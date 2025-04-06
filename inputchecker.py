@@ -116,5 +116,4 @@ class LiveInputChecker:
             self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
         elif len(self.typed_raw_word_lst) != word_index:
             self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
-        print(self.typed_raw_word_lst,word_index)
 
