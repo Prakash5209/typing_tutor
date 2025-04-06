@@ -67,61 +67,54 @@ class LiveInputChecker:
             print("hit space bar".center(90,'-')) 
 
 
-    def letter_color_confirmed(self,word_status_dict: Dict,context_text:List) -> int:
-        print("word_status_dict",word_status_dict)
-        green_color = lambda x: ['<span style="color:green">' + x + '</span>']
-        red_color = lambda x: ['<span style="color:red">' + x + '</span>']
+    def letter_color_confirmed(self, word_status_dict: Dict, context_text: List) -> None:
+        letter_status = word_status_dict.get("raw_letter_status", [])
+        word_index = word_status_dict.get("wordindex", 0)
+        current_word = context_text[word_index] if word_index < len(context_text) else []
 
-        letter_status = word_status_dict.get("raw_letter_status")
-        word_index = word_status_dict.get("wordindex")
-
+        # Reset if no letters (new word)
         if not letter_status:
-            self.track_raw_letter_lst.clear()
-            self.raw_letter_lst.clear()
+            self.track_raw_letter_lst = []
+            self.raw_letter_lst = []
+            return
 
-            self.typed_raw_word_lst = [[]] # reset for new sentence
-
-
-        if len(letter_status) <= len(self.track_raw_letter_lst):
-            ...
-        elif len(letter_status) <= len(context_text[word_index]) and letter_status[len(letter_status) - 1] == context_text[word_index][len(letter_status)-1] or len(letter_status) > len(context_text[word_index]):
-            self.raw_letter_lst.append(green_color(letter_status[len(letter_status) - 1]))
-            self.track_raw_letter_lst.append(letter_status[len(letter_status) - 1])
-        elif len(letter_status) <= len(context_text[word_index]) and letter_status[len(letter_status) -1] != context_text[word_index][len(letter_status) - 1]:
-            self.raw_letter_lst.append(red_color(letter_status[len(letter_status) - 1]))
-            self.track_raw_letter_lst.append(letter_status[len(letter_status) - 1])
-
-
-        # while letter_status != self.track_raw_letter_lst:
-        #     for i in range(len(letter_status)):
-        #         if letter_status[i] != self.track_raw_letter_lst[i]:
-        #             del self.track_raw_letter_lst[i]
-        #             del self.raw_letter_lst[i]
-        #     if len(letter_status) < len(self.track_raw_letter_lst):
-        #         self.track_raw_letter_lst.pop()
-        #         self.raw_letter_lst.pop()
-        #     else:
-        #         print("no pop in any list")
-        #     print('in while loop')
-        #     break
-
-        # Handle backspace/delete
-        
+        # Handle backspace/edit in middle of word
         if len(letter_status) != len(self.track_raw_letter_lst):
-            # Rebuild the tracking list completely
-            self.track_raw_letter_lst = letter_status.copy()
+            # Rebuild both lists completely to handle any position deletion
+            self.track_raw_letter_lst = []
+            self.raw_letter_lst = []
+            
+            for i, char in enumerate(letter_status):
+                # Check if letter is correct (within bounds and matches)
+                is_correct = i < len(current_word) and char == current_word[i]
+                color = '<span style="color:green">' + char + '</span>' if is_correct else '<span style="color:red">' + char + '</span>'
+                self.raw_letter_lst.append(color)
+                self.track_raw_letter_lst.append(char)
         else:
-            self.track_raw_letter_lst = letter_status.copy()
+            # Only process new letters (normal typing)
+            if len(letter_status) > len(self.track_raw_letter_lst):
+                new_char = letter_status[-1]
+                is_correct = (len(letter_status) <= len(current_word) and (new_char == current_word[len(letter_status)-1]))
+                color = '<span style="color:green">' + new_char + '</span>' if is_correct else '<span style="color:red">' + new_char + '</span>'
+                self.raw_letter_lst.append(color)
+                self.track_raw_letter_lst.append(new_char)
 
-            # Only add new letters at the end (normal typing)
-            # if len(letter_status) > len(self.track_raw_letter_lst):
-            #     self.track_raw_letter_lst.append(letter_status[-1])
 
-
-        # Update the current word's progress (no duplicates)
+        # Update word list (only one entry per word)
         if len(self.typed_word_lst) <= word_index:
             self.typed_word_lst.append(self.track_raw_letter_lst.copy())
         else:
             self.typed_word_lst[word_index] = self.track_raw_letter_lst.copy()
 
-        print(self.typed_word_lst)
+
+        print("raw_letter_lst", self.raw_letter_lst)
+
+
+
+        if len(self.typed_raw_word_lst) == word_index:
+            self.typed_raw_word_lst.append(['mouse'])
+            self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
+        elif len(self.typed_raw_word_lst) != word_index:
+            self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
+        print(self.typed_raw_word_lst,word_index)
+

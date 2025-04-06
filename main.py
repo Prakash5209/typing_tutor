@@ -1,5 +1,4 @@
 import module1
-from PyQt5.QtGui import QColor
 from inputchecker import LiveInputChecker
 
 from PyQt5 import uic
