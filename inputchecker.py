@@ -1,3 +1,4 @@
+from os import close
 from typing import Dict,List
 
 # TypingScreen from main.py
@@ -38,33 +39,43 @@ class LiveInputChecker:
         word_status = {}
         word_status['wordindex'] = self.wordindex
         word_status['raw_letter_status'] = raw_letter_status
-        self.letter_color_confirmed(word_status,text_nested_lst)
-
-        # print("okay",okay)
-        # self.typed_word_lst.append(okay)
-
-        # print("typed_word_lst",self.typed_word_lst)
+        letter_info = self.letter_color_confirmed(word_status,text_nested_lst)
 
         # changing current cursor background color
         try:
-            print("future".center(45,"-"),text_nested_lst[self.wordindex][len(word_lst)])
 
             front = list(map(lambda x:"".join(x),text_nested_lst[:self.wordindex]))
-            front_middle = ["".join(text_nested_lst[self.wordindex][:len(word_lst)])]
 
-            open_span = ['<span style="background:skyblue">']
-            middle = [text_nested_lst[self.wordindex][len(word_lst)]]
+            middle = ["".join(text_nested_lst[self.wordindex])]
+            third = list(map(lambda x:"".join(x),text_nested_lst[self.wordindex + 1:]))
+
+            if word_lst != text_nested_lst[self.wordindex][:len(word_lst)]:
+                open_span = ['<span style="background:red">']
+            elif word_lst == text_nested_lst[self.wordindex][:len(word_lst)]:
+                open_span = ['<span style="background:skyblue">']
+            else:
+                open_span = ['<span>']
+
             close_span = ['</span>']
 
-            back_middle = ["".join(text_nested_lst[self.wordindex][len(word_lst) + 1:])]
-            back = list(map(lambda x:"".join(x),text_nested_lst[self.wordindex + 1:]))
+            mid = ["".join(open_span + middle + close_span)]
 
-            color = " ".join(front + front_middle + open_span + middle + close_span + back_middle + back)
-            self.text_browser.setHtml(color)
 
-            #self.text_browser.setHtml(("".join(text_nested_lst[self.wordindex][:len(word_lst)]) + '<span style="background:skyblue">' + text_nested_lst[self.wordindex][len(word_lst)] + '</span>' + "".join(text_nested_lst[self.wordindex][len(word_lst) + 1:])))
-        except:
-            print("hit space bar".center(90,'-')) 
+            if len(front) == len(self.typed_raw_word_lst):
+                # front = self.typed_raw_word_lst
+                front = list(map(lambda x:"".join(x),self.typed_raw_word_lst))
+            else:
+                front = list(map(lambda x:"".join(x),self.typed_raw_word_lst))[:self.wordindex]
+                # front = list(map(lambda x:"".join(x),self.typed_raw_word_lst))
+
+            # print("front",front)
+            # print("mid",mid)
+            # print("third",third)
+
+            self.text_browser.setHtml(" ".join(front + mid + third))
+
+        except Exception as e:
+            print(e)
 
 
     def letter_color_confirmed(self, word_status_dict: Dict, context_text: List) -> None:
@@ -84,8 +95,8 @@ class LiveInputChecker:
             self.track_raw_letter_lst = []
             self.raw_letter_lst = []
             
+            # Check if letter is correct (within bounds and matches)
             for i, char in enumerate(letter_status):
-                # Check if letter is correct (within bounds and matches)
                 is_correct = i < len(current_word) and char == current_word[i]
                 color = '<span style="color:green">' + char + '</span>' if is_correct else '<span style="color:red">' + char + '</span>'
                 self.raw_letter_lst.append(color)
@@ -107,14 +118,18 @@ class LiveInputChecker:
             self.typed_word_lst[word_index] = self.track_raw_letter_lst.copy()
 
 
-        print("raw_letter_lst", self.raw_letter_lst)
-
+        # print("raw_letter_lst", self.raw_letter_lst)
 
 
         if len(self.typed_raw_word_lst) == word_index:
-            self.typed_raw_word_lst.append(['mouse'])
+            self.typed_raw_word_lst.append(['test'])
             self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
         elif len(self.typed_raw_word_lst) != word_index:
             self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
-        print(self.typed_raw_word_lst,word_index)
+
+
+        lad = (list(map(lambda x:" ".join(x),self.typed_raw_word_lst)))
+
+
+        # return lad
 
