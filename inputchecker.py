@@ -75,6 +75,8 @@ class LiveInputChecker:
             self.text_browser.setHtml(" ".join(front + mid + third))
 
         except Exception as e:
+            finish_type_word = list(map(lambda x:"".join(x),self.typed_raw_word_lst))
+            self.text_browser.setHtml(" ".join(finish_type_word))
             print(e)
 
 
