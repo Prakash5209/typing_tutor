@@ -105,9 +105,14 @@ class PracticeScreen(QMainWindow):
         uic.loadUi("practice.ui",self)
 
         self.test_button.clicked.connect(self.gotoHome)
+        self.account_btn.clicked.connect(self.goto_account)
 
     def gotoHome(self):
         widget.setCurrentIndex(widget.currentIndex() - 1)
+
+    def goto_account(self):
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
 
 
 class ResetPasswordVerificationScreen(QMainWindow):
@@ -136,7 +141,7 @@ class AccountScreen(QMainWindow):
 app = QApplication([])
 
 
-widget = QtWidgets.QStackedWidget()  # testing 
+widget = QtWidgets.QStackedWidget()  # testin
 
 login = MyApp()
 resetConfirmation = ResetPasswordVerificationScreen()
