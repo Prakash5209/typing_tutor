@@ -170,15 +170,16 @@ class TypingScreen(QMainWindow):
 
         if self.liveinput.wordindex <= 0 and len(strg) <= 1:
             # Thread-safe check
-            thread_alive = False
-            if hasattr(self, 'thread') and self.thread is not None:
-                try:
-                    thread_alive = self.thread.isRunning()
-                except RuntimeError:
-                    thread_alive = False
-            
-            if not thread_alive:
-                self.thread_timer()
+            # thread_alive = False
+            # if hasattr(self, 'thread') and self.thread is not None:
+            #     try:
+            #         thread_alive = self.thread.isRunning()
+            #     except RuntimeError:
+            #         thread_alive = False
+            # 
+            # if not thread_alive:
+            #     self.thread_timer()
+            self.thread_timer()
 
         if strg.endswith(" "):
             self.liveinput.wordindex += 1
