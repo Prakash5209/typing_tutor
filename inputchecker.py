@@ -1,4 +1,3 @@
-from os import close
 from typing import Dict,List
 
 # TypingScreen from main.py
@@ -119,7 +118,6 @@ class LiveInputChecker:
         else:
             self.typed_word_lst[word_index] = self.track_raw_letter_lst.copy()
 
-
         # print("raw_letter_lst", self.raw_letter_lst)
 
 
@@ -131,7 +129,4 @@ class LiveInputChecker:
 
 
         lad = (list(map(lambda x:" ".join(x),self.typed_raw_word_lst)))
-
-
-        # return lad
 
