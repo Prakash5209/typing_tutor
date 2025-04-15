@@ -1,6 +1,3 @@
-from sys import thread_info
-
-from numpy import e
 import module1
 from inputchecker import LiveInputChecker
 
@@ -10,7 +7,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow,QTextBrowser
 from PyQt5.QtCore import Qt, pyqtSignal,QThread,QObject
 
 import time
-
 
 class Worker(QObject):
     finished = pyqtSignal()
@@ -87,7 +83,7 @@ class TypingScreen(QMainWindow):
         self.test_type.textChanged.connect(self.textChangedfunc)
         self.test_refresh_button.clicked.connect(self.refresh_typing_text)
 
-        self.thread = None
+        self.timer_thread = None
         self.worker = None
         
         # dynamice text to
@@ -98,6 +94,8 @@ class TypingScreen(QMainWindow):
 
 
     def gotoPractice(self):
+        # thread cleaning
+        self.thread_cleanup()
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def goto_account(self):
@@ -112,17 +110,17 @@ class TypingScreen(QMainWindow):
             except RuntimeError:
                 pass  # Already deleted
             
-        if hasattr(self, 'thread') and self.thread is not None:
+        if hasattr(self, 'timer_thread') and self.timer_thread is not None:
             try:
-                if self.thread.isRunning():
-                    self.thread.quit()
-                    if not self.thread.wait(1000):
-                        self.thread.terminate()
-                        self.thread.wait()
+                if self.timer_thread.isRunning():
+                    self.timer_thread.quit()
+                    if not self.timer_thread.wait(1000):
+                        self.timer_thread.terminate()
+                        self.timer_thread.wait()
             except RuntimeError:
                 pass  # Already deleted
             finally:
-                self.thread = None
+                self.timer_thread = None
                 self.worker = None
 
     def refresh_typing_text(self):
@@ -140,7 +138,7 @@ class TypingScreen(QMainWindow):
         self.test_type.setText("")
 
         self.thread_cleanup()
-        print("inspect",self.thread)
+        print("inspect",self.timer_thread)
         print("inspect",self.worker)
 
 
@@ -149,16 +147,6 @@ class TypingScreen(QMainWindow):
         ok = self.liveinput.inputcheck(strg)
 
         if self.liveinput.wordindex <= 0 and len(strg) <= 1:
-            # Thread-safe check
-            # thread_alive = False
-            # if hasattr(self, 'thread') and self.thread is not None:
-            #     try:
-            #         thread_alive = self.thread.isRunning()
-            #     except RuntimeError:
-            #         thread_alive = False
-            # 
-            # if not thread_alive:
-            #     self.thread_timer()
             self.thread_timer()
 
         if strg.endswith(" "):
@@ -168,21 +156,21 @@ class TypingScreen(QMainWindow):
     def thread_timer(self):
         self.thread_cleanup()
 
-        self.thread = QThread()
+        self.timer_thread = QThread()
         self.worker = Worker()
 
-        self.worker.moveToThread(self.thread)
+        self.worker.moveToThread(self.timer_thread)
 
-        self.thread.started.connect(self.worker.run)
+        self.timer_thread.started.connect(self.worker.run)
 
         self.worker.finished.connect(self.worker_progress)
-        self.worker.finished.connect(self.thread.quit)
-        # self.thread.wait(500)
-        print(self.thread.isRunning())
+        self.worker.finished.connect(self.timer_thread.quit)
+        # self.timer_thread.wait(500)
+        print(self.timer_thread.isRunning())
         self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
+        self.timer_thread.finished.connect(self.timer_thread.deleteLater)
 
-        self.thread.start()
+        self.timer_thread.start()
 
 
     def worker_progress(self):
@@ -194,6 +182,7 @@ class TypingScreen(QMainWindow):
 
 
 class PracticeScreen(QMainWindow):
+    random_200_text = module1.typing_test_words()
     def __init__(self):
         super().__init__()
         uic.loadUi("practice.ui",self)
@@ -201,12 +190,79 @@ class PracticeScreen(QMainWindow):
         self.test_button.clicked.connect(self.gotoHome)
         self.account_btn.clicked.connect(self.goto_account)
 
+        self.lineEdit.textChanged.connect(self.textChangedfunc)
+        self.textBrowser.setMarkdown(self.random_200_text)
+
+        self.liveinput = LiveInputChecker(self.random_200_text,self.textBrowser)
+
     def gotoHome(self):
+        # thread cleaning
+        self.thread_cleanup()
         widget.setCurrentIndex(widget.currentIndex() - 1)
 
     def goto_account(self):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+
+    def thread_cleanup(self):
+        # Disconnect all signals first
+        if hasattr(self, 'worker') and self.worker is not None:
+            try:
+                self.worker.stop()
+                self.worker.finished.disconnect()
+            except RuntimeError:
+                pass  # Already deleted
+
+
+        if hasattr(self, 'timer_thread') and self.timer_thread is not None:
+            try:
+                if self.timer_thread.isRunning():
+                    self.timer_thread.quit()
+                    if not self.timer_thread.wait(1000):
+                        self.timer_thread.terminate()
+                        self.timer_thread.wait()
+            except RuntimeError:
+                pass  # Already deleted
+            finally:
+                self.timer_thread = None
+                self.worker = None
+
+
+    def textChangedfunc(self, strg):
+        ok = self.liveinput.inputcheck(strg)
+
+        if self.liveinput.wordindex <= 0 and len(strg) <= 1:
+            self.thread_timer()
+
+        if strg.endswith(" "):
+            self.liveinput.wordindex += 1
+            self.lineEdit.setText("")
+
+    def thread_timer(self):
+        self.thread_cleanup()
+
+        self.timer_thread = QThread()
+        self.worker = Worker()
+
+        self.worker.moveToThread(self.timer_thread)
+
+        self.timer_thread.started.connect(self.worker.run)
+
+        self.worker.finished.connect(self.worker_progress)
+        self.worker.finished.connect(self.timer_thread.quit)
+        # self.timer_thread.wait(500)
+        print(self.timer_thread.isRunning())
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.timer_thread.finished.connect(self.timer_thread.deleteLater)
+
+        self.timer_thread.start()
+    def worker_progress(self):
+
+        print("finished and deleted")
+
+        # disable the lineedit 
+        self.lineEdit.setEnabled(False)
+        self.worker = None
 
 
 class ResetPasswordVerificationScreen(QMainWindow):
