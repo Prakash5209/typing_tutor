@@ -21,7 +21,7 @@ class Worker(QObject):
         start = time.time()
         while not self._should_stop:
             result = time.time() - start
-            if result >= 5:
+            if result >= 10:
                 break
             time.sleep(0.1)  # Add small sleep to prevent tight loop
         self.finished.emit()
@@ -103,29 +103,6 @@ class TypingScreen(QMainWindow):
     def goto_account(self):
         widget.setCurrentIndex(widget.currentIndex() + 2)
 
-
-    # def thread_cleanup(self):
-    #     if hasattr(self, 'thread') and self.thread is not None:
-    #         try:
-    #             if self.thread.isRunning():
-    #                 if hasattr(self, 'worker') and self.worker is not None:
-    #                     self.worker.stop()
-    #                     self.worker.finished.disconnect()
-    #                     self.worker.deleteLater()
-    #                 self.thread.quit()
-    #                 self.thread.wait(500)
-    #                 if self.thread.isRunning():
-    #                     self.thread.terminate()
-    #                     self.thread.wait()
-
-    #             self.thread.deleteLater()
-    #         except RuntimeError:
-    #             pass
-    #         finally:
-    #             self.thread = None
-    #             self.worker = None
-
-
     def thread_cleanup(self):
         # Disconnect all signals first
         if hasattr(self, 'worker') and self.worker is not None:
@@ -149,6 +126,9 @@ class TypingScreen(QMainWindow):
                 self.worker = None
 
     def refresh_typing_text(self):
+        # enable the linedit after refreshing the 
+        self.test_type.setEnabled(True)
+
         self.random_200_text = module1.typing_test_words()
 
         # send to typing_test_words_from_TypingScreen
@@ -207,6 +187,9 @@ class TypingScreen(QMainWindow):
 
     def worker_progress(self):
         print("finished and deleted")
+
+        # disable the lineedit 
+        self.test_type.setEnabled(False)
         self.worker = None
 
 
