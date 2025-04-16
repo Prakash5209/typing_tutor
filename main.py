@@ -17,7 +17,7 @@ class Worker(QObject):
         start = time.time()
         while not self._should_stop:
             result = time.time() - start
-            if result >= 10:
+            if result >= 30:
                 break
             time.sleep(0.1)  # Add small sleep to prevent tight loop
         self.finished.emit()
