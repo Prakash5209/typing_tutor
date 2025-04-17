@@ -99,9 +99,12 @@ class LiveInputChecker:
             # Check if letter is correct (within bounds and matches)
             for i, char in enumerate(letter_status):
                 is_correct = i < len(current_word) and char == current_word[i]
+                print("is_correct",is_correct)
+                print(i,current_word,current_word[i])
                 color = '<span style="color:green">' + char + '</span>' if is_correct else '<span style="color:red">' + char + '</span>'
                 self.raw_letter_lst.append(color)
                 self.track_raw_letter_lst.append(char)
+                print("track_raw_letter_lst",self.track_raw_letter_lst)
         else:
             # Only process new letters (normal typing)
             if len(letter_status) > len(self.track_raw_letter_lst):
