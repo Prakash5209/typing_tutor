@@ -85,9 +85,9 @@ classDiagram
     QMainWindow <|-- ResetPasswordVerificationScreen
     QMainWindow <|-- AccountScreen
     
-    TypingScreen --> LiveInputChecker : uses
-    TypingScreen --> Worker : creates
-    TypingScreen --> QThread : uses
+    TypingScreen ..> LiveInputChecker : uses
+    TypingScreen ..> Worker : creates
+    TypingScreen ..> QThread : uses
 </mermaid>
 
 ## Sequence Diagram
