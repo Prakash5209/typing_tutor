@@ -85,9 +85,11 @@ classDiagram
     QMainWindow <|-- ResetPasswordVerificationScreen
     QMainWindow <|-- AccountScreen
     
-    TypingScreen ..> LiveInputChecker : uses
-    TypingScreen ..> Worker : creates
-    TypingScreen ..> QThread : uses
+    TypingScreen ..> LiveInputChecker
+    TypingScreen ..> Worker
+    TypingScreen ..> QThread
+    
+    note for TypingScreen "Uses LiveInputChecker for input validation, creates Worker instances, and uses QThread for timing"
 </mermaid>
 
 ## Sequence Diagram
