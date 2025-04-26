@@ -1,17 +1,17 @@
-from typing import Dict, List
 
-# TypingScreen from main.py
+from typing import Dict, List
 
 
 class LiveInputChecker:
     def __init__(self, text, text_browser):
+        self.count = 0
         self.wordindex = 0
         self.text = text
         self.text_browser = text_browser
         self.typed_word_lst = []
         self.typed_raw_word_lst = []
 
-        self.raw_letter_lst = []
+        self.raw_letter_lst = []  # Front corrected words
         self.track_raw_letter_lst = []
 
     def __str__(self):
@@ -24,113 +24,80 @@ class LiveInputChecker:
         if len(text_nested_lst) - 1 >= self.wordindex:
             text_in_word_lst = text_nested_lst[self.wordindex]
         else:
-            text_in_word_lst = text_nested_lst[len(text_nested_lst)-1]
+            text_in_word_lst = text_nested_lst[-1]
 
         word_lst = list(word)
-
         if len(word_lst) > 0 and word_lst[-1] == " ":
             word_lst.remove(" ")
 
-        # add mistake letter after word completion
         raw_letter_status = [y for _, y in zip(text_in_word_lst, word_lst)]
         raw_letter_status.extend(word_lst[len(text_in_word_lst):])
 
-        word_status = {}
-        word_status['wordindex'] = self.wordindex
-        word_status['raw_letter_status'] = raw_letter_status
-        letter_info = self.letter_color_confirmed(word_status, text_nested_lst)
+        word_status = {
+            'wordindex': self.wordindex,
+            'raw_letter_status': raw_letter_status
+        }
 
-        # changing current cursor background color
+        self.letter_color_confirmed(word_status, text_nested_lst)
+
         try:
-
-            front = list(map(lambda x: "".join(
-                x), text_nested_lst[:self.wordindex]))
-
-            middle = ["".join(text_nested_lst[self.wordindex])]
+            front = self.raw_letter_lst  # <<< Use raw_letter_lst directly
+            middle_word = "".join(text_nested_lst[self.wordindex])
             third = list(map(lambda x: "".join(
                 x), text_nested_lst[self.wordindex + 1:]))
 
             if word_lst != text_nested_lst[self.wordindex][:len(word_lst)]:
                 open_span = ['<span style="background:red">']
-            elif word_lst == text_nested_lst[self.wordindex][:len(word_lst)]:
-                open_span = ['<span style="background:skyblue">']
             else:
-                open_span = ['<span>']
+                open_span = ['<span style="background:skyblue">']
 
             close_span = ['</span>']
-
-            mid = ["".join(open_span + middle + close_span)]
-
-            if len(front) == len(self.typed_raw_word_lst):
-                # front = self.typed_raw_word_lst
-                front = list(map(lambda x: "".join(x),
-                             self.typed_raw_word_lst))
-            else:
-                front = list(map(lambda x: "".join(x), self.typed_raw_word_lst))[
-                    :self.wordindex]
-                # front = list(map(lambda x:"".join(x),self.typed_raw_word_lst))
+            mid = ["".join(open_span + [middle_word] + close_span)]
 
             self.text_browser.setHtml(" ".join(front + mid + third))
 
         except Exception as e:
             finish_type_word = list(
-                map(lambda x: "".join(x), self.typed_raw_word_lst))
+                map(lambda x: "".join(x), self.raw_letter_lst))
             self.text_browser.setHtml(" ".join(finish_type_word))
             return ("exception output", e)
 
+    def save_previous_word(self, prev_word):
+        self.typed_word_lst.append(prev_word.replace(" ", ""))
+
     def letter_color_confirmed(self, word_status_dict: Dict, context_text: List) -> None:
-        print("suru", word_status_dict, context_text)
-        letter_status = word_status_dict.get("raw_letter_status", [])
-        word_index = word_status_dict.get("wordindex", 0)
-        current_word = context_text[word_index] if word_index < len(
-            context_text) else []
+        word_index = word_status_dict.get('wordindex', 0)
+        raw_letter_status = word_status_dict.get('raw_letter_status', [])
 
-        # Reset if no letters (new word)
-        if not letter_status:
-            self.track_raw_letter_lst = []
-            self.raw_letter_lst = []
-            return
+        current_word = context_text[word_index]
 
-        # Handle backspace/edit in middle of word
-        if len(letter_status) != len(self.track_raw_letter_lst):
-            # Rebuild both lists completely to handle any position deletion
-            self.track_raw_letter_lst = []
-            self.raw_letter_lst = []
+        def red(x):
+            return f"<span style='color:red; display:inline-block; margin:0; padding:0;'>{x}</span>"
 
-            # Check if letter is correct (within bounds and matches)
-            for i, char in enumerate(letter_status):
-                is_correct = i < len(current_word) and char == current_word[i]
-                # print("is_correct", is_correct)
-                # print(i,current_word,current_word[i])
-                color = '<span style="color:green">' + char + \
-                    '</span>' if is_correct else '<span style="color:red">' + char + '</span>'
-                self.raw_letter_lst.append(color)
-                self.track_raw_letter_lst.append(char)
-        else:
-            # Only process new letters (normal typing)
-            if len(letter_status) > len(self.track_raw_letter_lst):
-                new_char = letter_status[-1]
-                is_correct = (len(letter_status) <= len(current_word) and (
-                    new_char == current_word[len(letter_status)-1]))
-                color = '<span style="color:green">' + new_char + \
-                    '</span>' if is_correct else '<span style="color:red">' + new_char + '</span>'
-                self.raw_letter_lst.append(color)
-                self.track_raw_letter_lst.append(new_char)
+        def green(x):
+            return f"<span style='color:green; display:inline-block; margin:0; padding:0;'>{x}</span>"
 
-        # Update word list (only one entry per word)
-        if len(self.typed_word_lst) <= word_index:
-            self.typed_word_lst.append(self.track_raw_letter_lst.copy())
-        else:
-            self.typed_word_lst[word_index] = self.track_raw_letter_lst.copy()
+        if len(self.typed_word_lst) > self.count:
+            self.count += 1
 
-        print("word index", self.wordindex)
-        print("ultimate test", self.raw_letter_lst)
-        print("typed_raw_word_lst", self.typed_raw_word_lst)
-        if len(self.typed_raw_word_lst) == word_index:
-            self.typed_raw_word_lst.append(['test'])
-            self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
-        elif len(self.typed_raw_word_lst) != word_index:
-            self.typed_raw_word_lst[word_index] = self.raw_letter_lst.copy()
+            typed_word = self.typed_word_lst[word_index - 1]
+            context_word = context_text[self.wordindex - 1]
 
-        lad = (list(map(lambda x: " ".join(x), self.typed_raw_word_lst)))
-        print("lad", lad)
+            if len(typed_word) > len(context_word):
+                self.raw_letter_lst.append(red("".join(context_word)))
+            elif len(typed_word) < len(context_word):
+                for i in range(len(context_word)):
+                    try:
+                        if typed_word[i] == context_word[i]:
+                            self.raw_letter_lst.append(green(context_word[i]))
+                    except IndexError:
+                        self.raw_letter_lst.append(red(context_word[i]))
+            else:
+                for i in range(len(context_word)):
+                    if context_word[i] == typed_word[i]:
+                        self.raw_letter_lst.append(green(context_word[i]))
+                    else:
+                        self.raw_letter_lst.append(red(context_word[i]))
+
+        # Debugging purpose
+        print("Current raw letter list:", "".join(self.raw_letter_lst))

@@ -10,6 +10,9 @@ from PyQt5.QtCore import pyqtSignal, QThread, QObject
 import time
 
 
+temp: str = ""
+
+
 class Worker(QObject):
     finished = pyqtSignal()
     _should_stop = False
@@ -161,8 +164,9 @@ class TypingScreen(QMainWindow):
         self.thread_cleanup()
 
     def textChangedfunc(self, strg):
+        global temp
+        temp = strg
         ok = self.liveinput.inputcheck(strg)
-
         # stop the worker thread when words is finished
         if ok != None:
             Worker.stop_thread()
@@ -174,6 +178,8 @@ class TypingScreen(QMainWindow):
             self.thread_timer()
 
         if strg.endswith(" "):
+            temp = strg
+            self.liveinput.save_previous_word(temp)
             self.liveinput.wordindex += 1
             self.test_type.setText("")
 
