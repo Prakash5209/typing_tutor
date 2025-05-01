@@ -54,7 +54,7 @@ class LiveInputChecker:
             close_span = ['</span>']
             mid = ["".join(open_span + [middle_word] + close_span)]
 
-            self.text_browser.setHtml(" ".join(front + mid + third))
+            self.text_browser.setHtml(" " .join(front + mid + third))
 
         except Exception as e:
             finish_type_word = list(
@@ -69,7 +69,7 @@ class LiveInputChecker:
         word_index = word_status_dict.get('wordindex', 0)
         raw_letter_status = word_status_dict.get('raw_letter_status', [])
 
-        current_word = context_text[word_index]
+        # current_word = context_text[word_index]
 
         def red(x):
             return f"<span style='color:red; display:inline-block; margin:0; padding:0;'>{x}</span>"
