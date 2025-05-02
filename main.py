@@ -41,7 +41,6 @@ class Worker(QObject):
     @classmethod
     def change_typing_time(cls, finish_time=0):
         cls.typing_time = finish_time
-        print("stoped all thread")
 
     @classmethod
     def change_status(cls, b):
@@ -103,7 +102,7 @@ class TypingScreen(QMainWindow):
         super().__init__()
         uic.loadUi("home.ui", self)
 
-        # timer option index    def selectTime
+        # timer option index
         self.timer_select_index = 0
         self.timer = TypingScreen.timer[self.timer_select_index]
 
@@ -132,7 +131,7 @@ class TypingScreen(QMainWindow):
             self.random_200_text, self.testTextBrowser)
 
         # sending random_200_text to this method
-        self.filter_save = Filter_and_save(self.random_200_text)
+        # self.filter_save = Filter_and_save(self.random_200_text)
 
         self.update_time = QTimer(self)
         self.update_time.timeout.connect(self.tracktimer)
@@ -157,39 +156,29 @@ class TypingScreen(QMainWindow):
     def gotoPractice(self):
         # thread cleaning
         self.thread_cleanup()
+
+        # stop the time tracker by assigning 0
+        self.timer_counter = 0
+
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def goto_account(self):
+        # thread cleaning
+        self.thread_cleanup()
+
+        # stop the time tracker by assigning 0
+        self.timer_counter = 0
+
         widget.setCurrentIndex(widget.currentIndex() + 2)
 
     def tracktimer(self):
-        self.timer_counter -= 1
         self.label_3.setText("time: " + str(self.timer_counter))
+        self.timer_counter -= 1
 
         if self.timer_counter < 1:
             self.update_time.stop()
             # self.timer_counter = TypingScreen.timer[self.timer_select_index]
             self.timer_started = False
-
-        print("timer_counter", self.timer_counter)
-
-        # self.label_3.setText("time: " + str(self.timer_counter))
-        # print("timer test", self.timer_counter)
-        # self.timer_counter -= 1
-
-        # if self.timer_counter < 0:
-        #     self.update_time.stop()
-        #     self.timer_started = False
-        # self.label_3.setText("time: " + str(self.timer_counter))
-
-        # def tracktimer(self):
-        #     self.label_3.setText("time: " + str(self.timer))
-        #     self.timer -= 1
-
-        #     if self.timer < 0:
-        #         self.update_time.stop()
-        #         self.timer_started = False
-        #     self.label_3.setText("time: " + str(self.timer))
 
     def thread_cleanup(self):
         # Disconnect all signals first
@@ -225,13 +214,13 @@ class TypingScreen(QMainWindow):
         # enable the linedit after refreshing the
         self.test_type.setEnabled(True)
 
-        # resetting self.timer_counter
+        # resetting self.timer_counter by assigning timer_counter to 0
         self.timer_counter = TypingScreen.timer[self.timer_select_index]
 
         self.random_200_text = module1.typing_test_words()
 
         # self.filter_save
-        self.filter_save = Filter_and_save(self.random_200_text)
+        # self.filter_save = Filter_and_save(self.random_200_text)
 
         # send to typing_test_words_from_TypingScreen
         self.liveinput = LiveInputChecker(
@@ -305,7 +294,7 @@ class TypingScreen(QMainWindow):
         # sending random generated text to filter
         # print(self.random_200_text)
         # self.send_strg = Filter_and_save(self.random_200_text)
-        self.filter_save.missedkey()
+        # self.filter_save.missedkey()
         # disable the lineedit
         self.test_type.setEnabled(False)
         self.worker = None
@@ -313,22 +302,41 @@ class TypingScreen(QMainWindow):
 
 class PracticeScreen(QMainWindow):
     random_200_text = module1.typing_test_words()
+    timer = [15, 30, 60]
 
     def __init__(self):
         super().__init__()
         uic.loadUi("practice.ui", self)
 
-        # self.test_refresh_button.clicked.connect(self.refresh_typing_text)
+        # timer option index    def selectTime
+        self.timer_select_index = 0
+        self.timer = PracticeScreen.timer[self.timer_select_index]
+
+        # time counter
+        self.timer_counter = PracticeScreen.timer[self.timer_select_index]
 
         self.test_button.clicked.connect(self.gotoHome)
         self.account_btn.clicked.connect(self.goto_account)
 
-        self.practice_refresh.clicked.connect(self.refresh_typing_text)
         self.lineEdit.textChanged.connect(self.textChangedfunc)
+        self.practice_refresh.clicked.connect(self.refresh_typing_text)
+
+        # change the timer options in gui
+        self.label_3.setText(
+            f"time: {TypingScreen.timer[self.timer_select_index]}")
+        self.label_3.clicked.connect(self.selectTime)
+
+        self.timer_thread = None
+        self.worker = None
+
         self.practiceTextBrowser.setMarkdown(self.random_200_text)
 
         self.liveinput = LiveInputChecker(
             self.random_200_text, self.practiceTextBrowser)
+
+        self.update_time = QTimer(self)
+        self.update_time.timeout.connect(self.tracktimer)
+        self.timer_started = False
 
     def gotoHome(self):
         # thread cleaning
@@ -336,16 +344,52 @@ class PracticeScreen(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() - 1)
 
     def goto_account(self):
+        # thread cleaning
+        self.thread_cleanup()
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    def selectTime(self):
+
+        if self.timer_select_index >= len(TypingScreen.timer)-1:
+            self.timer_select_index = 0
+        else:
+            self.timer_select_index += 1
+
+        if not Worker.status:
+            self.timer_counter = TypingScreen.timer[self.timer_select_index]
+            Worker.change_typing_time(
+                finish_time=TypingScreen.timer[self.timer_select_index])
+            self.label_3.setText(
+                f"time: {TypingScreen.timer[self.timer_select_index]}")
+
+    def tracktimer(self):
+        self.label_3.setText("time: " + str(self.timer_counter))
+        self.timer_counter -= 1
+
+        if self.timer_counter < 1:
+            self.update_time.stop()
+            # self.timer_counter = TypingScreen.timer[self.timer_select_index]
+            self.timer_started = False
+
     def refresh_typing_text(self):
+        # Stop the timer explicitly
+        self.update_time.stop()
+        self.timer_started = False  # Reset the state
+
+        # refresh the timer and reset the text of label_3
+        self.label_3.setText(
+            "time: "+str(TypingScreen.timer[self.timer_select_index]))
+
         # enable the linedit after refreshing the
         self.lineEdit.setEnabled(True)
+
+        # resetting self.timer_counter by assigning timer_counter to 0
+        self.timer_counter = TypingScreen.timer[self.timer_select_index]
 
         self.random_200_text = module1.typing_test_words()
 
         # self.filter_save
-        self.filter_save = Filter_and_save(self.random_200_text)
+        # self.filter_save = Filter_and_save(self.random_200_text)
 
         # send to typing_test_words_from_TypingScreen
         self.liveinput = LiveInputChecker(
@@ -354,7 +398,10 @@ class PracticeScreen(QMainWindow):
         self.practiceTextBrowser.setMarkdown(self.random_200_text)
 
         # clearing the input fields when refreshing the text
+        self.lineEdit.blockSignals(True)
         self.lineEdit.setText("")
+        self.lineEdit.blockSignals(False)
+
         # stop the worker thread when words is finished
         Worker.change_typing_time(finish_time=25)
 
@@ -375,6 +422,10 @@ class PracticeScreen(QMainWindow):
                     self.timer_thread.quit()
                     if not self.timer_thread.wait(1000):
                         self.timer_thread.terminate()
+
+                        # resetting self.timer_counter by assigning timer_counter to 0
+                        self.timer_counter = TypingScreen.timer[self.timer_select_index]
+
                         self.timer_thread.wait()
             except RuntimeError:
                 pass  # Already deleted
@@ -383,12 +434,34 @@ class PracticeScreen(QMainWindow):
                 self.worker = None
 
     def textChangedfunc(self, strg):
+
+        Worker.change_typing_time(
+            finish_time=PracticeScreen.timer[self.timer_select_index])
+        global temp
+        temp = strg
+
+        if not self.timer_started:
+            self.timer_started = True
+            self.update_time.start(1000)
+
         input_check = self.liveinput.inputcheck(strg)
+
+        if input_check != None:  # stop the worker thread when words is finished
+            Worker.change_typing_time()  # default prams: finish_time = 0
+
+            # stoping the timer (count down)
+            self.update_time.stop()
+            self.timer_started = False
+
+            # sending raw user input to Filter_and_save
+        # test = self.filter_save.set_input_lst(strg)
 
         if self.liveinput.wordindex <= 0 and len(strg) <= 1:
             self.thread_timer()
 
         if strg.endswith(" "):
+            temp = strg
+            self.liveinput.save_previous_word(temp)
             self.liveinput.wordindex += 1
             self.lineEdit.setText("")
 

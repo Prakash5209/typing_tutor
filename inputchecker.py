@@ -100,4 +100,4 @@ class LiveInputChecker:
                         self.raw_letter_lst.append(red(context_word[i]))
 
         # Debugging purpose
-        print("Current raw letter list:", "".join(self.raw_letter_lst))
+        # print("Current raw letter list:", "".join(self.raw_letter_lst))
