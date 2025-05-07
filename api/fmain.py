@@ -85,3 +85,6 @@ async def delete_user(id: int, db: db_dependency):
         return "data deleted successfully"
     except Exception as e:
         return f"Exception {e}"
+
+
+# commit test
