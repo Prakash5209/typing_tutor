@@ -1,16 +1,19 @@
-from sqlalchemy import Column,Integer,String
-from sqlalchemy import DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime
+from database import Base
+from datetime import datetime
 
-Base = declarative_base()
-metadata = Base.metadata
 
-class MistypeModel(Base):
-    __tablename__ = "mistypecontainer"
-    id = Column(Integer,primary_key=True,index=True)
-    expected = Column(String(1))
-    typed = Column(String(1))
-    timestamp = Column(DateTime)
+class TimeStamps:
 
-    def __repr__(self):
-        return f"id:{self.id}"
+    create_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow,
+                        onupdate=datetime.utcnow)
+
+
+class User(Base, TimeStamps):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True)
+    email = Column(String(50), unique=True, index=True)
+    hash_pass = Column(String(128))
