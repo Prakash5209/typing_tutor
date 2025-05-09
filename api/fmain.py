@@ -15,16 +15,15 @@ models.Base.metadata.create_all(bind=engine)
 
 
 class UserBase(BaseModel):
-    int: int
     username: str
     email: str
-    hash_pass: str
+    password: str
 
 
 class UpdateUserBase(BaseModel):
     username: Optional[str]
     email: Optional[str]
-    hash_pass: Optional[str]
+    password: Optional[str]
 
 
 def get_db():
@@ -38,12 +37,18 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
+# test
+@app.get("/test/")
+async def get_user(email: str, username: str, password: str, confirm_password: str):
+    print("server test", email, username, password, confirm_password)
+    return "return server"
+
+
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
-    print('date', dir(datetime))
     try:
         new_user = User(username=user.username, email=user.email,
-                        hash_pass=user.hash_pass)
+                        password=user.password)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)

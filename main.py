@@ -7,6 +7,9 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
+from working.register import Register
+
+
 import time
 
 
@@ -83,11 +86,19 @@ class RegisterScreen(QMainWindow):
         super().__init__()
         uic.loadUi("register.ui", self)
 
-        self.pushButton.clicked.connect(self.show_message)
+        # self.create_account.connect(self.create_account_button_function)
+        self.create_account_button.clicked.connect(
+            self.create_account_button_function)
         self.register_b_login.clicked.connect(self.gotoScreen1)
 
-    def show_message(self):
-        print("some button")
+    def create_account_button_function(self):
+        email = self.email_lineEdit.text()
+        username = self.username_lineEdit_2.text()
+        password = self.password_lineEdit_3.text()
+        confirm_password = self.confirm_password_lineEdit_4.text()
+        print("create new button", email, username, password, confirm_password)
+        r = Register(email, username, password, confirm_password)
+        r.register_new_account()
 
     def gotoScreen1(self):
         widget.setCurrentIndex(widget.currentIndex() - 1)

@@ -16,4 +16,4 @@ class User(Base, TimeStamps):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, index=True)
     email = Column(String(50), unique=True, index=True)
-    hash_pass = Column(String(128))
+    password = Column(String(128))

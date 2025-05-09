@@ -99,28 +99,28 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="email_lineEdit">
             <property name="placeholderText">
              <string>email</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_2">
+           <widget class="QLineEdit" name="username_lineEdit_2">
             <property name="placeholderText">
              <string>username</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_3">
+           <widget class="QLineEdit" name="password_lineEdit_3">
             <property name="placeholderText">
              <string>password</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_4">
+           <widget class="QLineEdit" name="confirm_password_lineEdit_4">
             <property name="placeholderText">
              <string>confirm password</string>
             </property>
@@ -139,7 +139,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="create_account_button">
             <property name="text">
              <string>create account</string>
             </property>
