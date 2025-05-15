@@ -4,10 +4,10 @@ from datetime import datetime
 
 
 class TimeStamps:
-
-    create_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+    create_at = Column(DateTime(timezone=True),
+                       default=lambda: datetime.utcnow())
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.utcnow(),
+                        onupdate=datetime.utcnow())
 
 
 class User(Base, TimeStamps):

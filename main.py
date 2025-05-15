@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
-from working.register import Register
+from working.account import Register, Login
 
 
 import time
@@ -66,6 +66,15 @@ class MyApp(QMainWindow):
         self.forgotPassword_btn.clicked.connect(
             self.goto_resetPasswordVerificationScreen)
 
+        QTimer.singleShot(0, self.auto_login_if_token_valid)
+
+    def auto_login_if_token_valid(self):
+        if Login.is_authenticated():
+            print("Token valid. Redirecting to TypingScreen.")
+            widget.setCurrentIndex(widget.currentIndex() + 3)
+        else:
+            print("Token not found or invalid.")
+
         # self.showMaximized()
     def show_message(self):
         print('login button pressed')
@@ -75,7 +84,21 @@ class MyApp(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def goto_homeScreen(self):
-        widget.setCurrentIndex(widget.currentIndex() + 3)
+        username = self.usernamelineEdit.text()
+        password = self.passwordlineEdit.text()
+
+        login = Login(username, password)
+        response_status = login.get_user()
+
+        # if okay go to TypingScreen
+        try:
+            if response_status.status_code == 200:
+                widget.setCurrentIndex(widget.currentIndex() + 3)
+                print(e)
+        except Exception as e:
+            print("response_status.status_code", e)
+
+            # print("is_authenticated", Login.is_authenticated())
 
     def goto_resetPasswordVerificationScreen(self):
         widget.setCurrentIndex(widget.currentIndex() + 2)
@@ -96,9 +119,12 @@ class RegisterScreen(QMainWindow):
         username = self.username_lineEdit_2.text()
         password = self.password_lineEdit_3.text()
         confirm_password = self.confirm_password_lineEdit_4.text()
-        print("create new button", email, username, password, confirm_password)
         r = Register(email, username, password, confirm_password)
-        r.register_new_account()
+        returned_info = r._Register__register_new_account()
+
+        if returned_info == 201:
+            # goto login page
+            self.gotoScreen1()
 
     def gotoScreen1(self):
         widget.setCurrentIndex(widget.currentIndex() - 1)
@@ -532,7 +558,7 @@ class AccountScreen(QMainWindow):
 app = QApplication([])
 
 
-widget = QtWidgets.QStackedWidget()  # testin
+widget = QtWidgets.QStackedWidget()  # testing
 
 login = MyApp()
 resetConfirmation = ResetPasswordVerificationScreen()

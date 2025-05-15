@@ -111,14 +111,14 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="usernamelineEdit">
             <property name="placeholderText">
              <string>email / username</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_2">
+           <widget class="QLineEdit" name="passwordlineEdit">
             <property name="placeholderText">
              <string>password</string>
             </property>

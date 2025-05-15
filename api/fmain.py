@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI, Depends, status, HTTPException
 from pydantic import BaseModel
 from typing import Annotated, Optional
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+import logging
+from sqlalchemy.exc import SQLAlchemyError
 
 
 import models
@@ -17,6 +20,11 @@ models.Base.metadata.create_all(bind=engine)
 class UserBase(BaseModel):
     username: str
     email: str
+    password: str
+
+
+class GetUser(BaseModel):
+    username: str
     password: str
 
 
@@ -39,8 +47,9 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 # test
 @app.get("/test/")
-async def get_user(email: str, username: str, password: str, confirm_password: str):
-    print("server test", email, username, password, confirm_password)
+async def get_user():
+    print(dir(datetime))
+    print("Time test", datetime.utcnow())
     return "return server"
 
 
@@ -57,13 +66,30 @@ async def create_user(user: UserBase, db: db_dependency):
         print("Exception", e)
 
 
-@app.get("/get-user/{id}", status_code=status.HTTP_200_OK)
-async def get_user(id: int, db: db_dependency):
+@app.post("/get-user/")
+async def get_user(user: GetUser, db: db_dependency):
     try:
-        user_id = db.query(User).get(id)
-        return user_id
-    except Exception as e:
-        print("Exception", e)
+        stmt = select(User).where((User.username == user.username) &
+                                  (User.password == user.password))
+        # stmt = db.query(User).select(
+        #     (User.username == user.username) & (User.password == user.password)
+        # )
+        that_user = db.execute(stmt).scalar_one_or_none()
+        if not that_user:
+            raise HTTPException(status.HTTP_404_NOT_FOUND,
+                                detail="user not found")
+        return that_user
+    except HTTPException as httpe:
+        raise httpe
+
+    except SQLAlchemyError as sqle:
+        logging.exception("database query failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SQLAlchemyError Exception")
+
+    except Exception as generic_exc:
+        logging.exception("Unexpected error")
+        raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
 @app.patch("/update-user-details/{id}", status_code=status.HTTP_200_OK)
