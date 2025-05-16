@@ -1,6 +1,7 @@
 import module1
 from inputchecker import LiveInputChecker
 from filter_save import Filter_and_save
+import smtplib
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -8,6 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login
+from working.recovery_account_email import Account_recovery
 
 
 import time
@@ -536,10 +538,21 @@ class ResetPasswordVerificationScreen(QMainWindow):
 
         # back to login screen from resetPasswordVerficadtionScreen
         self.forgotPasswordCancel_btn.clicked.connect(self.backToLoginScreen)
+        self.send_code_to_email_pushButton_2.clicked.connect(
+            self.send_code_to_email)
+        self.recovery_code_submit.clicked.connect(self.confirm_recovery_code)
 
     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
 
         widget.setCurrentIndex(widget.currentIndex() - 2)
+
+    def send_code_to_email(self):
+        username = self.username_lineEdit.text()
+        self.obj = Account_recovery(username)
+        self.obj.send_mail()
+
+    def confirm_recovery_code(self):
+        code = self.code_lineEdit.text()
 
 
 class AccountScreen(QMainWindow):

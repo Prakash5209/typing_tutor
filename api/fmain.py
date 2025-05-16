@@ -23,6 +23,10 @@ class UserBase(BaseModel):
     password: str
 
 
+class GetEmailByUsername(BaseModel):
+    username: str
+
+
 class GetUser(BaseModel):
     username: str
     password: str
@@ -64,6 +68,29 @@ async def create_user(user: UserBase, db: db_dependency):
         return f"{status.HTTP_201_CREATED}: {user}"
     except Exception as e:
         print("Exception", e)
+
+
+# get email only from Username
+@app.post("/get-email/")
+async def get_email_by_username(user: GetEmailByUsername, db: db_dependency):
+    try:
+        stmt = select(User).where(User.username == user.username)
+        that_user = db.execute(stmt).scalar_one_or_none()
+        if not that_user:
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
+        return that_user.email
+
+    except HTTPException as httpe:
+        raise httpe
+
+    except SQLAlchemyError as sqle:
+        logging.exception("database query failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SQLAlchemyError Exception")
+
+    except Exception as generic_exc:
+        logging.exception("Unexpected error")
+        raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
 @app.post("/get-user/")
