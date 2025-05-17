@@ -9,9 +9,10 @@ from email.mime.text import MIMEText
 
 
 class Account_recovery:
+    r = redis.Redis(host="localhost", port=6379)
+
     def __init__(self, usename: str):
         self.username: str = usename
-        self.redis = redis.Redis(host="localhost", port=6379)
 
     def request_email(self) -> str:
         try:
@@ -26,7 +27,13 @@ class Account_recovery:
 
     def generate_code(self):
         chars = string.ascii_letters + string.digits
-        return "".join(random.choices(chars, k=6))
+        existing_code = {Account_recovery.r.get(
+            key).decode() for key in Account_recovery.r.scan_iter("*") if Account_recovery.r.get(key)}
+
+        while True:
+            code = "".join(random.choices(chars, k=6))
+            if code not in existing_code:
+                return code
 
     def send_mail(self):
         sender_email = "prakashkchaudhary5209@gmail.com"
@@ -37,11 +44,9 @@ class Account_recovery:
             print("invalid email response")
             return
 
-        # generate and store code in redis and expiry
+        # generate and store code in redis
         self.code = self.generate_code()
-
-        self.redis.setex(f"{self.email}", 300, self.code)
-        print("output")
+        Account_recovery.r.setex(self.email, 300, self.code)
 
         try:
             msg = MIMEText(
@@ -59,3 +64,10 @@ class Account_recovery:
 
         except SMTPException as e:
             print("smtp error: ", e)
+
+
+class Verification_code:
+    def confirm_recovery_code(self, code):
+        dt = {Account_recovery.r.get(
+            key).decode(): key.decode() for key in Account_recovery.r.scan_iter("*")}
+        print(dt.get(code))

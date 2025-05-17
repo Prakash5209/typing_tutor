@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login
-from working.recovery_account_email import Account_recovery
+from working.recovery_account_email import Account_recovery, Verification_code
 
 
 import time
@@ -533,6 +533,7 @@ class PracticeScreen(QMainWindow):
 
 class ResetPasswordVerificationScreen(QMainWindow):
     def __init__(self):
+        self.obj = None
         super().__init__()
         uic.loadUi("forgotPasswordVerificationCode.ui", self)
 
@@ -540,7 +541,8 @@ class ResetPasswordVerificationScreen(QMainWindow):
         self.forgotPasswordCancel_btn.clicked.connect(self.backToLoginScreen)
         self.send_code_to_email_pushButton_2.clicked.connect(
             self.send_code_to_email)
-        self.recovery_code_submit.clicked.connect(self.confirm_recovery_code)
+        self.recovery_code_submit.clicked.connect(
+            self.confirm_recovery_code_func)
 
     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
 
@@ -551,8 +553,10 @@ class ResetPasswordVerificationScreen(QMainWindow):
         self.obj = Account_recovery(username)
         self.obj.send_mail()
 
-    def confirm_recovery_code(self):
+    def confirm_recovery_code_func(self):
         code = self.code_lineEdit.text()
+        obj = Verification_code()
+        obj.confirm_recovery_code(code)
 
 
 class AccountScreen(QMainWindow):
