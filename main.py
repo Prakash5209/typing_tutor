@@ -8,8 +8,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
-from working.account import Register, Login
-from working.recovery_account_email import Account_recovery, Verification_code
+from working.account import Register, Login, Account_recovery, Verification_code
 
 
 import time
@@ -556,7 +555,30 @@ class ResetPasswordVerificationScreen(QMainWindow):
     def confirm_recovery_code_func(self):
         code = self.code_lineEdit.text()
         obj = Verification_code()
-        obj.confirm_recovery_code(code)
+        ret = obj.confirm_recovery_code(code)
+        if ret:
+            reset_password_screen = widget.widget(widget.currentIndex() + 4)
+            reset_password_screen.setverification_obj(ret)
+            widget.setCurrentIndex(widget.currentIndex() + 4)
+        else:
+            return f"return {ret}"
+
+
+class ResetPassword(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("password_reset.ui", self)
+        self.submit.clicked.connect(self.submit_new_password)
+
+    def setverification_obj(self, obj):
+        self.verification_obj = obj
+        self.email_label.setText(self.verification_obj)
+
+    def submit_new_password(self):
+        new_pass = self.newpasswordLineEdit.text()
+        confirm_pass = self.confirmpasswordLineEdit.text()
+        obj = Verification_code()
+        obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
 
 
 class AccountScreen(QMainWindow):
@@ -583,6 +605,7 @@ register = RegisterScreen()
 typingScreen = TypingScreen()
 practicescreen = PracticeScreen()
 accountscreen = AccountScreen()
+resetpassword = ResetPassword()
 
 widget.addWidget(login)
 widget.addWidget(register)
@@ -590,6 +613,7 @@ widget.addWidget(resetConfirmation)
 widget.addWidget(typingScreen)
 widget.addWidget(practicescreen)
 widget.addWidget(accountscreen)
+widget.addWidget(resetpassword)
 
 widget.show()
 app.exec_()
