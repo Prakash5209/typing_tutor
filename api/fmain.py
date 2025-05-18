@@ -23,6 +23,15 @@ class UserBase(BaseModel):
     password: str
 
 
+class GetEmailByUsername(BaseModel):
+    username: str
+
+
+class ResetPassword(BaseModel):
+    email: str
+    password: str
+
+
 class GetUser(BaseModel):
     username: str
     password: str
@@ -64,6 +73,50 @@ async def create_user(user: UserBase, db: db_dependency):
         return f"{status.HTTP_201_CREATED}: {user}"
     except Exception as e:
         print("Exception", e)
+
+
+# get email only from Username
+@app.post("/get-email/")
+async def get_email_by_username(user: GetEmailByUsername, db: db_dependency):
+    try:
+        stmt = select(User).where(User.username == user.username)
+        that_user = db.execute(stmt).scalar_one_or_none()
+        if not that_user:
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
+        return that_user.email
+
+    except HTTPException as httpe:
+        raise httpe
+
+    except SQLAlchemyError as sqle:
+        logging.exception("database query failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SQLAlchemyError Exception")
+
+    except Exception as generic_exc:
+        logging.exception("Unexpected error")
+        raise HTTPException(status_code=500, detail="Unexpected server error")
+
+
+# @app.post("/user-details/")
+# async def get_user_info(email: str):
+#     try:
+#         stmt = select(User).where(User.email == email)
+#         that_user = db.execute(stmt).scalar_one_or_none()
+#         if not that_user:
+#             raise HTTPException(status.HTTP_404_NOT_FOUND)
+#         return that_user.email
+#     except HTTPException as httpe:
+#         raise httpe
+#
+#     except SQLAlchemyError as sqle:
+#         logging.exception("database query failed")
+#         raise HTTPException(
+#             status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SQLAlchemyError Exception")
+#
+#     except Exception as generic_exc:
+#         logging.exception("Unexpected error")
+#         raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
 @app.post("/get-user/")
@@ -116,3 +169,26 @@ async def delete_user(id: int, db: db_dependency):
         return "data deleted successfully"
     except Exception as e:
         return f"Exception {e}"
+
+
+@app.post("/reset-password/")
+async def reset_password(user: ResetPassword, db: db_dependency):
+    try:
+        stmt = select(User).where(User.email == user.email)
+        that_user = db.execute(stmt).scalar_one_or_none()
+        that_user.password = user.password
+        db.add(that_user)
+        db.commit()
+        db.refresh(that_user)
+        return that_user
+    except HTTPException as httpe:
+        raise httpe
+
+    except SQLAlchemyError as sqle:
+        logging.exception("database query failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SQLAlchemyError Exception")
+
+    except Exception as generic_exc:
+        logging.exception("Unexpected error")
+        raise HTTPException(status_code=500, detail="Unexpected server error")

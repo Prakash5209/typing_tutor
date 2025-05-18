@@ -1,13 +1,14 @@
 import module1
 from inputchecker import LiveInputChecker
 from filter_save import Filter_and_save
+import smtplib
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
-from working.account import Register, Login
+from working.account import Register, Login, Account_recovery, Verification_code
 
 
 import time
@@ -531,15 +532,53 @@ class PracticeScreen(QMainWindow):
 
 class ResetPasswordVerificationScreen(QMainWindow):
     def __init__(self):
+        self.obj = None
         super().__init__()
         uic.loadUi("forgotPasswordVerificationCode.ui", self)
 
         # back to login screen from resetPasswordVerficadtionScreen
         self.forgotPasswordCancel_btn.clicked.connect(self.backToLoginScreen)
+        self.send_code_to_email_pushButton_2.clicked.connect(
+            self.send_code_to_email)
+        self.recovery_code_submit.clicked.connect(
+            self.confirm_recovery_code_func)
 
     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
 
         widget.setCurrentIndex(widget.currentIndex() - 2)
+
+    def send_code_to_email(self):
+        username = self.username_lineEdit.text()
+        self.obj = Account_recovery(username)
+        self.obj.send_mail()
+
+    def confirm_recovery_code_func(self):
+        code = self.code_lineEdit.text()
+        obj = Verification_code()
+        ret = obj.confirm_recovery_code(code)
+        if ret:
+            reset_password_screen = widget.widget(widget.currentIndex() + 4)
+            reset_password_screen.setverification_obj(ret)
+            widget.setCurrentIndex(widget.currentIndex() + 4)
+        else:
+            return f"return {ret}"
+
+
+class ResetPassword(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("password_reset.ui", self)
+        self.submit.clicked.connect(self.submit_new_password)
+
+    def setverification_obj(self, obj):
+        self.verification_obj = obj
+        self.email_label.setText(self.verification_obj)
+
+    def submit_new_password(self):
+        new_pass = self.newpasswordLineEdit.text()
+        confirm_pass = self.confirmpasswordLineEdit.text()
+        obj = Verification_code()
+        obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
 
 
 class AccountScreen(QMainWindow):
@@ -566,6 +605,7 @@ register = RegisterScreen()
 typingScreen = TypingScreen()
 practicescreen = PracticeScreen()
 accountscreen = AccountScreen()
+resetpassword = ResetPassword()
 
 widget.addWidget(login)
 widget.addWidget(register)
@@ -573,6 +613,7 @@ widget.addWidget(resetConfirmation)
 widget.addWidget(typingScreen)
 widget.addWidget(practicescreen)
 widget.addWidget(accountscreen)
+widget.addWidget(resetpassword)
 
 widget.show()
 app.exec_()
