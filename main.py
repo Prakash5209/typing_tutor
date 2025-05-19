@@ -3,9 +3,9 @@ from inputchecker import LiveInputChecker
 from filter_save import Filter_and_save
 import smtplib
 
-from PyQt5 import uic
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code
@@ -57,8 +57,7 @@ class MyApp(QMainWindow):
         super().__init__()
         uic.loadUi("login.ui", self)  # Load UI dynamically
 
-        # login screen to TypingScreen
-        self.pushButton.clicked.connect(self.goto_homeScreen)
+        self.login_button.clicked.connect(self.goto_homeScreen)
 
         # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
@@ -68,6 +67,9 @@ class MyApp(QMainWindow):
             self.goto_resetPasswordVerificationScreen)
 
         QTimer.singleShot(0, self.auto_login_if_token_valid)
+
+    def login_func(self):
+        QMessageBox.information(self,"hello","button clicked")
 
     def auto_login_if_token_valid(self):
         if Login.is_authenticated():

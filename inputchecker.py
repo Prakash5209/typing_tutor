@@ -9,10 +9,8 @@ class LiveInputChecker:
         self.text = text
         self.text_browser = text_browser
         self.typed_word_lst = []
-        self.typed_raw_word_lst = []
 
         self.raw_letter_lst = []  # Front corrected words
-        self.track_raw_letter_lst = []
 
     def __str__(self):
         return self.text
@@ -98,6 +96,6 @@ class LiveInputChecker:
                         self.raw_letter_lst.append(green(context_word[i]))
                     else:
                         self.raw_letter_lst.append(red(context_word[i]))
-
+        print("raw_letter_lst",self.raw_letter_lst)
         # Debugging purpose
         # print("Current raw letter list:", "".join(self.raw_letter_lst))

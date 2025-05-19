@@ -75,9 +75,8 @@ class Login:
                 print("response", response)
                 response_text = json.loads(response.text)
 
-                if response_text:
-                    self.generateToken(response_text.get(
-                        'id'), response_text.get('username'))
+                if response_text and response.status_code == 200:
+                    self.generateToken(response_text.get('id'), response_text.get('username'))
                 return response
             except Exception as e:
                 print("get_user Exception", e)
@@ -208,10 +207,14 @@ class Verification_code:
     # create new password
     def create_new_password(self, email, new_password, confirm_password):
         if new_password == confirm_password:
-            response = requests.post("http://localhost:8000/reset-password/", json={
-                "email": email,
-                "password": confirm_password
-            })
+            try:
+                response = requests.post("http://localhost:8000/reset-password/", json={
+                    "email": email,
+                    "password": confirm_password
+                })
+            except Exception as e:
+                print(e)
+
             res = json.loads(response.text)
             print(res)
             print("new password", email, new_password, confirm_password)
