@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code
+from working.filter import Tracker
 
 
 import time
@@ -171,6 +172,7 @@ class TypingScreen(QMainWindow):
             self.random_200_text, self.testTextBrowser)
 
 
+
         # print("ultimate",self.liveinput.finally_return())
 
         # sending random_200_text to this method
@@ -260,7 +262,8 @@ class TypingScreen(QMainWindow):
         # resetting self.timer_counter by assigning timer_counter to 0
         self.timer_counter = TypingScreen.timer[self.timer_select_index]
 
-        self.random_200_text = module1.typing_test_words()
+        # random_200_text = module1.typing_test_words()
+        self.assign_random_text()
 
         # self.filter_save
         # self.filter_save = Filter_and_save(self.random_200_text)
@@ -280,6 +283,11 @@ class TypingScreen(QMainWindow):
         Worker.change_typing_time(finish_time=25)
 
         self.thread_cleanup()
+
+
+    @classmethod
+    def assign_random_text(cls):
+        cls.random_200_text = module1.typing_test_words()
 
     def textChangedfunc(self, strg):
 
@@ -334,8 +342,12 @@ class TypingScreen(QMainWindow):
     def worker_progress(self):
         print("finished and deleted")
 
+        # sending to 
+        raw_user_lst = self.liveinput.user_raw_text()
+        track = Tracker(TypingScreen.random_200_text,raw_user_lst).track_characters()
+
+
         # sending random generated text to filter
-        # print(self.random_200_text)
         # self.send_strg = Filter_and_save(self.random_200_text)
         # self.filter_save.missedkey()
         # disable the lineedit
@@ -429,7 +441,8 @@ class PracticeScreen(QMainWindow):
         # resetting self.timer_counter by assigning timer_counter to 0
         self.timer_counter = TypingScreen.timer[self.timer_select_index]
 
-        self.random_200_text = module1.typing_test_words()
+        # self.random_200_text = module1.typing_test_words()
+        self.assign_random_text()
 
         # self.filter_save
         # self.filter_save = Filter_and_save(self.random_200_text)
@@ -449,6 +462,11 @@ class PracticeScreen(QMainWindow):
         Worker.change_typing_time(finish_time=25)
 
         self.thread_cleanup()
+
+    @classmethod
+    def assign_random_text(cls):
+        cls.random_200_text = module1.typing_test_words()
+
 
     def thread_cleanup(self):
         # Disconnect all signals first
