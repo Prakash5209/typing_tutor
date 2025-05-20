@@ -170,6 +170,9 @@ class TypingScreen(QMainWindow):
         self.liveinput = LiveInputChecker(
             self.random_200_text, self.testTextBrowser)
 
+
+        # print("ultimate",self.liveinput.finally_return())
+
         # sending random_200_text to this method
         # self.filter_save = Filter_and_save(self.random_200_text)
 
