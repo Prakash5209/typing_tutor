@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
@@ -30,6 +31,6 @@ class MistakeLetter(Base, TimeStamps):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"),unique=True)
-    json = Column(JSON,default = track_letters)
+    jon = Column(MutableDict.as_mutable(JSON))
     user = relationship("User",back_populates = "mistakeletter")
 

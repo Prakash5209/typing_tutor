@@ -1,4 +1,4 @@
-
+from dotenv import load_dotenv
 import os
 import requests
 import jwt
@@ -13,7 +13,11 @@ import random
 import json
 import redis
 from email.mime.text import MIMEText
+from pathlib import Path
 
+
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # -- Secure location for token and key files
 CREDENTIAL_FILE = ".credential"
@@ -58,7 +62,7 @@ class Register:
 
 
 class Login:
-    secret = "prakashchaudhary"
+    secret = os.getenv("JWT_SECRET_KEY")
 
     def __init__(self, username, password):
         self.username = username
@@ -93,6 +97,7 @@ class Login:
 
         try:
             encoded = jwt.encode(payload, Login.secret, algorithm="HS256")
+            print("encoded",encoded)
             self.save_token(encoded)
         except Exception as e:
             print("generateToken Exception", e)
@@ -121,9 +126,10 @@ class Login:
                                    algorithms=["HS256"])
                 token_exp_time = datetime.datetime.utcfromtimestamp(
                     token["exp"])
-                print("Token expiration:", token_exp_time)
 
-                return token_exp_time > datetime.datetime.utcnow()
+                authenticted_or_not = token_exp_time > datetime.datetime.utcnow()
+
+                return decrypted
         except jwt.ExpiredSignatureError:
             print("Token has expired.")
             return False
@@ -160,8 +166,8 @@ class Account_recovery:
                 return code
 
     def send_mail(self):
-        sender_email = "prakashkchaudhary5209@gmail.com"
-        sender_email_password = "kbgb betb fvxf qxbg"
+        sender_email = os.getenv("SENDER_EMAIL")
+        sender_email_password = os.getenv("SENDER_PASSWORD")
 
         self.email = self.request_email()
         if not self.email:

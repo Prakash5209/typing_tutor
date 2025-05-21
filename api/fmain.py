@@ -1,16 +1,30 @@
 from fastapi import FastAPI, Depends, status, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from typing import Annotated, Optional
+from typing import Annotated, Optional,Dict,List
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-import logging
 from sqlalchemy.exc import SQLAlchemyError
+from dotenv import load_dotenv
+from pathlib import Path
+from datetime import datetime
+import string
+import os
+import logging
+
+import json
+import jwt
 
 
 import models
 from datetime import datetime
-from models import User
+from models import User,MistakeLetter
+
+
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 app = FastAPI()
@@ -43,6 +57,10 @@ class UpdateUserBase(BaseModel):
     password: Optional[str]
 
 
+class MistakeLetterSchema(BaseModel):
+    jon: Dict[str, List[int]]
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -53,6 +71,7 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # test
 @app.get("/test/")
@@ -171,3 +190,79 @@ async def reset_password(user: ResetPassword, db: db_dependency):
     except Exception as generic_exc:
         logging.exception("Unexpected error")
         raise HTTPException(status_code=500, detail="Unexpected server error")
+
+
+def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token,os.getenv("JWT_SECRET_KEY"),algorithms = [os.getenv("ALGORITHM")])
+        id = payload.get("id")
+        username = payload.get("username")
+        exp = datetime.utcfromtimestamp(payload.get("exp"))
+        stmt = select(User).where((User.id == id) and (User.username == username))
+        that_user = db.execute(stmt).scalar_one_or_none()
+        if that_user != None and exp > datetime.utcnow():
+            return JSONResponse(status_code = status.HTTP_200_OK,content={"message":payload})
+        else:
+            raise HTTPException(status=401)
+    except Exception as e:
+        print("verify_token",e)
+
+@app.post("/character-updated")
+async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
+    if token_data.status_code != 200:
+        return token_data
+    js = character.jon
+    print("js",js)
+    user_id = json.loads(token_data.body)["message"]["id"]
+    print(user_id)
+    
+    instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
+    
+    if instance is None:
+        # Create new record
+        char_dict = {key: [0, 0] for key in string.ascii_lowercase}
+        for i in js:
+            char_dict[i][0] += js[i][0]
+            char_dict[i][1] += js[i][1]
+            
+        new_instance = MistakeLetter(user_id=user_id, jon=char_dict)
+        try:
+            db.add(new_instance)
+            db.commit()
+            db.refresh(new_instance)
+            return {"message": "character created", "status": status.HTTP_201_CREATED}
+        except Exception as e:
+            db.rollback()
+            print("update_character new", e)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="failed to create new character object"
+            )
+    else:
+        # Create a completely new dictionary instead of modifying a copy
+        updated_json = {key: [0, 0] for key in string.ascii_lowercase}
+        
+        # First copy existing values
+        for key in instance.jon:
+            updated_json[key] = list(instance.jon[key])
+            
+        # Then update with new values
+        for i in js:
+            updated_json[i][0] += js[i][0]
+            updated_json[i][1] += js[i][1]
+        
+        try:
+            # Assign the completely new dictionary
+            instance.jon = updated_json
+            db.commit()
+            return {
+                "message": "character updated",
+                "status": status.HTTP_200_OK
+            }
+        except Exception as e:
+            db.rollback()
+            print("update_character update", e)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="failed to update the character json"
+            )

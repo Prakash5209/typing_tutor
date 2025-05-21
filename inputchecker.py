@@ -1,5 +1,6 @@
-
+import requests
 from typing import Dict, List
+from working.account import Login
 
 
 class LiveInputChecker:
@@ -100,37 +101,7 @@ class LiveInputChecker:
 
             self.user_raw_text()
 
-            # if len(typed_word) > len(context_word):
-            #     self.raw_letter_lst.append(red("".join(context_word)))
-            #     self.raw_char.append(list(typed_word))
-            # elif len(typed_word) < len(context_word):
-            #     for i in range(len(context_word)):
-            #         try:
-            #             if typed_word[i] == context_word[i]:
-            #                 self.raw_letter_lst.append(green(context_word[i]))
-            #                 self.raw_char.append(typed_word[i])
-            #             else:
-            #                 self.raw_letter_lst.append(red(context_word[i]))
-            #                 self.raw_char.append(typed_word[i])
-            #         except IndexError:
-            #             self.raw_letter_lst.append(red(context_word[i]))
-            #             # self.raw_char.append(typed_word[i])
-            # else:
-            #     for i in range(len(context_word)):
-            #         if context_word[i] == typed_word[i]:
-            #             self.raw_letter_lst.append(green(context_word[i]))
-            #             self.raw_char.append(typed_word[i])
-
-            #         else:
-            #             self.raw_letter_lst.append(red(context_word[i]))
-            #             self.raw_char.append(typed_word[i])
-
-
-        # Debugging purpose
-        # print("Current raw letter list:", "".join(self.raw_letter_lst))
-        # print("raw_char",self.raw_char)
-        # self.user_raw_text()
-
     def user_raw_text(self):
-        return self.raw_char
+        return list(map(lambda x:"".join(x),self.raw_char))
+        # return self.raw_char
 
