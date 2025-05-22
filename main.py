@@ -140,6 +140,7 @@ class TypingScreen(QMainWindow):
     timer = [15, 30, 60]
 
     def __init__(self):
+        self.no_chance = True
         super().__init__()
         uic.loadUi("home.ui", self)
 
@@ -248,6 +249,11 @@ class TypingScreen(QMainWindow):
                 self.worker = None
 
     def refresh_typing_text(self):
+        # set self.no_chance = True to reset
+        self.no_chance = True
+        print("resetting the thread to ",self.no_chance)
+
+
         # Stop the timer explicitly
         self.update_time.stop()
         self.timer_started = False  # Reset the state
@@ -311,10 +317,14 @@ class TypingScreen(QMainWindow):
 
         # test = self.filter_save.set_input_lst(strg)
 
-        if self.liveinput.wordindex <= 0 and len(strg) <= 1:
-            print(0)
+        # if self.liveinput.wordindex <= 0 and len(strg) <= 1:
+        #     self.thread_timer()
+
+        if self.no_chance:
+            print("no_change")
             self.thread_timer()
-            print(1)
+            self.no_chance = False
+
 
         if strg.endswith(" "):
             temp = strg
