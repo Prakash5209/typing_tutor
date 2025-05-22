@@ -309,11 +309,12 @@ class TypingScreen(QMainWindow):
             self.update_time.stop()
             self.timer_started = False
 
-            # sending raw user input to Filter_and_save
         # test = self.filter_save.set_input_lst(strg)
 
         if self.liveinput.wordindex <= 0 and len(strg) <= 1:
+            print(0)
             self.thread_timer()
+            print(1)
 
         if strg.endswith(" "):
             temp = strg
