@@ -8,11 +8,7 @@ class Tracker:
         self.raw_char = raw_char
 
     def track_characters(self, target_char=None):
-        print("text",self.text)
-        print("raw_char",self.raw_char)
-
         typed = list(self.raw_char)
-        print(typed)
         self.char_dict = {key: [0,0] for key in string.ascii_lowercase}
 
         lst_text = list(map(lambda x:list(x),self.text))

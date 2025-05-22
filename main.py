@@ -8,7 +8,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
-from working.account import Register, Login, Account_recovery, Verification_code
+from working.account import Register, Login, Account_recovery, Verification_code,Logout
 from working.filter import Tracker
 
 
@@ -250,8 +250,8 @@ class TypingScreen(QMainWindow):
 
     def refresh_typing_text(self):
         # set self.no_chance = True to reset
-        self.no_chance = True
         print("resetting the thread to ",self.no_chance)
+        self.no_chance = True
 
 
         # Stop the timer explicitly
@@ -624,6 +624,8 @@ class AccountScreen(QMainWindow):
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
+        logout = Logout()
+        logout.remove_token()
         widget.setCurrentIndex(widget.currentIndex() - 5)
 
 

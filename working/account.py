@@ -224,3 +224,11 @@ class Verification_code:
             res = json.loads(response.text)
             print(res)
             print("new password", email, new_password, confirm_password)
+
+
+class Logout:
+    def remove_token(self):
+        with open(CREDENTIAL_FILE,"w") as file:
+            file.write("")
+            print("removed token")
+            print("logged out")

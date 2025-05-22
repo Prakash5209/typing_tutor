@@ -212,9 +212,7 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
     if token_data.status_code != 200:
         return token_data
     js = character.jon
-    print("js",js)
     user_id = json.loads(token_data.body)["message"]["id"]
-    print(user_id)
     
     instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
     
