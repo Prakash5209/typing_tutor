@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+report/
 .env
 .credential
 .fernet_key

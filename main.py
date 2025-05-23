@@ -296,7 +296,6 @@ class TypingScreen(QMainWindow):
         cls.random_200_text = module1.typing_test_words()
 
     def textChangedfunc(self, strg):
-
         Worker.change_typing_time(
             finish_time=TypingScreen.timer[self.timer_select_index])
         global temp
@@ -355,7 +354,9 @@ class TypingScreen(QMainWindow):
 
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
-        track = Tracker(TypingScreen.random_200_text,raw_user_lst).track_characters()
+        track = Tracker(TypingScreen.random_200_text,raw_user_lst)
+        track.track_characters()
+        track.create_report(self.timer)
 
 
         # sending random generated text to filter

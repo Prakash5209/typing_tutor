@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Float
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from database import Base
@@ -21,10 +21,8 @@ class User(Base, TimeStamps):
     password = Column(String(128))
 
     mistakeletter = relationship("MistakeLetter",back_populates="user",uselist = False)
+    report = relationship("Report",back_populates = "user")
 
-
-def track_letters():
-    return {'a': [0, 0], 'b': [0, 0], 'c': [0, 0], 'd': [0, 0], 'e': [0, 0], 'f': [0, 0], 'g': [0, 0], 'h': [0, 0], 'i': [0, 0], 'j': [0, 0], 'k': [0, 0], 'l': [0, 0], 'm': [0, 0], 'n': [0, 0], 'o': [0, 0], 'p': [0, 0], 'q': [0, 0], 'r': [0, 0], 's': [0, 0], 't': [0, 0], 'u': [0, 0], 'v': [0, 0], 'w': [0, 0], 'x': [0, 0], 'y': [0, 0], 'z': [0, 0]}
 
 class MistakeLetter(Base, TimeStamps):
     __tablename__ = "MistakeLetter"
@@ -34,3 +32,15 @@ class MistakeLetter(Base, TimeStamps):
     jon = Column(MutableDict.as_mutable(JSON))
     user = relationship("User",back_populates = "mistakeletter")
 
+
+class Report(Base,TimeStamps):
+    __tablename__ = "reports"
+
+    id = Column(Integer,primary_key = True,index = True)
+    user_id = Column(Integer,ForeignKey("users.id"),nullable = False)
+    session_id = Column(String(64),unique = True,nullable = False,default=lambda x:str(uuid.uuid4()))
+    wpm = Column(Float)
+    rwpm = Column(Float)
+    accuracy = Column(Float)
+    file_path = Column(String(255),nullable = False)
+    user = relationship("User",back_populates = "report")

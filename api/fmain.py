@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import datetime
+import uuid
 import string
 import os
 import logging
@@ -20,7 +21,7 @@ import jwt
 
 import models
 from datetime import datetime
-from models import User,MistakeLetter
+from models import User,MistakeLetter,Report
 
 
 env_path = Path(__file__).parent.parent / '.env'
@@ -59,6 +60,13 @@ class UpdateUserBase(BaseModel):
 
 class MistakeLetterSchema(BaseModel):
     jon: Dict[str, List[int]]
+
+
+class ReportScheme(BaseModel):
+    # id: Optional[int]
+    wpm: float
+    rwpm: float
+    accuracy: float
 
 
 def get_db():
@@ -198,10 +206,11 @@ def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
         id = payload.get("id")
         username = payload.get("username")
         exp = datetime.utcfromtimestamp(payload.get("exp"))
-        stmt = select(User).where((User.id == id) and (User.username == username))
+        stmt = select(User).where((User.id == id) & (User.username == username))
         that_user = db.execute(stmt).scalar_one_or_none()
         if that_user != None and exp > datetime.utcnow():
-            return JSONResponse(status_code = status.HTTP_200_OK,content={"message":payload})
+            return payload
+            # return JSONResponse(status_code = status.HTTP_200_OK,content={"message":payload})
         else:
             raise HTTPException(status=401)
     except Exception as e:
@@ -209,10 +218,12 @@ def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
 
 @app.post("/character-updated")
 async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
-    if token_data.status_code != 200:
-        return token_data
+    print("token_data",token_data)
+    # if token_data.status_code != 200:
+    #     return token_data
     js = character.jon
-    user_id = json.loads(token_data.body)["message"]["id"]
+    # user_id = json.loads(token_data.body)["message"]["id"]
+    user_id = token_data.get('id')
     
     instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
     
@@ -237,10 +248,9 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
                 detail="failed to create new character object"
             )
     else:
-        # Create a completely new dictionary instead of modifying a copy
+        # Creating a completely new dictionary instead of modifying a copy
         updated_json = {key: [0, 0] for key in string.ascii_lowercase}
         
-        # First copy existing values
         for key in instance.jon:
             updated_json[key] = list(instance.jon[key])
             
@@ -250,7 +260,6 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
             updated_json[i][1] += js[i][1]
         
         try:
-            # Assign the completely new dictionary
             instance.jon = updated_json
             db.commit()
             return {
@@ -264,3 +273,30 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="failed to update the character json"
             )
+
+
+
+@app.post("/create-report")
+async def report(report: ReportScheme, db: db_dependency, token_data: str = Depends(verify_token)):
+    user_id = token_data.get("id")
+    session_id = str(uuid.uuid4())
+    file_src = "report/" + f"session-{session_id}.json"
+
+    new_instance = Report(
+        user_id=user_id,
+        session_id=session_id,
+        wpm=report.wpm,
+        rwpm=report.rwpm,
+        accuracy=report.accuracy,
+        file_path=file_src
+    )
+
+    try:
+        db.add(new_instance)
+        db.commit()
+        db.refresh(new_instance)
+        return new_instance
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Database error: " + str(e))
+

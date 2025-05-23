@@ -1,6 +1,9 @@
 import string
 from working.account import Login
 import requests
+from datetime import datetime
+import os
+import json
 
 class Tracker:
     def __init__(self, text, raw_char):
@@ -39,7 +42,6 @@ class Tracker:
                     self.char_dict[self.raw_char[i][-k]][0] += 1
 
         self.only_char = {k:j for k,j in self.char_dict.items() if j[0] > 0 or j[1] > 0}
-        print(self.only_char)
         self.save_char(self.only_char)
         return self.only_char
 
@@ -55,4 +57,81 @@ class Tracker:
         }
         response = requests.post("http://localhost:8000/character-updated",headers = headers,json = payload)
         print("response",response.status_code)
+
+
+    def create_report(self,time):
+        print("text",self.text)
+        print("raw_char",self.raw_char)
+
+        raw_user_char = 0
+        for word in self.raw_char:
+            raw_user_char += len(word)
+
+        # rwpm
+        rwpm = (raw_user_char / 5) / (time/60)
+        print("rwpm",rwpm)
+
+        correct_char = 0
+        for i in range(min(len(self.text),len(self.raw_char))):
+            for j in range(min(len(self.text[i]),len(self.raw_char[i]))):
+                if self.raw_char[i][j] == self.text[i][j]:
+                    correct_char += 1
+
+        #wpm
+        wpm = (correct_char / 5) / (time/60)
+        print("wpm",wpm)
+
+        #accuracy
+        accu = correct_char/raw_user_char * 100
+        print("accu",accu)
+
+
+        print("calling save_report_db")
+        response = self.save_report_db(rwpm,wpm,accu)
+        file_path = response.get("file_path")
+
+        self.save_to_file(raw_user_char,correct_char,file_path)
+
+    def save_to_file(self,raw_user_char,correct_char,file_path):
+
+        json_data = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "context_text": self.text,
+            "user_text": self.raw_char,
+            "raw_user_input_count": raw_user_char,
+            "correct_char_count": correct_char,
+            "mistakes": [
+                {"position": i, "expected": self.text[i], "actual": self.raw_char[i]}
+                for i in range(min(len(self.text), len(self.raw_char)))
+                if self.text[i] != self.raw_char[i]
+            ]
+        }
+
+        folder_path = "./report"
+        if not os.path.exists(folder_path):
+            os.mkdir(folder_path)
+            with open(file_path,"w") as file:
+                file.write(json.dumps(json_data))
+        else:
+            with open(file_path,"w") as file:
+                file.write(json.dumps(json_data))
+
+
+
+    def save_report_db(self,rwpm,wpm,accu):
+        tk = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {tk}",
+            "Content-Type":"application/json"
+        }
+        js = {
+            "wpm": rwpm, 
+            "rwpm": wpm,
+            "accuracy": accu,
+        }
+
+        response = requests.post("http://localhost:8000/create-report",headers = headers,json = js)
+        print("response",response.json())
+        return response.json()
+
 
