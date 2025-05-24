@@ -86,14 +86,17 @@ class Tracker:
         print("accu",accu)
 
 
+        # save_report_db function should be called first be get session_name for file name
         print("calling save_report_db")
         response = self.save_report_db(rwpm,wpm,accu)
+
         file_path = response.get("file_path")
+
 
         self.save_to_file(raw_user_char,correct_char,file_path)
 
-    def save_to_file(self,raw_user_char,correct_char,file_path):
 
+    def save_to_file(self,raw_user_char,correct_char,file_path):
         json_data = {
             "timestamp": datetime.utcnow().isoformat(),
             "context_text": self.text,

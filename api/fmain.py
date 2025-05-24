@@ -22,6 +22,7 @@ import jwt
 import models
 from datetime import datetime
 from models import User,MistakeLetter,Report
+from ml.knn_model import Suggest
 
 
 env_path = Path(__file__).parent.parent / '.env'
@@ -81,13 +82,9 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# test
-@app.get("/test/")
-async def get_user():
-    print(dir(datetime))
-    print("Time test", datetime.utcnow())
-    return "return server"
-
+@app.get("/practice-words/")
+async def word_prediction():
+    print(Suggest.predict_words())
 
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
