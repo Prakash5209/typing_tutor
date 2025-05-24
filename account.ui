@@ -15,6 +15,19 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>60</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
     <item row="1" column="0">
      <spacer name="horizontalSpacer">
       <property name="orientation">
@@ -24,19 +37,6 @@
        <size>
         <width>82</width>
         <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="1">
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>60</height>
        </size>
       </property>
      </spacer>
@@ -54,8 +54,8 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="1">
-     <spacer name="verticalSpacer">
+    <item row="2" column="1">
+     <spacer name="verticalSpacer_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -97,9 +97,9 @@
         <property name="geometry">
          <rect>
           <x>70</x>
-          <y>10</y>
+          <y>80</y>
           <width>431</width>
-          <height>271</height>
+          <height>121</height>
          </rect>
         </property>
         <property name="frameShape">
@@ -108,83 +108,48 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QFrame" name="frame">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap>../../../../../Pictures/supman.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <widget class="QLineEdit" name="lineEdit"/>
          </item>
          <item>
-          <widget class="QFrame" name="frame_2">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+          <widget class="QLineEdit" name="lineEdit_2"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>TextLabel</string>
            </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QFrame" name="frame_4">
+       <widget class="QFrame" name="frame">
         <property name="geometry">
          <rect>
           <x>70</x>
-          <y>300</y>
+          <y>20</y>
           <width>431</width>
-          <height>48</height>
+          <height>44</height>
          </rect>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Sunken</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Keystorke improver account</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
@@ -192,7 +157,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>317</width>
+             <width>40</width>
              <height>20</height>
             </size>
            </property>
@@ -207,6 +172,93 @@
          </item>
         </layout>
        </widget>
+       <widget class="QScrollArea" name="scrollArea_2">
+        <property name="geometry">
+         <rect>
+          <x>69</x>
+          <y>230</y>
+          <width>421</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>419</width>
+           <height>159</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QTreeWidget" name="treeWidget">
+            <column>
+             <property name="text">
+              <string>sn</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>firtname</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>lastname</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>email</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>accuracy</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>rwpm</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>datetime</string>
+             </property>
+            </column>
+            <item>
+             <property name="text">
+              <string>1</string>
+             </property>
+             <property name="text">
+              <string>prakash</string>
+             </property>
+             <property name="text">
+              <string>chuadhary</string>
+             </property>
+             <property name="text">
+              <string>prakashkchaudhary5209@gmail.com</string>
+             </property>
+             <property name="text">
+              <string>89</string>
+             </property>
+             <property name="text">
+              <string>80</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -218,7 +270,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
