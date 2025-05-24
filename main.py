@@ -6,7 +6,7 @@ import requests
 
 from PyQt5 import QtWidgets
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox,QTreeWidgetItem
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code,Logout
@@ -105,7 +105,6 @@ class MyApp(QMainWindow):
         except Exception as e:
             print("response_status.status_code", e)
 
-            # print("is_authenticated", Login.is_authenticated())
 
     def goto_resetPasswordVerificationScreen(self):
         widget.setCurrentIndex(widget.currentIndex() + 2)
@@ -299,6 +298,9 @@ class TypingScreen(QMainWindow):
         cls.random_200_text = module1.typing_test_words()
 
     def textChangedfunc(self, strg):
+
+
+        print("is_authenticated", Login.is_authenticated())
         Worker.change_typing_time(
             finish_time=TypingScreen.timer[self.timer_select_index])
         global temp
@@ -642,19 +644,84 @@ class ResetPassword(QMainWindow):
         obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
 
 
+    # class AccountScreen(QMainWindow):
+    #     def __init__(self):
+    #         super().__init__()
+    #         uic.loadUi("account.ui", self)
+    # 
+    #         # back to login screen from resetPasswordVerficadtionScreen
+    #         self.logout_btn.clicked.connect(self.backToLoginScreen)
+    # 
+    #     def load_data(self):
+    #         ...
+    # 
+    #     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
+    #         logout = Logout()
+    #         logout.remove_token()
+    #         widget.setCurrentIndex(widget.currentIndex() - 5)
+    
+
 class AccountScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("account.ui", self)
+        uic.loadUi("account.ui", self)  # Load your UI file here
 
-        # back to login screen from resetPasswordVerficadtionScreen
+        # Connect logout button (if needed)
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
-    def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
+        # Load reports on startup
+        self.load_reports()
+
+    def load_reports(self):
+        tk = Login.is_authenticated()
+        headers = {
+            "Authorization": f"Bearer {tk}",
+            "Content-Type": "application/json"
+        }
+        # Example payload, replace 'rwpm', 'wpm', 'accu' with actual values or remove if not needed
+        js = {
+            "wpm": 70,    # example value
+            "rwpm": 65,   # example value
+            "accuracy": 90 # example value
+        }
+
+        try:
+            response = requests.get("http://localhost:8000/get-report", headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            print("response",data)
+
+            # Assuming data is a list of report dicts; adjust if API returns differently
+            self.populate_tree(data)
+
+        except requests.RequestException as e:
+            QMessageBox.critical(self, "Error", f"Failed to load reports:\n{str(e)}")
+
+    def populate_tree(self, reports):
+        self.treeWidget.clear()
+    
+        self.treeWidget.setColumnCount(8)
+        self.treeWidget.setHeaderLabels([
+            "SN", "Session ID", "User ID", "WPM", "Accuracy", "RWPM", "Created At", "File Path"
+        ])
+    
+        for i, report in enumerate(reports, start=1):
+            item = QTreeWidgetItem([
+                str(i),
+                report.get("session_id", ""),
+                str(report.get("user_id", "")),
+                str(report.get("wpm", "")),
+                str(report.get("accuracy", "")),
+                str(report.get("rwpm", "")),
+                report.get("create_at", ""),
+                report.get("file_path", ""),
+            ])
+            self.treeWidget.addTopLevelItem(item)
+
+    def backToLoginScreen(self):
         logout = Logout()
         logout.remove_token()
         widget.setCurrentIndex(widget.currentIndex() - 5)
-
 
 # Run the application
 app = QApplication([])
