@@ -55,13 +55,13 @@ class Tracker:
         payload = {
             "jon":chars
         }
+
+        print("payload",payload)
         response = requests.post("http://localhost:8000/character-updated",headers = headers,json = payload)
-        print("response",response.status_code)
+        # print("save_char",response.json())
 
 
     def create_report(self,time):
-        print("text",self.text)
-        print("raw_char",self.raw_char)
 
         raw_user_char = 0
         for word in self.raw_char:
@@ -69,7 +69,6 @@ class Tracker:
 
         # rwpm
         rwpm = (raw_user_char / 5) / (time/60)
-        print("rwpm",rwpm)
 
         correct_char = 0
         for i in range(min(len(self.text),len(self.raw_char))):
@@ -79,19 +78,15 @@ class Tracker:
 
         #wpm
         wpm = (correct_char / 5) / (time/60)
-        print("wpm",wpm)
 
         #accuracy
         accu = correct_char/raw_user_char * 100
-        print("accu",accu)
 
 
         # save_report_db function should be called first be get session_name for file name
-        print("calling save_report_db")
         response = self.save_report_db(rwpm,wpm,accu)
 
         file_path = response.get("file_path")
-
 
         self.save_to_file(raw_user_char,correct_char,file_path)
 
@@ -109,6 +104,7 @@ class Tracker:
                 if self.text[i] != self.raw_char[i]
             ]
         }
+
 
         folder_path = "./report"
         if not os.path.exists(folder_path):
@@ -134,7 +130,6 @@ class Tracker:
         }
 
         response = requests.post("http://localhost:8000/create-report",headers = headers,json = js)
-        print("response",response.json())
         return response.json()
 
 
