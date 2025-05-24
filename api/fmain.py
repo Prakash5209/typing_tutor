@@ -82,9 +82,9 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@app.get("/practice-words/")
+@app.get("/practice-words")
 async def word_prediction():
-    print(Suggest.predict_words())
+    return Suggest.predict_words()
 
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
@@ -157,7 +157,6 @@ async def update_user(id: int, user: UpdateUserBase, db: db_dependency):
         db.add(that_user)
         db.commit()
         db.refresh(that_user)
-        print(that_user)
     except Exception as e:
         print("Exception", e)
 
@@ -166,7 +165,6 @@ async def update_user(id: int, user: UpdateUserBase, db: db_dependency):
 async def delete_user(id: int, db: db_dependency):
     try:
         that_user = db.query(User).get(id)
-        print(that_user)
         db.delete(that_user)
         db.commit()
         return "data deleted successfully"
@@ -215,61 +213,100 @@ def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
 
 @app.post("/character-updated")
 async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
-    print("token_data",token_data)
-    # if token_data.status_code != 200:
-    #     return token_data
     js = character.jon
-    # user_id = json.loads(token_data.body)["message"]["id"]
     user_id = token_data.get('id')
-    
-    instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
-    
-    if instance is None:
-        # Create new record
-        char_dict = {key: [0, 0] for key in string.ascii_lowercase}
-        for i in js:
-            char_dict[i][0] += js[i][0]
-            char_dict[i][1] += js[i][1]
-            
-        new_instance = MistakeLetter(user_id=user_id, jon=char_dict)
+
+    print("js",js)
+    print(token_data)
+
+    stmt = select(MistakeLetter).where(MistakeLetter.user_id == user_id)
+    db_response = db.execute(stmt).scalar_one_or_none()
+    if db_response:
         try:
-            db.add(new_instance)
+            updated_json = {key: [0, 0] for key in string.ascii_lowercase}
+            for key in js:
+                updated_json[key] = db_response.jon[key]
+                # updated_json[key] = list(db_response.jon[key])
+            print("updated_json",updated_json)
+
+            for i in js:
+                updated_json[i][0] += js[i][0]
+                updated_json[i][1] += js[i][1]
+
+            print("updated_json",updated_json)
+
+            db_response.jon = updated_json
             db.commit()
-            db.refresh(new_instance)
-            return {"message": "character created", "status": status.HTTP_201_CREATED}
-        except Exception as e:
-            db.rollback()
-            print("update_character new", e)
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="failed to create new character object"
-            )
-    else:
-        # Creating a completely new dictionary instead of modifying a copy
-        updated_json = {key: [0, 0] for key in string.ascii_lowercase}
-        
-        for key in instance.jon:
-            updated_json[key] = list(instance.jon[key])
-            
-        # Then update with new values
-        for i in js:
-            updated_json[i][0] += js[i][0]
-            updated_json[i][1] += js[i][1]
-        
-        try:
-            instance.jon = updated_json
-            db.commit()
+            db.refresh(db_response)
             return {
-                "message": "character updated",
+                "message":db_response,
                 "status": status.HTTP_200_OK
             }
+
         except Exception as e:
-            db.rollback()
-            print("update_character update", e)
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="failed to update the character json"
-            )
+            print("update_character",e)
+
+    else:
+        updated_json = {key: [0, 0] for key in string.ascii_lowercase}
+        for i in js:
+            updated_json[i][0] = js[i][0]
+            updated_json[i][1] = js[i][1]
+        new_instance = MistakeLetter(user_id = user_id,jon = updated_json)
+        db.add(new_instance)
+        db.commit()
+        db.refresh(new_instance)
+        return {"message":new_instance,"status":status.HTTP_201_CREATED}
+
+    # instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
+    # database_response = db.execute(instance).scalar_one_or_none()
+    # if database_response:
+    #     print("already saved")
+    # else:
+    #     print("not saved")
+
+
+    # if instance is None:
+    #     # Create new record
+    #     char_dict = {key: [0, 0] for key in string.ascii_lowercase}
+    #     for i in js:
+    #         char_dict[i][0] += js[i][0]
+    #         char_dict[i][1] += js[i][1]
+    #         
+    #     new_instance = MistakeLetter(user_id=user_id, jon=char_dict)
+    #     try:
+    #         db.add(new_instance)
+    #         db.commit()
+    #         db.refresh(new_instance)
+    #         return {"message": "character created", "status": status.HTTP_201_CREATED}
+    #     except Exception as e:
+    #         db.rollback()
+    #         raise HTTPException(
+    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #             detail="failed to create new character object"
+    #         )
+    # else:
+    #     updated_json = {key: [0, 0] for key in string.ascii_lowercase}
+    #     
+    #     for key in instance.jon:
+    #         updated_json[key] = list(instance.jon[key])
+    #         
+    #     for i in js:
+    #         updated_json[i][0] += js[i][0]
+    #         updated_json[i][1] += js[i][1]
+    #     
+    #     try:
+    #         instance.jon = updated_json
+    #         db.commit()
+    #         return {
+    #             "message": "character updated",
+    #             "status": status.HTTP_200_OK
+    #         }
+    #     except Exception as e:
+    #         db.rollback()
+    #         raise HTTPException(
+    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #             detail="failed to update the character json"
+    #         )
 
 
 

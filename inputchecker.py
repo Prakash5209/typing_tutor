@@ -99,7 +99,7 @@ class LiveInputChecker:
                     self.raw_char.append(list(typed_word))
                     self.raw_letter_lst.append(red("".join(context_word)))
 
-            self.user_raw_text()
+            # self.user_raw_text()
 
     def user_raw_text(self):
         return list(map(lambda x:"".join(x),self.raw_char))

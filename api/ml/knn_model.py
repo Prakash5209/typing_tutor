@@ -13,54 +13,52 @@ class Suggest:
     }
 
     letter_scores = {k: sum(v) for k, v in error_map.items()}
-
-   
     word_list = [
-            # Original words (20)
-            "application", "banana", "candle", "network", "toolkit", "keyboard", "typo",
-            "mistake", "random", "frequency", "input", "function", "approach", "python",
-            "statistics", "attention", "performance", "instruction", "machine", "learning",
-            
-            # Easy words (100)
-            "apple", "book", "cat", "dog", "egg", "fish", "goat", "hat", "ice", "jump",
-            "kite", "lamp", "moon", "nest", "open", "pig", "queen", "red", "sun", "tree",
-            "umbrella", "van", "water", "box", "yellow", "zoo", "ant", "ball", "car", "duck",
-            "ear", "fox", "girl", "hand", "ink", "jam", "king", "leg", "mom", "nut",
-            "apple", "baby", "cake", "door", "eye", "frog", "game", "hill", "iron", "jet",
-            "kiss", "love", "milk", "nose", "owl", "pie", "quilt", "rain", "star", "toy",
-            "up", "vet", "wolf", "xray", "yarn", "zip", "arm", "bus", "cow", "dig",
-            "elf", "gap", "hop", "jug", "kid", "log", "mat", "net", "old", "pen",
-            "quail", "rug", "sock", "tap", "urn", "vat", "web", "yell", "zap", "art",
-            "bat", "cup", "dot", "fan", "gum", "hen", "ill", "job", "kit", "lip",
-            
+        # Original words (20)
+        "application", "banana", "candle", "network", "toolkit", "keyboard", "typo",
+        "mistake", "random", "frequency", "input", "function", "approach", "python",
+        "statistics", "attention", "performance", "instruction", "machine", "learning",
+        
+        # Easy words (100)
+        "apple", "book", "cat", "dog", "egg", "fish", "goat", "hat", "ice", "jump",
+        "kite", "lamp", "moon", "nest", "open", "pig", "queen", "red", "sun", "tree",
+        "umbrella", "van", "water", "box", "yellow", "zoo", "ant", "ball", "car", "duck",
+        "ear", "fox", "girl", "hand", "ink", "jam", "king", "leg", "mom", "nut",
+        "apple", "baby", "cake", "door", "eye", "frog", "game", "hill", "iron", "jet",
+        "kiss", "love", "milk", "nose", "owl", "pie", "quilt", "rain", "star", "toy",
+        "up", "vet", "wolf", "xray", "yarn", "zip", "arm", "bus", "cow", "dig",
+        "elf", "gap", "hop", "jug", "kid", "log", "mat", "net", "old", "pen",
+        "quail", "rug", "sock", "tap", "urn", "vat", "web", "yell", "zap", "art",
+        "bat", "cup", "dot", "fan", "gum", "hen", "ill", "job", "kit", "lip",
+        
             # Medium words (80)
-            "bicycle", "dolphin", "garden", "jacket", "kitten", "ladder", "mirror", "notebook",
-            "orange", "puzzle", "rabbit", "soccer", "turtle", "violin", "window", "xylophone",
-            "yogurt", "zeebra", "acorn", "butter", "camera", "diamond", "elephant", "firefly",
-            "guitar", "hamburger", "island", "jungle", "koala", "lemon", "mountain", "necklace",
-            "ocean", "parrot", "quilt", "rocket", "sandwich", "telephone", "umbrella", "volcano",
-            "watermelon", "xylophone", "yacht", "zebra", "airplane", "basket", "caterpillar", "dragon",
-            "envelope", "feather", "globe", "honey", "igloo", "jellyfish", "kangaroo", "lighthouse",
-            "mushroom", "napkin", "octopus", "penguin", "quiver", "rainbow", "scissors", "telescope",
-            "unicorn", "vulture", "whale", "xylophone", "yo-yo", "zipper", "anchor", "blossom",
-            "compass", "dandelion", "eclipse", "flamingo", "giraffe", "harmonica", "iceberg", "jigsaw",
-            "kaleidoscope", "lantern", "mermaid", "nectarine", "orchard", "peacock", "quicksand",
-            
-            # Hard words (60)
-            "quintessential", "juxtaposition", "xenophobia", "zwieback", "acquiesce", "bureaucracy",
-            "czar", "dyslexia", "euphoria", "fjord", "gazebo", "hygge", "ivory", "jazz", "kaleidoscope",
-            "labyrinth", "mnemonic", "nymph", "onomatopoeia", "phoenix", "quasar", "rhetoric", "syzygy",
-            "tsunami", "ubiquitous", "vortex", "wildebeest", "xenon", "yacht", "zeitgeist", "asymptote",
-            "bouquet", "chrysanthemum", "dichotomy", "ephemeral", "facetious", "grandiose", "haphazard",
-            "idiosyncrasy", "jeopardize", "kleptomania", "languorous", "mellifluous", "nomenclature",
-            "obfuscate", "pandemonium", "quintuple", "recalcitrant", "serendipity", "thesaurus",
-            "unambiguous", "verisimilitude", "whimsical", "xerography", "yesterday", "zoological",
-            "ambidextrous", "belligerent", "circumlocution", "discombobulate", "extraterrestrial",
-            
-            # Words covering less common letters (20)
-            "jazz", "quiz", "vixen", "wax", "jinx", "fuzz", "pyx", "qat", "vex", "zephyr",
-            "junk", "quartz", "vibe", "wok", "jog", "quip", "vow", "wiz", "jolt", "quark"
-        ]
+        "bicycle", "dolphin", "garden", "jacket", "kitten", "ladder", "mirror", "notebook",
+        "orange", "puzzle", "rabbit", "soccer", "turtle", "violin", "window", "xylophone",
+        "yogurt", "zeebra", "acorn", "butter", "camera", "diamond", "elephant", "firefly",
+        "guitar", "hamburger", "island", "jungle", "koala", "lemon", "mountain", "necklace",
+        "ocean", "parrot", "quilt", "rocket", "sandwich", "telephone", "umbrella", "volcano",
+        "watermelon", "xylophone", "yacht", "zebra", "airplane", "basket", "caterpillar", "dragon",
+        "envelope", "feather", "globe", "honey", "igloo", "jellyfish", "kangaroo", "lighthouse",
+        "mushroom", "napkin", "octopus", "penguin", "quiver", "rainbow", "scissors", "telescope",
+        "unicorn", "vulture", "whale", "xylophone", "yo-yo", "zipper", "anchor", "blossom",
+        "compass", "dandelion", "eclipse", "flamingo", "giraffe", "harmonica", "iceberg", "jigsaw",
+        "kaleidoscope", "lantern", "mermaid", "nectarine", "orchard", "peacock", "quicksand",
+        
+        # Hard words (60)
+        "quintessential", "juxtaposition", "xenophobia", "zwieback", "acquiesce", "bureaucracy",
+        "czar", "dyslexia", "euphoria", "fjord", "gazebo", "hygge", "ivory", "jazz", "kaleidoscope",
+        "labyrinth", "mnemonic", "nymph", "onomatopoeia", "phoenix", "quasar", "rhetoric", "syzygy",
+        "tsunami", "ubiquitous", "vortex", "wildebeest", "xenon", "yacht", "zeitgeist", "asymptote",
+        "bouquet", "chrysanthemum", "dichotomy", "ephemeral", "facetious", "grandiose", "haphazard",
+        "idiosyncrasy", "jeopardize", "kleptomania", "languorous", "mellifluous", "nomenclature",
+        "obfuscate", "pandemonium", "quintuple", "recalcitrant", "serendipity", "thesaurus",
+        "unambiguous", "verisimilitude", "whimsical", "xerography", "yesterday", "zoological",
+        "ambidextrous", "belligerent", "circumlocution", "discombobulate", "extraterrestrial",
+        
+        # Words covering less common letters (20)
+        "jazz", "quiz", "vixen", "wax", "jinx", "fuzz", "pyx", "qat", "vex", "zephyr",
+        "junk", "quartz", "vibe", "wok", "jog", "quip", "vow", "wiz", "jolt", "quark"
+    ]    
 
     @classmethod
     def get_top_mistake_letters(cls, n=7):
@@ -95,7 +93,8 @@ class Suggest:
         print("Suggested Words (KNN based on High Mistake Letters):")
         raw_suggested_words = [cls.word_list[i] for i in indices[0]]
         # filter_words = [i for i in raw_suggested_words if len(i) <= 5]
-        print("filter_words",raw_suggested_words)
+        # print("filter_words",raw_suggested_words)
+        return raw_suggested_words
 
 
 # Run the prediction
