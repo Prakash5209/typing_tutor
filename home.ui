@@ -133,7 +133,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="label_3">
+               <widget class="QPushButton" name="time_button">
                 <property name="styleSheet">
                  <string notr="true">color:whitesmoke;</string>
                 </property>
