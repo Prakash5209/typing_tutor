@@ -70,6 +70,21 @@ class ReportScheme(BaseModel):
     accuracy: float
 
 
+class GetReportSchema(BaseModel):
+    id: int
+    create_at: datetime
+    updated_at: datetime
+    user_id: int
+    session_id: str
+    wpm: float
+    rwpm: float
+    accuracy: float
+    file_path: str
+
+    class Config:
+        orm_mode = True
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -211,6 +226,8 @@ def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
     except Exception as e:
         print("verify_token",e)
 
+
+
 @app.post("/character-updated")
 async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
     js = character.jon
@@ -236,6 +253,7 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
             print("updated_json",updated_json)
 
             db_response.jon = updated_json
+            print("db_response",db_response.jon)
             db.commit()
             db.refresh(db_response)
             return {
@@ -256,59 +274,6 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
         db.commit()
         db.refresh(new_instance)
         return {"message":new_instance,"status":status.HTTP_201_CREATED}
-
-    # instance = db.scalar(select(MistakeLetter).where(MistakeLetter.user_id == user_id))
-    # database_response = db.execute(instance).scalar_one_or_none()
-    # if database_response:
-    #     print("already saved")
-    # else:
-    #     print("not saved")
-
-
-    # if instance is None:
-    #     # Create new record
-    #     char_dict = {key: [0, 0] for key in string.ascii_lowercase}
-    #     for i in js:
-    #         char_dict[i][0] += js[i][0]
-    #         char_dict[i][1] += js[i][1]
-    #         
-    #     new_instance = MistakeLetter(user_id=user_id, jon=char_dict)
-    #     try:
-    #         db.add(new_instance)
-    #         db.commit()
-    #         db.refresh(new_instance)
-    #         return {"message": "character created", "status": status.HTTP_201_CREATED}
-    #     except Exception as e:
-    #         db.rollback()
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="failed to create new character object"
-    #         )
-    # else:
-    #     updated_json = {key: [0, 0] for key in string.ascii_lowercase}
-    #     
-    #     for key in instance.jon:
-    #         updated_json[key] = list(instance.jon[key])
-    #         
-    #     for i in js:
-    #         updated_json[i][0] += js[i][0]
-    #         updated_json[i][1] += js[i][1]
-    #     
-    #     try:
-    #         instance.jon = updated_json
-    #         db.commit()
-    #         return {
-    #             "message": "character updated",
-    #             "status": status.HTTP_200_OK
-    #         }
-    #     except Exception as e:
-    #         db.rollback()
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="failed to update the character json"
-    #         )
-
-
 
 @app.post("/create-report")
 async def report(report: ReportScheme, db: db_dependency, token_data: str = Depends(verify_token)):
@@ -334,3 +299,9 @@ async def report(report: ReportScheme, db: db_dependency, token_data: str = Depe
         db.rollback()
         raise HTTPException(status_code=500, detail="Database error: " + str(e))
 
+
+@app.get("/get-report", response_model=List[GetReportSchema])
+async def get_report(db: db_dependency, token_data: dict = Depends(verify_token)):
+    result = db.execute(select(Report))
+    reports = result.scalars().all()
+    return reports
