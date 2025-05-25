@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>557</height>
+    <width>580</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,6 +21,9 @@
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#222831;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -68,7 +71,7 @@
        </size>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Panel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
@@ -88,7 +91,10 @@
             <property name="font">
              <font>
               <pointsize>16</pointsize>
-              </font>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:whitesmoke;</string>
             </property>
             <property name="text">
              <string>KeyStroke Improver</string>
@@ -112,14 +118,22 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QLineEdit" name="usernamelineEdit">
+            <property name="styleSheet">
+             <string notr="true">color:white;</string>
+            </property>
             <property name="placeholderText">
              <string>email / username</string>
             </property>
            </widget>
           </item>
-                    <item>
+          <item>
 
                       <!--<widget class="QLineEdit" name="passwordlineEdit">
+          <item>
+           <widget class="QLineEdit" name="passwordlineEdit">
+            <property name="styleSheet">
+             <string notr="true">color:white;</string>
+            </property>
             <property name="placeholderText">
              <string>password</string>
             </property>
@@ -151,6 +165,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QPushButton" name="login_button">
+            <property name="styleSheet">
+             <string notr="true">color:whitesmoke;</string>
+            </property>
             <property name="text">
              <string>Login</string>
             </property>
@@ -158,6 +175,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="pushButton_2">
+            <property name="styleSheet">
+             <string notr="true">color:whitesmoke;</string>
+            </property>
             <property name="text">
              <string>Register</string>
             </property>
@@ -165,6 +185,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="forgotPassword_btn">
+            <property name="styleSheet">
+             <string notr="true">color:whitesmoke;</string>
+            </property>
             <property name="text">
              <string>Forgot password</string>
             </property>
@@ -209,8 +232,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>795</width>
-     <height>22</height>
+     <width>580</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
