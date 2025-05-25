@@ -123,7 +123,7 @@
                   <widget class="QLabel" name="label_2">
                    <property name="font">
                     <font>
-                     <pointsize>15</pointsize>
+                     <pointsize>20</pointsize>
                     </font>
                    </property>
                    <property name="styleSheet">
@@ -156,7 +156,7 @@
                   <widget class="QPushButton" name="test_refresh_button">
                    <property name="font">
                     <font>
-                     <pointsize>15</pointsize>
+                     <pointsize>20</pointsize>
                     </font>
                    </property>
                    <property name="styleSheet">
@@ -192,7 +192,7 @@
                <widget class="QPushButton" name="time_button">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -332,7 +332,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QPushButton" name="pushButton">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -350,7 +350,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QPushButton" name="practice_button">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -365,7 +365,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QPushButton" name="pushButton_3">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -398,7 +398,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QPushButton" name="account_btn">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -430,8 +430,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>648</width>
-                <height>131</height>
+                <width>634</width>
+                <height>126</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -439,7 +439,7 @@ p, li { white-space: pre-wrap; }
                 <widget class="QLabel" name="label_4">
                  <property name="font">
                   <font>
-                   <pointsize>15</pointsize>
+                   <pointsize>20</pointsize>
                   </font>
                  </property>
                  <property name="styleSheet">
