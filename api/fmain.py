@@ -226,6 +226,8 @@ def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
     except Exception as e:
         print("verify_token",e)
 
+
+
 @app.post("/character-updated")
 async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
     js = character.jon
@@ -251,6 +253,7 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
             print("updated_json",updated_json)
 
             db_response.jon = updated_json
+            print("db_response",db_response.jon)
             db.commit()
             db.refresh(db_response)
             return {
