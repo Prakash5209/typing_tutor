@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#222831;</string>
+   <string notr="true">background-color:#36454F;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -431,7 +431,7 @@ p, li { white-space: pre-wrap; }
                 <x>0</x>
                 <y>0</y>
                 <width>648</width>
-                <height>127</height>
+                <height>131</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
