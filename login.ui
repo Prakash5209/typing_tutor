@@ -88,8 +88,8 @@
             <property name="font">
              <font>
               <pointsize>16</pointsize>
-             </font>
             </property>
+             </font>
             <property name="text">
              <string>KeyStroke Improver</string>
             </property>
