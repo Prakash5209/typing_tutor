@@ -225,7 +225,7 @@
                 <property name="font">
                  <font>
                   <family>Ubuntu</family>
-                  <pointsize>15</pointsize>
+                  <pointsize>40</pointsize>
                   <weight>50</weight>
                   <italic>false</italic>
                   <bold>false</bold>
@@ -233,7 +233,7 @@
                 </property>
                 <property name="styleSheet">
                  <string notr="true">color:whitesmoke;
-font: 15pt &quot;Ubuntu&quot;;</string>
+font: 40pt &quot;Ubuntu&quot;;</string>
                 </property>
                 <property name="text">
                  <string>KeyStroke Improver</string>
@@ -430,8 +430,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>648</width>
-                <height>131</height>
+                <width>634</width>
+                <height>117</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
