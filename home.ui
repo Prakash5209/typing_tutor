@@ -291,7 +291,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QLineEdit" name="test_type">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -430,8 +430,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>648</width>
-                <height>119</height>
+                <width>634</width>
+                <height>117</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
