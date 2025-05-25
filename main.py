@@ -6,7 +6,7 @@ import requests
 
 from PyQt5 import QtWidgets
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTreeWidgetItem
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code,Logout
@@ -59,12 +59,18 @@ class MyApp(QMainWindow):
     # login screen
     def __init__(self):
         super().__init__()
+
         uic.loadUi("login.ui", self)  # Load UI dynamically
 
         self.login_button.clicked.connect(self.goto_homeScreen)
 
+
+        # self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+
         # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
+
+
 
         # login screen to resetPasswordVerficadtionScreen
         self.forgotPassword_btn.clicked.connect(
@@ -105,7 +111,6 @@ class MyApp(QMainWindow):
         except Exception as e:
             print("response_status.status_code", e)
 
-            # print("is_authenticated", Login.is_authenticated())
 
     def goto_resetPasswordVerificationScreen(self):
         widget.setCurrentIndex(widget.currentIndex() + 2)
@@ -161,9 +166,9 @@ class TypingScreen(QMainWindow):
         self.test_refresh_button.clicked.connect(self.refresh_typing_text)
 
         # change the timer options in gui
-        self.label_3.setText(
+        self.time_button.setText(
             f"time: {TypingScreen.timer[self.timer_select_index]}")
-        self.label_3.clicked.connect(self.selectTime)
+        self.time_button.clicked.connect(self.selectTime)
 
         self.timer_thread = None
         self.worker = None
@@ -197,7 +202,7 @@ class TypingScreen(QMainWindow):
             self.timer_counter = TypingScreen.timer[self.timer_select_index]
             Worker.change_typing_time(
                 finish_time=TypingScreen.timer[self.timer_select_index])
-            self.label_3.setText(
+            self.time_button.setText(
                 f"time: {TypingScreen.timer[self.timer_select_index]}")
 
         # gui timer won't change until next operation
@@ -221,7 +226,7 @@ class TypingScreen(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() + 2)
 
     def tracktimer(self):
-        self.label_3.setText("time: " + str(self.timer_counter))
+        self.time_button.setText("time: " + str(self.timer_counter))
         self.timer_counter -= 1
 
         if self.timer_counter < 1:
@@ -261,8 +266,8 @@ class TypingScreen(QMainWindow):
         self.update_time.stop()
         self.timer_started = False  # Reset the state
 
-        # refresh the timer and reset the text of label_3
-        self.label_3.setText(
+        # refresh the timer and reset the text of time_button
+        self.time_button.setText(
             "time: "+str(TypingScreen.timer[self.timer_select_index]))
 
         # enable the linedit after refreshing the
@@ -299,6 +304,9 @@ class TypingScreen(QMainWindow):
         cls.random_200_text = module1.typing_test_words()
 
     def textChangedfunc(self, strg):
+
+
+        print("is_authenticated", Login.is_authenticated())
         Worker.change_typing_time(
             finish_time=TypingScreen.timer[self.timer_select_index])
         global temp
@@ -360,9 +368,15 @@ class TypingScreen(QMainWindow):
         print("Test raw_user_lst",raw_user_lst)
         track = Tracker(TypingScreen.random_200_text,raw_user_lst)
         track.track_characters()
-        track.create_report(self.timer)
+        res = track.create_report(self.timer)
 
+        print("res",res)
 
+        for key, value in res.items():
+            key_item = QTreeWidgetItem()
+            key_item.setText(0, str(key))     # Column 0: name
+            key_item.setText(1, str(value))   # Column 1: value
+            self.treeWidget.addTopLevelItem(key_item)
         # sending random generated text to filter
         # self.send_strg = Filter_and_save(self.random_200_text)
         # self.filter_save.missedkey()
@@ -394,9 +408,9 @@ class PracticeScreen(QMainWindow):
         self.practice_refresh.clicked.connect(self.refresh_typing_text)
         # change the timer options in gui
 
-        self.label_3.setText(
+        self.time_button.setText(
             f"time: {TypingScreen.timer[self.timer_select_index]}")
-        self.label_3.clicked.connect(self.selectTime)
+        self.time_button.clicked.connect(self.selectTime)
 
         self.timer_thread = None
         self.worker = None
@@ -437,11 +451,11 @@ class PracticeScreen(QMainWindow):
             self.timer_counter = TypingScreen.timer[self.timer_select_index]
             Worker.change_typing_time(
                 finish_time=TypingScreen.timer[self.timer_select_index])
-            self.label_3.setText(
+            self.time_button.setText(
                 f"time: {TypingScreen.timer[self.timer_select_index]}")
 
     def tracktimer(self):
-        self.label_3.setText("time: " + str(self.timer_counter))
+        self.time_button.setText("time: " + str(self.timer_counter))
         self.timer_counter -= 1
 
         if self.timer_counter < 1:
@@ -457,8 +471,8 @@ class PracticeScreen(QMainWindow):
         self.update_time.stop()
 
         self.timer_started = False  # Reset the state
-        # refresh the timer and reset the text of label_3
-        self.label_3.setText(
+        # refresh the timer and reset the text of time_button
+        self.time_button.setText(
             "time: "+str(TypingScreen.timer[self.timer_select_index]))
 
         # enable the linedit after refreshing the
@@ -642,19 +656,84 @@ class ResetPassword(QMainWindow):
         obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
 
 
+    # class AccountScreen(QMainWindow):
+    #     def __init__(self):
+    #         super().__init__()
+    #         uic.loadUi("account.ui", self)
+    # 
+    #         # back to login screen from resetPasswordVerficadtionScreen
+    #         self.logout_btn.clicked.connect(self.backToLoginScreen)
+    # 
+    #     def load_data(self):
+    #         ...
+    # 
+    #     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
+    #         logout = Logout()
+    #         logout.remove_token()
+    #         widget.setCurrentIndex(widget.currentIndex() - 5)
+    
+
 class AccountScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("account.ui", self)
+        uic.loadUi("account.ui", self)  # Load your UI file here
 
-        # back to login screen from resetPasswordVerficadtionScreen
+        # Connect logout button (if needed)
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
-    def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
+        self.load_reports()
+        # Load reports on startup
+
+    def load_reports(self):
+        tk = Login.is_authenticated()
+        headers = {
+            "Authorization": f"Bearer {tk}",
+            "Content-Type": "application/json"
+        }
+        # Example payload, replace 'rwpm', 'wpm', 'accu' with actual values or remove if not needed
+        js = {
+            "wpm": 70,    # example value
+            "rwpm": 65,   # example value
+            "accuracy": 90 # example value
+        }
+
+        try:
+            response = requests.get("http://localhost:8000/get-report", headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            print("response",data)
+
+            # Assuming data is a list of report dicts; adjust if API returns differently
+            self.populate_tree(data)
+
+        except requests.RequestException as e:
+            QMessageBox.critical(self, "Error", f"Failed to load reports:\n{str(e)}")
+
+    def populate_tree(self, reports):
+        self.treeWidget.clear()
+    
+        self.treeWidget.setColumnCount(8)
+        self.treeWidget.setHeaderLabels([
+            "SN", "Session ID", "User ID", "WPM", "Accuracy", "RWPM", "Created At", "File Path"
+        ])
+    
+        for i, report in enumerate(reports, start=1):
+            item = QTreeWidgetItem([
+                str(i),
+                report.get("session_id", ""),
+                str(report.get("user_id", "")),
+                str(report.get("wpm", "")),
+                str(report.get("accuracy", "")),
+                str(report.get("rwpm", "")),
+                report.get("create_at", ""),
+                report.get("file_path", ""),
+            ])
+            self.treeWidget.addTopLevelItem(item)
+
+    def backToLoginScreen(self):
         logout = Logout()
         logout.remove_token()
         widget.setCurrentIndex(widget.currentIndex() - 5)
-
 
 # Run the application
 app = QApplication([])

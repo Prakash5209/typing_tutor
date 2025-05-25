@@ -58,7 +58,7 @@ class Tracker:
 
         print("payload",payload)
         response = requests.post("http://localhost:8000/character-updated",headers = headers,json = payload)
-        # print("save_char",response.json())
+        print("save_char",response.json())
 
 
     def create_report(self,time):
@@ -89,6 +89,8 @@ class Tracker:
         file_path = response.get("file_path")
 
         self.save_to_file(raw_user_char,correct_char,file_path)
+
+        return response
 
 
     def save_to_file(self,raw_user_char,correct_char,file_path):

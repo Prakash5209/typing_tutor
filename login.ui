@@ -127,6 +127,9 @@
            </widget>
           </item>
           <item>
+
+                      <!--<widget class="QLineEdit" name="passwordlineEdit">
+          <item>
            <widget class="QLineEdit" name="passwordlineEdit">
             <property name="styleSheet">
              <string notr="true">color:white;</string>
@@ -134,7 +137,19 @@
             <property name="placeholderText">
              <string>password</string>
             </property>
-           </widget>
+            </widget>-->
+
+
+
+          <widget class="QLineEdit" name="passwordlineEdit">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+           <property name="placeholderText">
+            <string>Enter your password</string>
+           </property>
+          </widget>
+
           </item>
          </layout>
         </widget>
