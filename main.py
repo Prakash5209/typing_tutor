@@ -63,8 +63,13 @@ class MyApp(QMainWindow):
 
         self.login_button.clicked.connect(self.goto_homeScreen)
 
+
+        self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+
         # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
+
+
 
         # login screen to resetPasswordVerficadtionScreen
         self.forgotPassword_btn.clicked.connect(
