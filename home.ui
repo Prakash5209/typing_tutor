@@ -149,7 +149,7 @@
                </spacer>
               </item>
               <item row="0" column="2">
-               <widget class="QPushButton" name="label_3">
+               <widget class="QPushButton" name="time_button">
                 <property name="styleSheet">
                  <string notr="true">color:whitesmoke;</string>
                 </property>
