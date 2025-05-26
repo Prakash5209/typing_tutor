@@ -1,3 +1,7 @@
+#frame_4{
+    border-radius:5px;
+    border:1px solid #CCC;
+  }
 QPushButton {
     width:200px;
     border-radius: 5px;
