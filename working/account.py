@@ -76,7 +76,7 @@ class Login:
             try:
                 response = requests.post("http://localhost:8000/get-user/",
                                          json={"username": self.username, "password": self.password})
-                print("response", response)
+                # print("response", response)
                 response_text = json.loads(response.text)
 
                 if response_text and response.status_code == 200:
@@ -97,7 +97,7 @@ class Login:
 
         try:
             encoded = jwt.encode(payload, Login.secret, algorithm="HS256")
-            print("encoded",encoded)
+            # print("encoded",encoded)
             self.save_token(encoded)
         except Exception as e:
             print("generateToken Exception", e)
@@ -222,8 +222,8 @@ class Verification_code:
                 print(e)
 
             res = json.loads(response.text)
-            print(res)
-            print("new password", email, new_password, confirm_password)
+            # print(res)
+            # print("new password", email, new_password, confirm_password)
 
 
 class Logout:

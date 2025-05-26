@@ -13,12 +13,13 @@ from working.account import Register, Login, Account_recovery, Verification_code
 from working.filter import Tracker
 
 from api.ml.handler import predict_practice_word
-
+import sys
 
 import time
 
 
 temp: str = ""
+
 
 
 class Worker(QObject):
@@ -306,7 +307,7 @@ class TypingScreen(QMainWindow):
     def textChangedfunc(self, strg):
 
 
-        print("is_authenticated", Login.is_authenticated())
+        # print("is_authenticated", Login.is_authenticated())
         Worker.change_typing_time(
             finish_time=TypingScreen.timer[self.timer_select_index])
         global temp
@@ -365,12 +366,12 @@ class TypingScreen(QMainWindow):
 
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
-        print("Test raw_user_lst",raw_user_lst)
+        # print("Test raw_user_lst",raw_user_lst)
         track = Tracker(TypingScreen.random_200_text,raw_user_lst)
         track.track_characters()
         res = track.create_report(self.timer)
 
-        print("res",res)
+        # print("res",res)
 
         for key, value in res.items():
             key_item = QTreeWidgetItem()
@@ -436,7 +437,7 @@ class PracticeScreen(QMainWindow):
 
     def predict_practice_word():
         res = requests.get("http://localhost:8000/practice-words")
-        print("predict_practice_word",res.json())
+        # print("predict_practice_word",res.json())
 
 
 
@@ -464,7 +465,7 @@ class PracticeScreen(QMainWindow):
             self.timer_started = False
 
     def refresh_typing_text(self):
-        print("resetting the thread to ",self.no_chance)
+        # print("resetting the thread to ",self.no_chance)
         self.no_chance = True
 
         # Stop the timer explicitly
@@ -594,7 +595,7 @@ class PracticeScreen(QMainWindow):
 
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
-        print("Test raw_user_lst",raw_user_lst)
+        # print("Test raw_user_lst",raw_user_lst)
         track = Tracker(PracticeScreen.random_200_text,raw_user_lst)
         track.track_characters()
         track.create_report(self.timer)
@@ -701,7 +702,7 @@ class AccountScreen(QMainWindow):
             response = requests.get("http://localhost:8000/get-report", headers=headers)
             response.raise_for_status()
             data = response.json()
-            print("response",data)
+            # print("response",data)
 
             # Assuming data is a list of report dicts; adjust if API returns differently
             self.populate_tree(data)
@@ -737,6 +738,12 @@ class AccountScreen(QMainWindow):
 
 # Run the application
 app = QApplication([])
+
+
+# styling
+
+with open("style/style.qss") as f:
+    app.setStyleSheet(f.read())
 
 
 widget = QtWidgets.QStackedWidget()  # testing

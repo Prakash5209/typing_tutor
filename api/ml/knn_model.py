@@ -105,7 +105,7 @@ class Suggest:
     
         distances, indices = knn.kneighbors([target_vec])
     
-        print("Suggested Words (Length <= 6):")
+        # print("Suggested Words (Length <= 6):")
         suggested_words = [filtered_words[i] for i in indices[0]]
         return suggested_words
 
