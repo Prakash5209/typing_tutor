@@ -93,7 +93,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color:#B2B2B2;</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
