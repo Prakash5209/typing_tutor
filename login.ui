@@ -108,7 +108,7 @@
 color: rgb(61, 56, 70);</string>
             </property>
             <property name="text">
-             <string>KeyStroke Improver</string>
+             <string>Keystroke Improver</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

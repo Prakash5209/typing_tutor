@@ -75,11 +75,19 @@
            <widget class="QLabel" name="label">
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <family>Ubuntu</family>
+              <pointsize>20</pointsize>
+              <weight>50</weight>
+              <italic>false</italic>
+              <bold>false</bold>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+color: rgb(61, 56, 70);</string>
+            </property>
             <property name="text">
-             <string>KeyStroke Improver</string>
+             <string>Keystroke Improver</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -100,6 +108,11 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QLineEdit" name="email_lineEdit">
+            <property name="styleSheet">
+             <string notr="true">Padding:10px;
+border-radius:5px;
+</string>
+            </property>
             <property name="placeholderText">
              <string>email</string>
             </property>
@@ -107,6 +120,11 @@
           </item>
           <item>
            <widget class="QLineEdit" name="username_lineEdit_2">
+            <property name="styleSheet">
+             <string notr="true">Padding:10px;
+border-radius:5px;
+</string>
+            </property>
             <property name="placeholderText">
              <string>username</string>
             </property>
@@ -114,6 +132,11 @@
           </item>
           <item>
            <widget class="QLineEdit" name="password_lineEdit_3">
+            <property name="styleSheet">
+             <string notr="true">Padding:10px;
+border-radius:5px;
+</string>
+            </property>
             <property name="placeholderText">
              <string>password</string>
             </property>
@@ -121,6 +144,11 @@
           </item>
           <item>
            <widget class="QLineEdit" name="confirm_password_lineEdit_4">
+            <property name="styleSheet">
+             <string notr="true">Padding:10px;
+border-radius:5px;
+</string>
+            </property>
             <property name="placeholderText">
              <string>confirm password</string>
             </property>
@@ -192,7 +220,7 @@
      <x>0</x>
      <y>0</y>
      <width>761</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
