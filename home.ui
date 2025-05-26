@@ -93,7 +93,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">background-color:#B2B2B2;</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
@@ -103,17 +103,17 @@
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QPushButton" name="pushButton">
+               <widget class="QPushButton" name="test_session">
                 <property name="font">
                  <font>
                   <pointsize>15</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true"/>
+                 <string notr="true">background-color:7f7f7f;</string>
                 </property>
                 <property name="text">
-                 <string>test</string>
+                 <string>Test</string>
                 </property>
                 <property name="checkable">
                  <bool>false</bool>
@@ -131,7 +131,7 @@
                  <string notr="true"/>
                 </property>
                 <property name="text">
-                 <string>practice</string>
+                 <string>Practice</string>
                 </property>
                </widget>
               </item>
@@ -143,11 +143,10 @@
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">
-</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
-                 <string>tutor</string>
+                 <string>Tutor</string>
                 </property>
                </widget>
               </item>
@@ -211,17 +210,17 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
-                <widget class="QFrame" name="frame_3">
+                <widget class="QFrame" name="frame_4">
                  <property name="font">
                   <font>
                    <pointsize>15</pointsize>
                   </font>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
+                  <enum>QFrame::Plain</enum>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <item>
@@ -280,10 +279,10 @@ p, li { white-space: pre-wrap; }
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color:whitesmoke;</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
-                  <string>report</string>
+                  <string>Report</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -302,7 +301,7 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <column>
                   <property name="text">
-                   <string>name</string>
+                   <string>Name</string>
                   </property>
                   <property name="font">
                    <font>
@@ -312,7 +311,7 @@ p, li { white-space: pre-wrap; }
                  </column>
                  <column>
                   <property name="text">
-                   <string>value</string>
+                   <string>Value</string>
                   </property>
                   <property name="font">
                    <font>
@@ -377,7 +376,7 @@ p, li { white-space: pre-wrap; }
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>test</string>
+                    <string>Test session</string>
                    </property>
                   </widget>
                  </item>
@@ -410,7 +409,7 @@ p, li { white-space: pre-wrap; }
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>refresh</string>
+                    <string>Refresh</string>
                    </property>
                   </widget>
                  </item>
