@@ -124,11 +124,10 @@
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">padding:10px;
-border-radius:5px;</string>
+                     <string notr="true"/>
                     </property>
                     <property name="markdown">
-                     <string>omg
+                     <string>loading...
 
 </string>
                     </property>
@@ -137,7 +136,7 @@ border-radius:5px;</string>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:15pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:28pt; color:#000000;&quot;&gt;omg&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;loading...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="overwriteMode">
                      <bool>false</bool>
@@ -192,8 +191,7 @@ border-radius:5px;</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">padding:10px;
-border-radius:5px;</string>
+                  <string notr="true"/>
                  </property>
                  <column>
                   <property name="text">
