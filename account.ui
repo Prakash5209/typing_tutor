@@ -261,9 +261,9 @@
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QPushButton" name="pushButton_4">
+                  <widget class="QPushButton" name="logout_btn">
                    <property name="text">
-                    <string>PushButton</string>
+                    <string>logout</string>
                    </property>
                   </widget>
                  </item>
