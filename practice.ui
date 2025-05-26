@@ -95,7 +95,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="tutor_btn">
              <property name="font">
               <font>
                <pointsize>15</pointsize>
