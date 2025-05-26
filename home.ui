@@ -160,9 +160,7 @@
                     </font>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                    <string notr="true"/>
                    </property>
                    <property name="text">
                     <string>refresh</string>
@@ -198,9 +196,7 @@ padding:10px;</string>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>time: 1 minute</string>
@@ -340,9 +336,7 @@ p, li { white-space: pre-wrap; }
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>test</string>
@@ -360,9 +354,7 @@ padding:10px;</string>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>practice</string>
@@ -377,9 +369,8 @@ padding:10px;</string>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                 <string notr="true">
+</string>
                 </property>
                 <property name="text">
                  <string>tutor</string>
@@ -412,9 +403,7 @@ padding:10px;</string>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;
-margin:0 10px;
-padding:10px;</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>Account</string>
