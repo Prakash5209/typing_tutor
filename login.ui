@@ -130,7 +130,8 @@ color: rgb(61, 56, 70);</string>
           <item>
            <widget class="QLineEdit" name="usernamelineEdit">
             <property name="styleSheet">
-             <string notr="true">padding:10px;</string>
+             <string notr="true">padding:10px;
+border-radius:5px;</string>
             </property>
             <property name="placeholderText">
              <string>email / username</string>
@@ -141,6 +142,7 @@ color: rgb(61, 56, 70);</string>
            <widget class="QLineEdit" name="passwordlineEdit">
             <property name="styleSheet">
              <string notr="true">padding:10px;
+border-radius:5px;
 </string>
             </property>
             <property name="placeholderText">
