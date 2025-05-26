@@ -134,14 +134,14 @@ color: rgb(61, 56, 70);</string>
 border-radius:5px;</string>
             </property>
             <property name="placeholderText">
-             <string>email / username</string>
+             <string>Username</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLineEdit" name="passwordlineEdit">
             <property name="styleSheet">
-             <string notr="true">padding:10px;
+             <string notr="true">Padding:10px;
 border-radius:5px;
 </string>
             </property>
