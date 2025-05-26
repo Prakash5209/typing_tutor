@@ -237,7 +237,7 @@
               <item row="0" column="1">
                <widget class="QPushButton" name="logout_btn">
                 <property name="text">
-                 <string>logout</string>
+                 <string>Logout</string>
                 </property>
                </widget>
               </item>

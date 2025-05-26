@@ -66,7 +66,7 @@ class MyApp(QMainWindow):
         self.login_button.clicked.connect(self.goto_homeScreen)
 
 
-        # self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
 
         # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
@@ -122,6 +122,9 @@ class RegisterScreen(QMainWindow):
         super().__init__()
         uic.loadUi("register.ui", self)
 
+
+        self.password_lineEdit_3.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.confirm_password_lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
         # self.create_account.connect(self.create_account_button_function)
         self.create_account_button.clicked.connect(
             self.create_account_button_function)
@@ -165,6 +168,11 @@ class TypingScreen(QMainWindow):
         self.account_btn.clicked.connect(self.goto_account)
         self.test_type.textChanged.connect(self.textChangedfunc)
         self.test_refresh_button.clicked.connect(self.refresh_typing_text)
+
+        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 4))
+
+
+        # self.tutor
 
         # change the timer options in gui
         self.time_button.setText(
@@ -404,9 +412,12 @@ class PracticeScreen(QMainWindow):
 
         self.test_button.clicked.connect(self.gotoHome)
         self.account_btn.clicked.connect(self.goto_account)
+        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 3))
 
         self.lineEdit.textChanged.connect(self.textChangedfunc)
         self.practice_refresh.clicked.connect(self.refresh_typing_text)
+
+
         # change the timer options in gui
 
         self.time_button.setText(
@@ -646,6 +657,10 @@ class ResetPassword(QMainWindow):
         uic.loadUi("password_reset.ui", self)
         self.submit.clicked.connect(self.submit_new_password)
 
+
+        self.newpasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.confirmpasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+
     def setverification_obj(self, obj):
         self.verification_obj = obj
         self.email_label.setText(self.verification_obj)
@@ -668,8 +683,7 @@ class ResetPassword(QMainWindow):
     #     def load_data(self):
     #         ...
     # 
-    #     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen
-    #         logout = Logout()
+    #     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen logout = Logout()
     #         logout.remove_token()
     #         widget.setCurrentIndex(widget.currentIndex() - 5)
     
@@ -687,6 +701,8 @@ class AccountScreen(QMainWindow):
 
         # back to practice screen
         self.practice_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 1))
+
+        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
 
         self.load_reports()
         # Load reports on startup
@@ -742,6 +758,27 @@ class AccountScreen(QMainWindow):
         logout.remove_token()
         widget.setCurrentIndex(widget.currentIndex() - 5)
 
+
+class Tutorial(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("Tutor.ui", self)
+        # self.submit.clicked.connect(self.submit_new_password)
+
+        # go to test session
+        self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
+        self.pushButton_2.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
+        self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
+
+
+class KeyTutorial(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi("key_tutor.ui", self)
+        # self.submit.clicked.connect(self.submit_new_password)
+
+
+
 # Run the application
 app = QApplication([])
 
@@ -761,6 +798,8 @@ typingScreen = TypingScreen()
 practicescreen = PracticeScreen()
 accountscreen = AccountScreen()
 resetpassword = ResetPassword()
+tutorial = Tutorial()
+key_tutorial = KeyTutorial()
 
 widget.addWidget(login)
 widget.addWidget(register)
@@ -769,6 +808,8 @@ widget.addWidget(typingScreen)
 widget.addWidget(practicescreen)
 widget.addWidget(accountscreen)
 widget.addWidget(resetpassword)
+widget.addWidget(tutorial)
+widget.addWidget(key_tutorial)
 
 widget.show()
 app.exec_()

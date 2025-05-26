@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import re
 import os
 import requests
 import jwt
@@ -47,7 +48,15 @@ class Register:
         self.password = password
         self.confirm_password = confirm_password
 
+
     def __register_new_account(self):
+
+        pattern = r'^(?=.*\d)(?=.*[!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~]).{6,}$'
+
+        if not re.fullmatch(pattern, self.password):
+            print("Password must be at least 6 characters long, contain at least one digit and one punctuation mark.")
+            return
+
         if self.confirm_password == self.password:
             try:
                 test_response = requests.post("http://localhost:8000/create-user/",
