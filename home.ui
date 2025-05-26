@@ -158,7 +158,7 @@ border-radius:5px;</string>
                      <string/>
                     </property>
                     <property name="placeholderText">
-                     <string>type here..</string>
+                     <string>Type here...</string>
                     </property>
                    </widget>
                   </item>
@@ -239,7 +239,7 @@ border-radius:5px;</string>
               <enum>QFrame::NoFrame</enum>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
+              <enum>QFrame::Plain</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
