@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#323232;</string>
+   <string notr="true">background-color:#36454F;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -160,7 +160,9 @@
                     </font>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">color:whitesmoke;</string>
+                    <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                    </property>
                    <property name="text">
                     <string>refresh</string>
@@ -196,7 +198,9 @@
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;</string>
+                 <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                 </property>
                 <property name="text">
                  <string>time: 1 minute</string>
@@ -336,7 +340,9 @@ p, li { white-space: pre-wrap; }
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;</string>
+                 <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                 </property>
                 <property name="text">
                  <string>test</string>
@@ -354,7 +360,9 @@ p, li { white-space: pre-wrap; }
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;</string>
+                 <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                 </property>
                 <property name="text">
                  <string>practice</string>
@@ -369,7 +377,9 @@ p, li { white-space: pre-wrap; }
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;</string>
+                 <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                 </property>
                 <property name="text">
                  <string>tutor</string>
@@ -402,7 +412,9 @@ p, li { white-space: pre-wrap; }
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:whitesmoke;</string>
+                 <string notr="true">color:whitesmoke;
+margin:0 10px;
+padding:10px;</string>
                 </property>
                 <property name="text">
                  <string>Account</string>
