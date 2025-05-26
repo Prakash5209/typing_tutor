@@ -104,7 +104,8 @@
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 20pt &quot;Ubuntu&quot;;</string>
+             <string notr="true">font: 20pt &quot;Ubuntu&quot;;
+color: rgb(61, 56, 70);</string>
             </property>
             <property name="text">
              <string>KeyStroke Improver</string>
