@@ -682,6 +682,12 @@ class AccountScreen(QMainWindow):
         # Connect logout button (if needed)
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
+        # back to typing screen
+        self.test_session.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
+
+        # back to practice screen
+        self.practice_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 1))
+
         self.load_reports()
         # Load reports on startup
 
