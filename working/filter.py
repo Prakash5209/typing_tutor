@@ -56,9 +56,9 @@ class Tracker:
             "jon":chars
         }
 
-        print("payload",payload)
+        # print("payload",payload)
         response = requests.post("http://localhost:8000/character-updated",headers = headers,json = payload)
-        print("save_char",response.json())
+        # print("save_char",response.json())
 
 
     def create_report(self,time):
