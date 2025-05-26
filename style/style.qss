@@ -7,12 +7,12 @@ QPushButton {
     border-radius: 5px;
     padding:10px;
     margin:0 10px;
-    background-color: #DFD0B8;
+    background-color: #6C727B;
     color:whitesmoke;
 }
 QPushButton:hover {
     background-color: #6C727B;
 }
 QPushButton:pressed {
-    background-color: #6C727B;
+    background-color: #7F7F7F;
 }
