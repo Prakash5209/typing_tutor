@@ -110,7 +110,7 @@
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">background-color:7f7f7f;</string>
+                 <string notr="true">background-color:#7f7f7f;</string>
                 </property>
                 <property name="text">
                  <string>Test</string>
