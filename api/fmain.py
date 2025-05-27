@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from typing import Annotated, Optional,Dict,List
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, Integer
 from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
 from pathlib import Path
@@ -69,10 +69,10 @@ class MistakeLetterSchema(BaseModel):
 
 
 class ReportScheme(BaseModel):
-    # id: Optional[int]
     wpm: float
     rwpm: float
     accuracy: float
+    second: int
 
 
 class GetReportSchema(BaseModel):
@@ -83,6 +83,7 @@ class GetReportSchema(BaseModel):
     session_id: str
     wpm: float
     rwpm: float
+    second: int
     accuracy: float
     file_path: str
 
@@ -101,6 +102,30 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token,os.getenv("JWT_SECRET_KEY"),algorithms = [os.getenv("ALGORITHM")])
+        id = payload.get("id")
+        username = payload.get("username")
+        exp = datetime.utcfromtimestamp(payload.get("exp"))
+        stmt = select(User).where((User.id == id) & (User.username == username))
+        that_user = db.execute(stmt).scalar_one_or_none()
+        if that_user != None and exp > datetime.utcnow():
+            return payload
+            # return JSONResponse(status_code = status.HTTP_200_OK,content={"message":payload})
+        else:
+            raise HTTPException(status=401)
+    except Exception as e:
+        print("verify_token",e)
+
+
+
+@app.get("/user-info")
+async def user_info(db: db_dependency,token: str = Depends(verify_token)):
+    stmt = select(User).where(User.id == token.get("id"))
+    res = db.execute(stmt).scalar_one_or_none()
+    return res
 
 
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
@@ -212,22 +237,6 @@ async def reset_password(user: ResetPassword, db: db_dependency):
         raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
-def verify_token(db: db_dependency,token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token,os.getenv("JWT_SECRET_KEY"),algorithms = [os.getenv("ALGORITHM")])
-        id = payload.get("id")
-        username = payload.get("username")
-        exp = datetime.utcfromtimestamp(payload.get("exp"))
-        stmt = select(User).where((User.id == id) & (User.username == username))
-        that_user = db.execute(stmt).scalar_one_or_none()
-        if that_user != None and exp > datetime.utcnow():
-            return payload
-            # return JSONResponse(status_code = status.HTTP_200_OK,content={"message":payload})
-        else:
-            raise HTTPException(status=401)
-    except Exception as e:
-        print("verify_token",e)
-
 
 
 @app.post("/character-updated")
@@ -285,7 +294,8 @@ async def report(report: ReportScheme, db: db_dependency, token_data: str = Depe
         wpm=report.wpm,
         rwpm=report.rwpm,
         accuracy=report.accuracy,
-        file_path=file_src
+        file_path=file_src,
+        second=report.second
     )
 
     try:

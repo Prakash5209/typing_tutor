@@ -43,5 +43,6 @@ class Report(Base,TimeStamps):
     wpm = Column(Float)
     rwpm = Column(Float)
     accuracy = Column(Float)
+    second = Column(Integer)
     file_path = Column(String(255),nullable = False)
     user = relationship("User",back_populates = "report")

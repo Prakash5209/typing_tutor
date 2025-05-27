@@ -90,7 +90,7 @@ class Tracker:
 
         # save_report_db function should be called first be get session_name for file name
         print("call save db")
-        response = self.save_report_db(rwpm,wpm,accu)
+        response = self.save_report_db(rwpm,wpm,accu,time)
 
         file_path = response.get("file_path")
 
@@ -129,7 +129,7 @@ class Tracker:
 
 
 
-    def save_report_db(self,rwpm,wpm,accu):
+    def save_report_db(self,rwpm,wpm,accu,second):
         tk = Login.is_authenticated()
         headers = {
             "Authorization":f"Bearer {tk}",
@@ -139,6 +139,7 @@ class Tracker:
             "wpm": wpm, 
             "rwpm": rwpm,
             "accuracy": accu,
+            "second":second
         }
 
         response = requests.post("http://localhost:8000/create-report",headers = headers,json = js)

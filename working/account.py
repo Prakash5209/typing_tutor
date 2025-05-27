@@ -146,6 +146,22 @@ class Login:
             print("is_authenticated Exception:", e)
             return False
 
+    @staticmethod
+    def get_userinfo():
+        try:
+            if not os.path.exists(CREDENTIAL_FILE):
+                print("no credentials file found")
+                return False
+            with open(CREDENTIAL_FILE,"rb") as file:
+                encrypted = file.read()
+                decrypted = cipher_suite.decrypt(encrypted).decode()
+                token = jwt.decode(decrypted,Login.secret,algorithms=["HS256"])
+                return token
+        except Exception as e:
+            print("get_userinfo",e)
+
+
+
 
 class Account_recovery:
     r = redis.Redis(host="localhost", port=6379)

@@ -1,16 +1,20 @@
 import module1
+import pyqtgraph as pg
 from inputchecker import LiveInputChecker
 # from filter_save import Filter_and_save
 import smtplib
 import requests
+import datetime
 
 from PyQt5 import QtWidgets
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTreeWidgetItem
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTreeWidgetItem,QTableWidgetItem
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code,Logout
 from working.filter import Tracker
+import numpy as np
 
 from algo_handler import Handler_algo
 
@@ -157,6 +161,10 @@ class TypingScreen(QMainWindow):
         super().__init__()
         uic.loadUi("home.ui", self)
 
+
+        # set username in account tab 
+        user_name = Login.get_userinfo().get("username")
+        self.account_btn.setText(user_name)
 
         # timer option index
         self.timer_select_index = 0
@@ -375,12 +383,13 @@ class TypingScreen(QMainWindow):
     def worker_progress(self):
         print("finished and deleted")
 
+
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
         # print("Test raw_user_lst",raw_user_lst)
         track = Tracker(TypingScreen.random_200_text,raw_user_lst)
         track.track_characters()
-        res = track.create_report(self.timer)
+        res = track.create_report(TypingScreen.timer[self.timer_select_index])
 
         # print("res",res)
 
@@ -405,6 +414,11 @@ class PracticeScreen(QMainWindow):
         self.no_chance = True
         super().__init__()
         uic.loadUi("practice.ui", self)
+
+        # set username in account tab 
+        user_name = Login.get_userinfo().get("username")
+        self.account_btn.setText(user_name)
+
 
 
         self.treeWidget.clear()
@@ -710,6 +724,167 @@ class AccountScreen(QMainWindow):
         super().__init__()
         uic.loadUi("account.ui", self)  # Load your UI file here
 
+        # set username in account tab 
+
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+        user_info = requests.get("http://localhost:8000/user-info",headers = headers).json()
+        self.username_label.setText("Welcome " + user_info.get("username"))
+        self.account_btn.setText(user_info.get("username"))
+        self.email_label.setText("Email: " + user_info.get("email"))
+        joined_date = user_info.get("create_at")
+        joined_date_timezone = datetime.datetime.strptime(joined_date,"%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours = 5, minutes = 45)
+        self.joinded_date_label.setText("Joinded Date: " + str(joined_date_timezone))
+
+        test_taken = requests.get("http://localhost:8000/get-report",headers = headers).json()
+        print("test_taken",len(test_taken))
+        self.test_completed_label.setText("Test Taken: " + str(len(test_taken)))
+
+
+        self.highest_wpm = [0, 0, 0]
+        self.highest_rwpm = [0, 0, 0]
+        self.accuracy = [0, 0, 0]
+
+        
+        for i in test_taken:
+            second = i.get("second", 0)
+            
+            wpm = i.get("wpm")
+            if wpm is not None:
+                if second == 15 and wpm > self.highest_wpm[0]:
+                    self.highest_wpm[0] = wpm
+                elif second == 30 and wpm > self.highest_wpm[1]:
+                    self.highest_wpm[1] = wpm
+                elif second == 60 and wpm > self.highest_wpm[2]:
+                    self.highest_wpm[2] = wpm
+        
+            rwpm = i.get("rwpm")
+            if rwpm is not None:
+                if second == 15 and rwpm > self.highest_rwpm[0]:
+                    self.highest_rwpm[0] = rwpm
+                elif second == 30 and rwpm > self.highest_rwpm[1]:
+                    self.highest_rwpm[1] = rwpm
+                elif second == 60 and rwpm > self.highest_rwpm[2]:
+                    self.highest_rwpm[2] = rwpm
+        
+            acc = i.get("accuracy")
+            if acc is not None:
+                if second == 15 and acc > self.accuracy[0]:
+                    self.accuracy[0] = acc
+                elif second == 30 and acc > self.accuracy[1]:
+                    self.accuracy[1] = acc
+                elif second == 60 and acc > self.accuracy[2]:
+                    self.accuracy[2] = acc
+
+        print(self.highest_wpm)
+        print(self.highest_rwpm)
+        print(self.accuracy)
+
+
+        row_position = self.tableWidget.rowCount()  # Get the current number of rows
+        self.tableWidget.insertRow(row_position)    # Add a new empty row
+        
+        # Set items for the new row
+        self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(self.highest_wpm[0])))
+        self.tableWidget.setItem(row_position, 1, QTableWidgetItem(str(self.highest_wpm[1])))
+        self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(self.highest_wpm[2])))
+        
+        # (Optional) If you want to add multiple rows for rwpm and accuracy:
+        row_position = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(row_position)
+        self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(self.highest_rwpm[0])))
+        self.tableWidget.setItem(row_position, 1, QTableWidgetItem(str(self.highest_rwpm[1])))
+        self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(self.highest_rwpm[2])))
+        
+        row_position = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(row_position)
+        self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(self.accuracy[0])))
+        self.tableWidget.setItem(row_position, 1, QTableWidgetItem(str(self.accuracy[1])))
+        self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(self.accuracy[2])))
+
+
+
+
+
+
+
+
+        timestamps = []
+        wpm_values = []
+        rwpm_values = []
+        accuracy_values = []
+        
+        for report in test_taken:
+            dt = datetime.datetime.fromisoformat(report['create_at'])
+            timestamps.append(dt.timestamp())  # Convert datetime to float timestamp for plotting
+            wpm_values.append(report['wpm'])
+            rwpm_values.append(report['rwpm'])
+            accuracy_values.append(report['accuracy'])
+        
+        # Convert to numpy arrays for better plotting performance
+        x = np.array(timestamps)
+        wpm = np.array(wpm_values)
+        rwpm = np.array(rwpm_values)
+        accuracy = np.array(accuracy_values)
+        
+
+        # Replace label_5 with pyqtgraph plot in QGridLayout
+        label = self.findChild(QtWidgets.QLabel, "label_5")
+        layout = label.parent().layout()
+        
+        # Find position of label_5 in the grid
+        position = None
+        for row in range(layout.rowCount()):
+            for col in range(layout.columnCount()):
+                item = layout.itemAtPosition(row, col)
+                if item and item.widget() == label:
+                    position = (row, col)
+                    break
+            if position:
+                break
+        
+        if position:
+            layout.removeWidget(label)
+            label.deleteLater()
+        
+            graph_widget = pg.GraphicsLayoutWidget()
+            layout.addWidget(graph_widget, position[0], position[1])
+        
+            # Add the plot
+            plot = graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
+            plot.plot(x, wpm, pen=pg.mkPen('r', width=2), name="WPM")
+            plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
+            plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
+        
+            plot.setLabel('left', 'Value')
+            plot.setLabel('bottom', 'Time')
+            plot.addLegend()
+        
+            axis = plot.getAxis('bottom')
+            axis.setTicks([[(val, datetime.datetime.fromtimestamp(val).strftime('%H:%M:%S')) for val in x]])
+
+
+
+
+        mistake = requests.get("http://localhost:8000/get-mistakes",headers = headers).json()
+        print("mistakes",mistake)
+
+        table = self.tableWidget_2
+        table.setRowCount(len(mistake))
+        table.setColumnCount(3)
+        table.setHorizontalHeaderLabels(["key", "mistake", "missed"])
+
+        for row, (key, value) in enumerate(mistake.items()):
+            table.setItem(row, 0, QTableWidgetItem(str(key)))
+            table.setItem(row, 1, QTableWidgetItem(str(value[0])))
+            table.setItem(row, 2, QTableWidgetItem(str(value[1])))
+
+        table.resizeColumnsToContents()
+
+
+
         # Connect logout button (if needed)
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
@@ -780,6 +955,14 @@ class Tutorial(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("Tutor.ui", self)
+
+        # set username in account tab 
+        user_name = Login.get_userinfo().get("username")
+        self.account_btn.setText(user_name)
+
+
+
+
         # self.submit.clicked.connect(self.submit_new_password)
 
         # go to test session
@@ -792,6 +975,14 @@ class KeyTutorial(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("key_tutor.ui", self)
+
+
+
+        # set username in account tab 
+        user_name = Login.get_userinfo().get("username")
+        self.account_btn.setText(user_name)
+
+
         # self.submit.clicked.connect(self.submit_new_password)
 
 
