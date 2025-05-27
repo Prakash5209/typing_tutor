@@ -21,4 +21,4 @@ class Handler_algo:
         self.hand = Suggest.assign_mistake_keys(self.mistakes)
         # print(Suggest.error_map,Suggest.letter_scores)
         # print(Suggest.predict_words())
-        return Suggest.predict_words()
+        return " ".join(Suggest.predict_words())

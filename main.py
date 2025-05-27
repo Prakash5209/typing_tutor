@@ -157,6 +157,7 @@ class TypingScreen(QMainWindow):
         super().__init__()
         uic.loadUi("home.ui", self)
 
+
         # timer option index
         self.timer_select_index = 0
         self.timer = TypingScreen.timer[self.timer_select_index]
@@ -267,6 +268,8 @@ class TypingScreen(QMainWindow):
                 self.worker = None
 
     def refresh_typing_text(self):
+
+        self.treeWidget.clear()
         # set self.no_chance = True to reset
         print("resetting the thread to ",self.no_chance)
         self.no_chance = True
@@ -403,6 +406,9 @@ class PracticeScreen(QMainWindow):
         super().__init__()
         uic.loadUi("practice.ui", self)
 
+
+        self.treeWidget.clear()
+
         # timer option index    def selectTime
         self.timer_select_index = 0
         self.timer = PracticeScreen.timer[self.timer_select_index]
@@ -476,6 +482,8 @@ class PracticeScreen(QMainWindow):
             self.timer_started = False
 
     def refresh_typing_text(self):
+
+        self.treeWidget.clear()
         #Handler_algo().predict_words()
         # hand.predict_words()
 
@@ -551,7 +559,6 @@ class PracticeScreen(QMainWindow):
                 self.worker = None
 
     def textChangedfunc(self, strg):
-        print("random_200_text",type(PracticeScreen.random_200_text))
         Worker.change_typing_time(
             finish_time=PracticeScreen.timer[self.timer_select_index])
         global temp
@@ -612,7 +619,14 @@ class PracticeScreen(QMainWindow):
         # print("Test raw_user_lst",raw_user_lst)
         track = Tracker(PracticeScreen.random_200_text,raw_user_lst)
         track.track_characters()
-        track.create_report(self.timer)
+        res = track.create_report(self.timer)
+
+
+        for key,value in res.items():
+            key_item = QTreeWidgetItem()
+            key_item.setText(0,str(key))
+            key_item.setText(1,str(value))
+            self.treeWidget.addTopLevelItem(key_item)
 
 
         # disable the lineedit
