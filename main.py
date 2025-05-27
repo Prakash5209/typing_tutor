@@ -1,6 +1,6 @@
 import module1
 from inputchecker import LiveInputChecker
-from filter_save import Filter_and_save
+# from filter_save import Filter_and_save
 import smtplib
 import requests
 
@@ -12,7 +12,9 @@ from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 from working.account import Register, Login, Account_recovery, Verification_code,Logout
 from working.filter import Tracker
 
-from api.ml.handler import predict_practice_word
+from algo_handler import Handler_algo
+
+
 import sys
 
 import time
@@ -62,7 +64,6 @@ class MyApp(QMainWindow):
         super().__init__()
 
         uic.loadUi("login.ui", self)  # Load UI dynamically
-
         self.login_button.clicked.connect(self.goto_homeScreen)
 
 
@@ -314,7 +315,6 @@ class TypingScreen(QMainWindow):
 
     def textChangedfunc(self, strg):
 
-
         # print("is_authenticated", Login.is_authenticated())
         Worker.change_typing_time(
             finish_time=TypingScreen.timer[self.timer_select_index])
@@ -395,7 +395,7 @@ class TypingScreen(QMainWindow):
 
 
 class PracticeScreen(QMainWindow):
-    random_200_text = predict_practice_word()
+    random_200_text = Handler_algo().predict_words()
     timer = [15, 30, 60]
 
     def __init__(self):
@@ -476,6 +476,9 @@ class PracticeScreen(QMainWindow):
             self.timer_started = False
 
     def refresh_typing_text(self):
+        #Handler_algo().predict_words()
+        # hand.predict_words()
+
         # print("resetting the thread to ",self.no_chance)
         self.no_chance = True
 
@@ -517,7 +520,7 @@ class PracticeScreen(QMainWindow):
 
     @classmethod
     def assign_random_text(cls):
-        cls.random_200_text = predict_practice_word()
+        cls.random_200_text = Handler_algo().predict_words()
 
 
 
@@ -548,7 +551,7 @@ class PracticeScreen(QMainWindow):
                 self.worker = None
 
     def textChangedfunc(self, strg):
-
+        print("random_200_text",type(PracticeScreen.random_200_text))
         Worker.change_typing_time(
             finish_time=PracticeScreen.timer[self.timer_select_index])
         global temp
@@ -779,37 +782,37 @@ class KeyTutorial(QMainWindow):
 
 
 
-# Run the application
-app = QApplication([])
 
-
-# styling
-
-with open("style/style.qss") as f:
-    app.setStyleSheet(f.read())
-
-
-widget = QtWidgets.QStackedWidget()  # testing
-
-login = MyApp()
-resetConfirmation = ResetPasswordVerificationScreen()
-register = RegisterScreen()
-typingScreen = TypingScreen()
-practicescreen = PracticeScreen()
-accountscreen = AccountScreen()
-resetpassword = ResetPassword()
-tutorial = Tutorial()
-key_tutorial = KeyTutorial()
-
-widget.addWidget(login)
-widget.addWidget(register)
-widget.addWidget(resetConfirmation)
-widget.addWidget(typingScreen)
-widget.addWidget(practicescreen)
-widget.addWidget(accountscreen)
-widget.addWidget(resetpassword)
-widget.addWidget(tutorial)
-widget.addWidget(key_tutorial)
-
-widget.show()
-app.exec_()
+if __name__ == "__main__":
+    # Run the application
+    app = QApplication([])
+    
+    # adding styling files
+    with open("style/style.qss") as f:
+        app.setStyleSheet(f.read())
+    
+    
+    widget = QtWidgets.QStackedWidget()
+    
+    login = MyApp()
+    resetConfirmation = ResetPasswordVerificationScreen()
+    register = RegisterScreen()
+    typingScreen = TypingScreen()
+    practicescreen = PracticeScreen()
+    accountscreen = AccountScreen()
+    resetpassword = ResetPassword()
+    tutorial = Tutorial()
+    key_tutorial = KeyTutorial()
+    
+    widget.addWidget(login)
+    widget.addWidget(register)
+    widget.addWidget(resetConfirmation)
+    widget.addWidget(typingScreen)
+    widget.addWidget(practicescreen)
+    widget.addWidget(accountscreen)
+    widget.addWidget(resetpassword)
+    widget.addWidget(tutorial)
+    widget.addWidget(key_tutorial)
+    
+    widget.show()
+    app.exec_()

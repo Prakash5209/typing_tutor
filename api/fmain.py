@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, status, HTTPException
+from sqlalchemy.ext.mutable import MutableDict
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from typing import Annotated, Optional,Dict,List
 from database import engine, SessionLocal
@@ -22,7 +24,10 @@ import jwt
 import models
 from datetime import datetime
 from models import User,MistakeLetter,Report
-from ml.knn_model import Suggest
+
+
+# from custom_algo import get_mistakes
+# from ml.knn_model import Suggest
 
 
 env_path = Path(__file__).parent.parent / '.env'
@@ -97,9 +102,6 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@app.get("/practice-words")
-async def word_prediction():
-    return Suggest.predict_words()
 
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
@@ -240,22 +242,17 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
     db_response = db.execute(stmt).scalar_one_or_none()
     if db_response:
         try:
-            updated_json = {key: [0, 0] for key in string.ascii_lowercase}
+            updated_json = db_response.jon.copy()
             for key in js:
-                updated_json[key] = db_response.jon[key]
-                # updated_json[key] = list(db_response.jon[key])
-            print("updated_json",updated_json)
+                updated_json[key][0] += js[key][0]
+                updated_json[key][1] += js[key][1]
 
-            for i in js:
-                updated_json[i][0] += js[i][0]
-                updated_json[i][1] += js[i][1]
-
-            print("updated_json",updated_json)
-
-            db_response.jon = updated_json
+            db_response.jon.clear()
+            db_response.jon = MutableDict(updated_json)
             print("db_response",db_response.jon)
             db.commit()
             db.refresh(db_response)
+            print("final",db_response.jon)
             return {
                 "message":db_response,
                 "status": status.HTTP_200_OK
@@ -269,6 +266,7 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
         for i in js:
             updated_json[i][0] = js[i][0]
             updated_json[i][1] = js[i][1]
+        print(updated_json)
         new_instance = MistakeLetter(user_id = user_id,jon = updated_json)
         db.add(new_instance)
         db.commit()
@@ -305,3 +303,14 @@ async def get_report(db: db_dependency, token_data: dict = Depends(verify_token)
     result = db.execute(select(Report))
     reports = result.scalars().all()
     return reports
+
+
+@app.get("/get-mistakes")
+async def get_mistake_letters(db:db_dependency,token_data: dict = Depends(verify_token)):
+
+    print(token_data)
+    stmt = select(MistakeLetter).where(MistakeLetter.user_id == token_data.get("id"))
+    out = db.execute(stmt)
+    dd = out.scalar_one_or_none()
+    return jsonable_encoder(dd).get('jon')
+    print(jsonable_encoder(dd).get('jon'))

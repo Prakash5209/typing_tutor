@@ -29,7 +29,7 @@ class MistakeLetter(Base, TimeStamps):
     __tablename__ = "MistakeLetter"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"),unique=True)
+    user_id = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"),unique=True)
     jon = Column(MutableDict.as_mutable(JSON))
     user = relationship("User",back_populates = "mistakeletter")
 
@@ -38,7 +38,7 @@ class Report(Base,TimeStamps):
     __tablename__ = "reports"
 
     id = Column(Integer,primary_key = True,index = True)
-    user_id = Column(Integer,ForeignKey("users.id"),nullable = False)
+    user_id = Column(Integer,ForeignKey("users.id",ondelete="CASCADE"),nullable = False)
     session_id = Column(String(64),unique = True,nullable = False,default=lambda x:str(uuid.uuid4()))
     wpm = Column(Float)
     rwpm = Column(Float)

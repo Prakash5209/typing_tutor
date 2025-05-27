@@ -67,8 +67,10 @@ class Tracker:
         for word in self.raw_char:
             raw_user_char += len(word)
 
+        print("raw_user_char",raw_user_char)
         # rwpm
         rwpm = (raw_user_char / 5) / (time/60)
+        print(rwpm)
 
         correct_char = 0
         for i in range(min(len(self.text),len(self.raw_char))):
@@ -76,17 +78,22 @@ class Tracker:
                 if self.raw_char[i][j] == self.text[i][j]:
                     correct_char += 1
 
+        print("correct_char",correct_char)
+        
         #wpm
         wpm = (correct_char / 5) / (time/60)
+        print(wpm)
 
         #accuracy
         accu = correct_char/raw_user_char * 100
 
 
         # save_report_db function should be called first be get session_name for file name
+        print("call save db")
         response = self.save_report_db(rwpm,wpm,accu)
 
         file_path = response.get("file_path")
+
 
         self.save_to_file(raw_user_char,correct_char,file_path)
 
@@ -113,9 +120,12 @@ class Tracker:
             os.mkdir(folder_path)
             with open(file_path,"w") as file:
                 file.write(json.dumps(json_data))
+                print("if",os.path.exists(file_path))
         else:
             with open(file_path,"w") as file:
                 file.write(json.dumps(json_data))
+                print("else",os.path.exists(file_path))
+                print(os.path.abspath(file_path))
 
 
 
@@ -126,12 +136,13 @@ class Tracker:
             "Content-Type":"application/json"
         }
         js = {
-            "wpm": rwpm, 
-            "rwpm": wpm,
+            "wpm": wpm, 
+            "rwpm": rwpm,
             "accuracy": accu,
         }
 
         response = requests.post("http://localhost:8000/create-report",headers = headers,json = js)
+        # print("res",res.json())
         return response.json()
 
 
