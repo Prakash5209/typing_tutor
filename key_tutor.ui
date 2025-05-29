@@ -66,7 +66,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="active_key">
              <property name="minimumSize">
               <size>
                <width>600</width>
@@ -74,7 +74,9 @@
               </size>
              </property>
              <property name="text">
-              <string>key tutorial arial lorem lipum</string>
+              <string>
+                Accuracy in typing today brings speed tomorrow.
+              </string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>

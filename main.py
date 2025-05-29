@@ -1043,6 +1043,7 @@ class KeyTutorial(QMainWindow):
         self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
         self.test_type.textChanged.connect(self.textChangedfunc)
 
+
     def showEvent(self, event):
         super().showEvent(event)
         print("tutorial")
@@ -1051,15 +1052,23 @@ class KeyTutorial(QMainWindow):
 
 
         self.context:str = None
+        self.intro: str = None
+
         lst = ['f-j', 'd-k', 's-l', 'a-;', 'g-h', 'r-u', 'e-i', 'w-o', 'q-p', 't-y', 'v-n', 'c-m', 'x-,', 'z-.', 'b', 'n-m']
         for i in lst:
             if i == self.lesson_data.get("pair"):
                 with open("tutorials/" + i + ".txt","r") as file:
                     self.context = file.read()
 
+                with open("tutorials/" + i + "_intro.txt","r") as file:
+                    self.intro = file.read()
 
-        print("context",self.context)
+        if self.lesson_data.get("pair") == "j-f":
+            self.active_key.setText("f and j key")
+
         self.textBrowser.setText(self.context)
+        self.textBrowser_2.setText(self.intro)
+        
 
         self.liveinput = LiveInputChecker(self.context,self.textBrowser)
 
