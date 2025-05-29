@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>594</height>
+    <width>852</width>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,23 +33,12 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>778</width>
-         <height>529</height>
+         <width>830</width>
+         <height>677</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_5">
+       <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
-         <widget class="QFrame" name="frame_3">
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_4"/>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
          <widget class="QFrame" name="frame_2">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
@@ -86,8 +75,89 @@
           </layout>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="1" column="0">
+         <widget class="QFrame" name="frame_3">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>LP</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>LR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>LM</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>LI</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Thumb</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>RI</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>RM</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>RR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>RP</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QTextBrowser" name="textBrowser">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>20</pointsize>
@@ -105,22 +175,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="4" column="0" colspan="2">
-         <widget class="QFrame" name="frame">
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QTextBrowser" name="textBrowser_2"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
+        <item row="3" column="0">
          <widget class="QLineEdit" name="test_type">
           <property name="font">
            <font>
@@ -136,6 +191,21 @@ border-radius:5px;</string>
           </property>
          </widget>
         </item>
+        <item row="4" column="0">
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QTextBrowser" name="textBrowser_2"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -147,7 +217,7 @@ border-radius:5px;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>852</width>
      <height>21</height>
     </rect>
    </property>
