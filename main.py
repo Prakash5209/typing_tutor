@@ -1041,14 +1041,13 @@ class KeyTutorial(QMainWindow):
 
         # Updated here: go back directly to the existing tutorial widget instance
         self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
+        self.test_type.textChanged.connect(self.textChangedfunc)
 
     def showEvent(self, event):
         super().showEvent(event)
         print("tutorial")
-        print("current",widget.currentIndex())
-        print("Account screen index:", widget.indexOf(practicescreen))
-        if UserInfo.get_userinfo():
-            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+        # if UserInfo.get_userinfo():
+        #     self.account_btn.setText(UserInfo.get_userinfo().get("username"))
 
 
         self.context:str = None
@@ -1056,12 +1055,24 @@ class KeyTutorial(QMainWindow):
         for i in lst:
             if i == self.lesson_data.get("pair"):
                 with open("tutorials/" + i + ".txt","r") as file:
-                    context = file.read()
-                    print("content",context)
+                    self.context = file.read()
 
+
+        print("context",self.context)
         self.textBrowser.setText(self.context)
 
         self.liveinput = LiveInputChecker(self.context,self.textBrowser)
+
+    def textChangedfunc(self,strg):
+        temp = strg
+        input_check = self.liveinput.inputcheck(strg)
+
+        if strg.endswith(" "):
+            temp = strg
+            self.liveinput.save_previous_word(temp)
+            self.liveinput.wordindex += 1
+            self.test_type.setText("")
+
 
 if __name__ == "__main__":
     # Run the application
