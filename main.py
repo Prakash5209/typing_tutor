@@ -881,7 +881,17 @@ class AccountScreen(QMainWindow):
             label.deleteLater()
         
             graph_widget = pg.GraphicsLayoutWidget()
+            graph_widget.setMinimumHeight(400)  # or any height you prefer
             layout.addWidget(graph_widget, position[0], position[1])
+
+
+            plot = graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
+            plot.addLegend()  # Add legend BEFORE plotting
+
+            # Plot data with names to appear in the legend
+            wpm_curve = plot.plot(x, wpm, pen=pg.mkPen('r', width=2), name="WPM")
+            rwpm_curve = plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
+            acc_curve = plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
         
             # Add the plot
             plot = graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
