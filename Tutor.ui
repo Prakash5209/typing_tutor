@@ -173,116 +173,112 @@
            <string>Lessons</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="4">
+           <item row="0" column="0">
             <widget class="QPushButton" name="fj_btn">
              <property name="text">
               <string>f,j</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="5">
+           <item row="0" column="1">
             <widget class="QPushButton" name="dk_btn">
              <property name="text">
               <string>d,k</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="5">
+           <item row="0" column="2">
             <widget class="QPushButton" name="sl_btn">
              <property name="text">
               <string>s,l</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="4">
+           <item row="0" column="3">
             <widget class="QPushButton" name="a;_btn">
              <property name="text">
               <string>a,;</string>
              </property>
             </widget>
-          </item>
-
-           <item row="2" column="1">
+           </item>
+           <item row="0" column="5">
             <widget class="QPushButton" name="gh_btn">
              <property name="text">
               <string>g,h</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
+           <item row="1" column="0">
             <widget class="QPushButton" name="ru_btn">
              <property name="text">
               <string>r,u</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="1" column="1">
             <widget class="QPushButton" name="ei_btn">
              <property name="text">
               <string>e,i</string>
              </property>
             </widget>
            </item>
-
-           <item row="0" column="0">
+           <item row="1" column="2">
             <widget class="QPushButton" name="wo_btn">
              <property name="text">
               <string>w,o</string>
              </property>
             </widget>
            </item>
-
-           <item row="1" column="0">
+           <item row="1" column="3">
             <widget class="QPushButton" name="qp_btn">
              <property name="text">
               <string>q,p</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="5">
             <widget class="QPushButton" name="ty_btn">
              <property name="text">
               <string>t,y</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="0">
             <widget class="QPushButton" name="vn_btn">
              <property name="text">
               <string>v,n</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="2" column="1">
             <widget class="QPushButton" name="cm_btn">
              <property name="text">
               <string>c,m</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
+           <item row="2" column="2">
             <widget class="QPushButton" name="x,_btn">
              <property name="text">
               <string>x,,</string>
              </property>
             </widget>
-          </item>
-          <item row="0" column="2">
+           </item>
+           <item row="2" column="3">
             <widget class="QPushButton" name="z._btn">
              <property name="text">
               <string>z,.</string>
              </property>
             </widget>
            </item>
-
-          <item row="0" column="2">
+           <item row="2" column="5">
             <widget class="QPushButton" name="b_btn">
              <property name="text">
               <string>b</string>
              </property>
             </widget>
            </item>
-          <item row="0" column="2">
+           <item row="3" column="0">
             <widget class="QPushButton" name="nm_btn">
              <property name="text">
               <string>n,m</string>
