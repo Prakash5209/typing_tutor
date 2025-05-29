@@ -15,6 +15,8 @@ class Handler_algo:
         }
         response = requests.get("http://localhost:8000/get-mistakes",headers = headers)
         mistakes = response.json()
+        if mistakes == None:
+            return {}
         return mistakes
 
     def predict_words(self):

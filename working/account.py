@@ -78,8 +78,6 @@ class Login:
         self.password = password
 
     def get_user(self):
-        print("username", self.username)
-        print("password", self.password)
 
         if self.username and self.password:
             try:
@@ -100,7 +98,8 @@ class Login:
         payload = {
             "id": id,
             "username": username,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            # "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours = 24),
             "iat": datetime.datetime.utcnow()
         }
 
@@ -137,8 +136,13 @@ class Login:
                     token["exp"])
 
                 authenticted_or_not = token_exp_time > datetime.datetime.utcnow()
-
-                return decrypted
+                if authenticted_or_not:
+                    return decrypted
+                else:
+                    with open(CREDENTIAL_FILE,"w") as file:
+                        file.write("")
+                        print("removed token")
+                return "token expired"
         except jwt.ExpiredSignatureError:
             print("Token has expired.")
             return False
@@ -146,6 +150,8 @@ class Login:
             print("is_authenticated Exception:", e)
             return False
 
+
+class UserInfo:
     @staticmethod
     def get_userinfo():
         try:
@@ -156,7 +162,9 @@ class Login:
                 encrypted = file.read()
                 decrypted = cipher_suite.decrypt(encrypted).decode()
                 token = jwt.decode(decrypted,Login.secret,algorithms=["HS256"])
-                return token
+                if Login.is_authenticated():
+                    return token
+
         except Exception as e:
             print("get_userinfo",e)
 

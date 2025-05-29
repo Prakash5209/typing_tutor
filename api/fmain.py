@@ -317,10 +317,12 @@ async def get_report(db: db_dependency, token_data: dict = Depends(verify_token)
 
 @app.get("/get-mistakes")
 async def get_mistake_letters(db:db_dependency,token_data: dict = Depends(verify_token)):
+    try:
+        stmt = select(MistakeLetter).where(MistakeLetter.user_id == token_data.get("id"))
+        out = db.execute(stmt)
+        dd = out.scalar_one_or_none()
+        print(jsonable_encoder(dd).get('jon'))
+        return jsonable_encoder(dd).get('jon')
+    except Exception as e:
+        print(e)
 
-    print(token_data)
-    stmt = select(MistakeLetter).where(MistakeLetter.user_id == token_data.get("id"))
-    out = db.execute(stmt)
-    dd = out.scalar_one_or_none()
-    return jsonable_encoder(dd).get('jon')
-    print(jsonable_encoder(dd).get('jon'))

@@ -12,7 +12,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTreeWidgetItem,QTableWidgetItem
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
-from working.account import Register, Login, Account_recovery, Verification_code,Logout
+from working.account import Register, Login, Account_recovery, Verification_code,Logout,UserInfo
 from working.filter import Tracker
 import numpy as np
 
@@ -67,6 +67,7 @@ class MyApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
+
         uic.loadUi("login.ui", self)  # Load UI dynamically
         self.login_button.clicked.connect(self.goto_homeScreen)
 
@@ -105,18 +106,14 @@ class MyApp(QMainWindow):
     def goto_homeScreen(self):
         username = self.usernamelineEdit.text()
         password = self.passwordlineEdit.text()
-
         login = Login(username, password)
         response_status = login.get_user()
-
-        # if okay go to TypingScreen
         try:
             if response_status.status_code == 200:
+                # Move to TypingScreen
                 widget.setCurrentIndex(widget.currentIndex() + 3)
-                print(e)
         except Exception as e:
-            print("response_status.status_code", e)
-
+            print("Login failed:", e)
 
     def goto_resetPasswordVerificationScreen(self):
         widget.setCurrentIndex(widget.currentIndex() + 2)
@@ -162,10 +159,6 @@ class TypingScreen(QMainWindow):
         uic.loadUi("home.ui", self)
 
 
-        # set username in account tab 
-        user_name = Login.get_userinfo().get("username")
-        self.account_btn.setText(user_name)
-
         # timer option index
         self.timer_select_index = 0
         self.timer = TypingScreen.timer[self.timer_select_index]
@@ -209,6 +202,13 @@ class TypingScreen(QMainWindow):
         self.update_time = QTimer(self)
         self.update_time.timeout.connect(self.tracktimer)
         self.timer_started = False
+
+    def showEvent(self,event):
+        print("typingscreen")
+        if UserInfo.get_userinfo():
+            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+        super().showEvent(event)
+
 
     def selectTime(self):
 
@@ -416,8 +416,8 @@ class PracticeScreen(QMainWindow):
         uic.loadUi("practice.ui", self)
 
         # set username in account tab 
-        user_name = Login.get_userinfo().get("username")
-        self.account_btn.setText(user_name)
+        # user_name = Login.get_userinfo().get("username")
+        # self.account_btn.setText(user_name)
 
 
 
@@ -455,6 +455,13 @@ class PracticeScreen(QMainWindow):
         self.update_time = QTimer(self)
         self.update_time.timeout.connect(self.tracktimer)
         self.timer_started = False
+
+
+    def showEvent(self,event):
+        print("practicingscreen")
+        if UserInfo.get_userinfo():
+            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+        super().showEvent(event)
 
     def gotoHome(self):
         # thread cleaning
@@ -724,13 +731,37 @@ class AccountScreen(QMainWindow):
         super().__init__()
         uic.loadUi("account.ui", self)  # Load your UI file here
 
-        # set username in account tab 
+        
+        # Connect logout button (if needed)
+        self.logout_btn.clicked.connect(self.backToLoginScreen)
+
+        # back to typing screen
+        self.test_session.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
+
+        # back to practice screen
+        self.practice_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 1))
+
+        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
+
+        self.load_reports()
+        # Load reports on startup
+
+
+
+    def showEvent(self,event):
+        print("practicingscreen")
+        if UserInfo.get_userinfo():
+            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+        super().showEvent(event)
+
 
         token = Login.is_authenticated()
         headers = {
             "Authorization":f"Bearer {token}"
         }
-        user_info = requests.get("http://localhost:8000/user-info",headers = headers).json()
+
+
+        user_info = requests.get("http://localhost:8000/user-info",headers = headers).json() 
         self.username_label.setText("Welcome " + user_info.get("username"))
         self.account_btn.setText(user_info.get("username"))
         self.email_label.setText("Email: " + user_info.get("email"))
@@ -885,19 +916,7 @@ class AccountScreen(QMainWindow):
 
 
 
-        # Connect logout button (if needed)
-        self.logout_btn.clicked.connect(self.backToLoginScreen)
 
-        # back to typing screen
-        self.test_session.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
-
-        # back to practice screen
-        self.practice_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 1))
-
-        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
-
-        self.load_reports()
-        # Load reports on startup
 
     def load_reports(self):
         tk = Login.is_authenticated()
@@ -951,54 +970,107 @@ class AccountScreen(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() - 5)
 
 
+
+
 class Tutorial(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("Tutor.ui", self)
-
-        # set username in account tab 
-        user_name = Login.get_userinfo().get("username")
-        self.account_btn.setText(user_name)
-
-
-
-
-        # self.submit.clicked.connect(self.submit_new_password)
-
-        # go to test session
         self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
         self.pushButton_2.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
         self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
 
+        
+        pairs = {
+            # Home row
+            'fj_btn': 'f-j',
+            'dk_btn': 'd-k',
+            'sl_btn': 's-l',
+            'a;_btn': 'a-;',
+            'gh_btn': 'g-h',
+        
+            # Top row
+            'ru_btn': 'r-u',
+            'ei_btn': 'e-i',
+            'wo_btn': 'w-o',
+            'qp_btn': 'q-p',
+            'ty_btn': 't-y',
+        
+            # Bottom row
+            'vn_btn': 'v-n',
+            'cm_btn': 'c-m',
+            'x,_btn': 'x-,',
+            'z._btn': 'z-.',
+            'b_btn': 'b',  # single letter drill
+            'nm_btn': 'n-m',
+        
+            # Additional useful combos (optional but common)
+            # 'ui_btn': 'u-i',
+            # 'op_btn': 'o-p',
+            # 'qw_btn': 'q-w',
+            # 'as_btn': 'a-s',
+            # 'zx_btn': 'z-x',
+        }
+
+        for btn_name, pair in pairs.items():
+            btn = getattr(self, btn_name)
+            btn.clicked.connect(lambda _, p=pair: self.open_key_tutorial({'pair': p}))
+
+    def open_key_tutorial(self, lesson_data):
+        tutorial_screen = KeyTutorial(lesson_data=lesson_data)
+        widget.addWidget(tutorial_screen)
+        widget.setCurrentWidget(tutorial_screen)
+
+    def showEvent(self, event):
+        print("tutorial")
+        if UserInfo.get_userinfo():
+            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+        super().showEvent(event)
+
 
 class KeyTutorial(QMainWindow):
-    def __init__(self):
+    def __init__(self, lesson_data=None):
         super().__init__()
         uic.loadUi("key_tutor.ui", self)
+        self.lesson_data = lesson_data
+
+        try:
+            self.go_back_tutorial.clicked.disconnect()
+        except TypeError:
+            pass  # no previous connection
+
+        # Updated here: go back directly to the existing tutorial widget instance
+        self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
+
+        self.practice_screen.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
+        self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 5))
+        self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        print("tutorial")
+        if UserInfo.get_userinfo():
+            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
 
 
-
-        # set username in account tab 
-        user_name = Login.get_userinfo().get("username")
-        self.account_btn.setText(user_name)
-
-
-        # self.submit.clicked.connect(self.submit_new_password)
-
-
+        context:str = None
+        lst = ['f-j', 'd-k', 's-l', 'a-;', 'g-h', 'r-u', 'e-i', 'w-o', 'q-p', 't-y', 'v-n', 'c-m', 'x-,', 'z-.', 'b', 'n-m']
+        for i in lst:
+            if i == self.lesson_data.get("pair"):
+                with open("tutorials/" + i + ".txt","r") as file:
+                    context = file.read()
+                    print("content",context)
 
 
 if __name__ == "__main__":
     # Run the application
     app = QApplication([])
-    
+
     # adding styling files
     with open("style/style.qss") as f:
         app.setStyleSheet(f.read())
-    
-    
     widget = QtWidgets.QStackedWidget()
-    
+
     login = MyApp()
     resetConfirmation = ResetPasswordVerificationScreen()
     register = RegisterScreen()
@@ -1008,7 +1080,7 @@ if __name__ == "__main__":
     resetpassword = ResetPassword()
     tutorial = Tutorial()
     key_tutorial = KeyTutorial()
-    
+
     widget.addWidget(login)
     widget.addWidget(register)
     widget.addWidget(resetConfirmation)
@@ -1018,6 +1090,7 @@ if __name__ == "__main__":
     widget.addWidget(resetpassword)
     widget.addWidget(tutorial)
     widget.addWidget(key_tutorial)
-    
+
     widget.show()
     app.exec_()
+
