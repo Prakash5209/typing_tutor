@@ -1,25 +1,17 @@
 from sklearn.neighbors import NearestNeighbors
-from typing import Dict,List
+from typing import Dict, List
 import numpy as np
+import random
 
 class Suggest:
     error_map: Dict = None
     letter_scores: Dict = None
-
-    # word_list = [
-    #     # Example subset for brevity (you can use your full list here)
-    #     "application", "banana", "candle", "keyboard", "toolkit", "apple",
-    #     "kite", "lamp", "mom", "milk", "quiz", "jazz", "xylophone", "rainbow", "zipper"
-    # ]
-    
-
     word_list: List = []
 
-    with open("words_alpha.txt","r") as word:
+    with open("words_alpha.txt", "r") as word:
         re = word.read()
         lst = re.split()
         word_list = np.array([i for i in lst if len(i) <= 6])
-
 
     @classmethod
     def assign_mistake_keys(cls, dt: Dict):
@@ -28,6 +20,8 @@ class Suggest:
 
     @classmethod
     def get_top_mistake_letters(cls, n=5):
+        if not cls.letter_scores:
+            return []
         return sorted(cls.letter_scores, key=cls.letter_scores.get, reverse=True)[:n]
 
     @staticmethod
@@ -41,10 +35,15 @@ class Suggest:
 
     @classmethod
     def predict_words(cls, n_neighbors=30, top_n_letters=5):
-        if cls.letter_scores is None:
-            raise ValueError("Letter scores not initialized. Call assign_mistake_keys() first.")
+        # If no letter scores exist, return random words
+        if not cls.letter_scores:
+            print("No mistake data found. Returning random words.")
+            return np.random.choice(cls.word_list, size=n_neighbors, replace=False)
 
         top_letters = set(cls.get_top_mistake_letters(top_n_letters))
+        if not top_letters:
+            print("Top mistake letters empty. Returning random words.")
+            return np.random.choice(cls.word_list, size=n_neighbors, replace=False)
 
         print(f"Top mistake letters: {top_letters}")
 
@@ -63,10 +62,5 @@ class Suggest:
         distances, indices = knn.kneighbors([target_vec])
 
         suggested_words = [cls.word_list[i] for i in indices[0]]
-
-        # return suggested_words
-        
-        # randomize words
-        randomize = np.random.choice(suggested_words,size=30)
-        return randomize
+        return np.random.choice(suggested_words, size=min(n_neighbors, len(suggested_words)), replace=False)
 

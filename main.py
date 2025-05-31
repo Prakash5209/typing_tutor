@@ -1,6 +1,6 @@
 import module1
 import pyqtgraph as pg
-from inputchecker import LiveInputChecker
+from inputchecker import LiveInputChecker,Fingers
 # from filter_save import Filter_and_save
 import smtplib
 import requests
@@ -172,7 +172,8 @@ class TypingScreen(QMainWindow):
         self.test_type.textChanged.connect(self.textChangedfunc)
         self.test_refresh_button.clicked.connect(self.refresh_typing_text)
 
-        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 4))
+        # self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 4))
+        self.tutor_btn.clicked.connect(self.tutor)
 
 
         # self.tutor
@@ -225,6 +226,11 @@ class TypingScreen(QMainWindow):
                 f"time: {TypingScreen.timer[self.timer_select_index]}")
 
         # gui timer won't change until next operation
+
+    def tutor(self):
+        self.thread_cleanup()
+        self.timer_counter = 0
+        widget.setCurrentIndex(widget.currentIndex() + 4)
 
     def gotoPractice(self):
         # thread cleaning
@@ -432,7 +438,8 @@ class PracticeScreen(QMainWindow):
 
         self.test_button.clicked.connect(self.gotoHome)
         self.account_btn.clicked.connect(self.goto_account)
-        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 3))
+        # self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 3))
+        self.tutor_btn.clicked.connect(self.tutor)
 
         self.lineEdit.textChanged.connect(self.textChangedfunc)
         self.practice_refresh.clicked.connect(self.refresh_typing_text)
@@ -463,14 +470,21 @@ class PracticeScreen(QMainWindow):
             self.account_btn.setText(UserInfo.get_userinfo().get("username"))
         super().showEvent(event)
 
+    def tutor(self):
+        self.thread_cleanup()
+        self.timer_counter = 0
+        widget.setCurrentIndex(widget.currentIndex() + 3)
+
     def gotoHome(self):
         # thread cleaning
         self.thread_cleanup()
+        self.timer_counter = 0
         widget.setCurrentIndex(widget.currentIndex() - 1)
 
     def goto_account(self):
         # thread cleaning
         self.thread_cleanup()
+        self.timer_counter = 0
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def predict_practice_word():
@@ -731,8 +745,6 @@ class AccountScreen(QMainWindow):
         super().__init__()
         uic.loadUi("account.ui", self)  # Load your UI file here
 
-        
-        # Connect logout button (if needed)
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
         # back to typing screen
@@ -893,11 +905,6 @@ class AccountScreen(QMainWindow):
             rwpm_curve = plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
             acc_curve = plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
         
-            # Add the plot
-            plot = graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
-            plot.plot(x, wpm, pen=pg.mkPen('r', width=2), name="WPM")
-            plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
-            plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
         
             plot.setLabel('left', 'Value')
             plot.setLabel('bottom', 'Time')
@@ -1038,7 +1045,37 @@ class Tutorial(QMainWindow):
         super().showEvent(event)
 
 
+
 class KeyTutorial(QMainWindow):
+
+    FINGER_MAP = {
+        'q': 'left_pinky', 'a': 'left_pinky', 'z': 'left_pinky',
+        'w': 'left_ring', 's': 'left_ring', 'x': 'left_ring',
+        'e': 'left_middle', 'd': 'left_middle', 'c': 'left_middle',
+        'r': 'left_index', 'f': 'left_index', 'v': 'left_index',
+        't': 'left_index', 'g': 'left_index', 'b': 'left_index',
+
+        'y': 'right_index', 'h': 'right_index', 'n': 'right_index',
+        'u': 'right_index', 'j': 'right_index', 'm': 'right_index',
+        'i': 'right_middle', 'k': 'right_middle', ',': 'right_middle',
+        'o': 'right_ring', 'l': 'right_ring', '.': 'right_ring',
+        'p': 'right_pinky', ';': 'right_pinky', '/': 'right_pinky',
+
+        ' ': 'thumb',
+    }
+
+    FINGER_COLOR = {
+        'left_pinky': 'background-color: #e74c3c;',
+        'left_ring': 'background-color: #f39c12;',
+        'left_middle': 'background-color: #f1c40f;',
+        'left_index': 'background-color: #2ecc71;',
+        'right_index': 'background-color: #3498db;',
+        'right_middle': 'background-color: #9b59b6;',
+        'right_ring': 'background-color: #1abc9c;',
+        'right_pinky': 'background-color: #e67e22;',
+        'thumb': 'background-color: #95a5a6;',
+    }
+
     def __init__(self, lesson_data=None):
         super().__init__()
         uic.loadUi("key_tutor.ui", self)
@@ -1047,30 +1084,37 @@ class KeyTutorial(QMainWindow):
         try:
             self.go_back_tutorial.clicked.disconnect()
         except TypeError:
-            pass  # no previous connection
+            pass
 
-        # Updated here: go back directly to the existing tutorial widget instance
         self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
         self.test_type.textChanged.connect(self.textChangedfunc)
 
+        # Finger label map
+        self.finger_labels = {
+            'left_pinky': self.label,
+            'left_ring': self.label_2,
+            'left_middle': self.label_3,
+            'left_index': self.label_4,
+            'thumb': self.label_5,
+            'right_index': self.label_6,
+            'right_middle': self.label_7,
+            'right_ring': self.label_8,
+            'right_pinky': self.label_9,
+        }
 
     def showEvent(self, event):
         super().showEvent(event)
         print("tutorial")
-        # if UserInfo.get_userinfo():
-        #     self.account_btn.setText(UserInfo.get_userinfo().get("username"))
 
-
-        self.context:str = None
+        self.context: str = None
         self.intro: str = None
 
         lst = ['f-j', 'd-k', 's-l', 'a-;', 'g-h', 'r-u', 'e-i', 'w-o', 'q-p', 't-y', 'v-n', 'c-m', 'x-,', 'z-.', 'b', 'n-m']
         for i in lst:
             if i == self.lesson_data.get("pair"):
-                with open("tutorials/" + i + ".txt","r") as file:
+                with open("tutorials/" + i + ".txt", "r") as file:
                     self.context = file.read()
-
-                with open("tutorials/" + i + "_intro.txt","r") as file:
+                with open("tutorials/" + i + "_intro.txt", "r") as file:
                     self.intro = file.read()
 
         if self.lesson_data.get("pair") == "j-f":
@@ -1078,14 +1122,31 @@ class KeyTutorial(QMainWindow):
 
         self.textBrowser.setText(self.context)
         self.textBrowser_2.setText(self.intro)
-        
 
-        self.liveinput = LiveInputChecker(self.context,self.textBrowser)
+        self.liveinput = LiveInputChecker(self.context, self.textBrowser)
+        self.fingers = Fingers(self.context)
 
-    def textChangedfunc(self,strg):
+    def textChangedfunc(self, strg):
         temp = strg
         input_check = self.liveinput.inputcheck(strg)
-
+        finger_input_check = self.fingers.userinput(strg)
+    
+        # Highlight correct finger
+        next_letter = self.fingers.future_letter()
+        if next_letter:
+            finger = self.FINGER_MAP.get(next_letter.lower())
+    
+            # Reset all labels
+            for label in self.finger_labels.values():
+                label.setStyleSheet("")
+    
+            # Highlight only the correct finger label
+            if finger and finger in self.finger_labels:
+                color = self.FINGER_COLOR.get(finger, "")
+                correct_label = self.finger_labels[finger]  # Fixed: use correct_label instead of label
+                correct_label.setStyleSheet(color + " color: white; padding: 3px 6px; border-radius: 4px;")
+    
+        # Keep your original flow
         if strg.endswith(" "):
             temp = strg
             self.liveinput.save_previous_word(temp)
@@ -1093,6 +1154,8 @@ class KeyTutorial(QMainWindow):
             self.test_type.setText("")
 
 
+
+            
 if __name__ == "__main__":
     # Run the application
     app = QApplication([])

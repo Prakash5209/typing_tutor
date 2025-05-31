@@ -23,7 +23,8 @@ import jwt
 
 import models
 from datetime import datetime
-from models import User,MistakeLetter,Report
+from models import User,MistakeLetter,Report,MistakeTracker
+from services import deduct_mistake_letters
 
 
 # from custom_algo import get_mistakes
@@ -57,7 +58,6 @@ class GetUser(BaseModel):
     username: str
     password: str
 
-
 class UpdateUserBase(BaseModel):
     username: Optional[str]
     email: Optional[str]
@@ -66,6 +66,7 @@ class UpdateUserBase(BaseModel):
 
 class MistakeLetterSchema(BaseModel):
     jon: Dict[str, List[int]]
+    no_jon: Dict[str, int]
 
 
 class ReportScheme(BaseModel):
@@ -238,18 +239,18 @@ async def reset_password(user: ResetPassword, db: db_dependency):
 
 
 
-
 @app.post("/character-updated")
 async def update_character(character: MistakeLetterSchema, db: db_dependency, token_data: Dict = Depends(verify_token)):
     js = character.jon
+    no_js = character.no_jon
     user_id = token_data.get('id')
 
-    print("js",js)
-    print(token_data)
-
     stmt = select(MistakeLetter).where(MistakeLetter.user_id == user_id)
+    no_char_query = db.query(MistakeTracker).filter(MistakeTracker.user_id == user_id).scalar()
     db_response = db.execute(stmt).scalar_one_or_none()
-    if db_response:
+
+    # deduct_mistake_letters(token_data.get("id"),db)
+    if db_response and no_char_query:
         try:
             updated_json = db_response.jon.copy()
             for key in js:
@@ -258,10 +259,16 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
 
             db_response.jon.clear()
             db_response.jon = MutableDict(updated_json)
-            print("db_response",db_response.jon)
             db.commit()
             db.refresh(db_response)
-            print("final",db_response.jon)
+
+            for i in no_js:
+                no_char_query.count[i] += no_js[i]
+
+            db.commit()
+            db.refresh(no_char_query)
+
+            deduct_mistake_letters(user_id, db)
             return {
                 "message":db_response,
                 "status": status.HTTP_200_OK
@@ -277,9 +284,12 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
             updated_json[i][1] = js[i][1]
         print(updated_json)
         new_instance = MistakeLetter(user_id = user_id,jon = updated_json)
-        db.add(new_instance)
+        new_mistakeTracker = MistakeTracker(user_id = user_id,count = no_js)
+
+        db.add_all([new_instance,new_mistakeTracker])
         db.commit()
         db.refresh(new_instance)
+        db.refresh(new_mistakeTracker)
         return {"message":new_instance,"status":status.HTTP_201_CREATED}
 
 @app.post("/create-report")

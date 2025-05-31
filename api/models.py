@@ -23,6 +23,7 @@ class User(Base, TimeStamps):
 
     mistakeletter = relationship("MistakeLetter",back_populates="user",uselist = False)
     report = relationship("Report",back_populates = "user")
+    mistaketracker = relationship("MistakeTracker",back_populates="user",uselist = False)
 
 
 class MistakeLetter(Base, TimeStamps):
@@ -32,6 +33,14 @@ class MistakeLetter(Base, TimeStamps):
     user_id = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"),unique=True)
     jon = Column(MutableDict.as_mutable(JSON))
     user = relationship("User",back_populates = "mistakeletter")
+
+class MistakeTracker(Base,TimeStamps):
+    __tablename__ = "MistakeTracker"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"),unique=True)
+    count = Column(MutableDict.as_mutable(JSON))
+    user = relationship("User",back_populates = "mistaketracker")
 
 
 class Report(Base,TimeStamps):

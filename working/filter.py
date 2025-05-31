@@ -42,10 +42,13 @@ class Tracker:
                     self.char_dict[self.raw_char[i][-k]][0] += 1
 
         self.only_char = {k:j for k,j in self.char_dict.items() if j[0] > 0 or j[1] > 0}
-        self.save_char(self.only_char)
+        self.except_char = self.filter_mistake_tracker()
+        self.save_char(self.only_char,self.except_char)
+        
+
         return self.only_char
 
-    def save_char(self,chars: dict):
+    def save_char(self,chars: dict,no_chars: dict):
         login = Login.is_authenticated()
 
         headers = {
@@ -53,7 +56,8 @@ class Tracker:
             "Content-Type":"application/json"
         }
         payload = {
-            "jon":chars
+            "jon":chars,
+            "no_jon":no_chars
         }
 
         # print("payload",payload)
@@ -67,10 +71,8 @@ class Tracker:
         for word in self.raw_char:
             raw_user_char += len(word)
 
-        print("raw_user_char",raw_user_char)
         # rwpm
         rwpm = (raw_user_char / 5) / (time/60)
-        print(rwpm)
 
         correct_char = 0
         for i in range(min(len(self.text),len(self.raw_char))):
@@ -78,25 +80,21 @@ class Tracker:
                 if self.raw_char[i][j] == self.text[i][j]:
                     correct_char += 1
 
-        print("correct_char",correct_char)
-        
         #wpm
         wpm = (correct_char / 5) / (time/60)
-        print(wpm)
 
         #accuracy
         accu = correct_char/raw_user_char * 100
 
 
         # save_report_db function should be called first be get session_name for file name
-        print("call save db")
         response = self.save_report_db(rwpm,wpm,accu,time)
 
         file_path = response.get("file_path")
 
 
         self.save_to_file(raw_user_char,correct_char,file_path)
-
+        self.filter_mistake_tracker()
         return response
 
 
@@ -120,12 +118,9 @@ class Tracker:
             os.mkdir(folder_path)
             with open(file_path,"w") as file:
                 file.write(json.dumps(json_data))
-                print("if",os.path.exists(file_path))
         else:
             with open(file_path,"w") as file:
                 file.write(json.dumps(json_data))
-                print("else",os.path.exists(file_path))
-                print(os.path.abspath(file_path))
 
 
 
@@ -146,4 +141,9 @@ class Tracker:
         # print("res",res.json())
         return response.json()
 
+
+    def filter_mistake_tracker(self):
+        dt = {i:0 for i in string.ascii_lowercase} 
+        no_only_char = {i:dt[i]+1 if i not in self.only_char else dt[i] for i in dt}
+        return no_only_char
 

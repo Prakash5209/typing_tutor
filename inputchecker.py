@@ -20,6 +20,7 @@ class LiveInputChecker:
         return self.text
 
     def inputcheck(self, word):
+
         text_lst = self.text.split()
         text_nested_lst = list(map(lambda x: list(x), text_lst))
 
@@ -105,3 +106,39 @@ class LiveInputChecker:
         return list(map(lambda x:"".join(x),self.raw_char))
         # return self.raw_char
 
+
+
+
+
+
+class Fingers:
+    def __init__(self, text):
+        self.text = text
+        self.index = 0
+        self.prev_input = ""
+
+    def userinput(self, current_input):
+        # Update the index based on user's input correctness
+        clean_input = current_input.replace(" ", "")  # Remove spaces for matching
+
+        # Move index forward only if characters match expected text sequentially
+        matched_len = 0
+        for i, ch in enumerate(clean_input):
+            if i < len(self.text) and ch == self.text[i]:
+                matched_len = i + 1
+            else:
+                break
+        self.index = matched_len
+        self.prev_input = current_input
+
+    def future_letter(self):
+        # Return next expected character if available
+        if self.index < len(self.text):
+            return self.text[self.index]
+        return None
+
+    def sync_index(self, current_input):
+        # Sync index carefully on space or manual reset
+        clean_input = current_input.replace(" ", "")
+        self.index = min(len(clean_input), len(self.text))
+        self.prev_input = current_input
