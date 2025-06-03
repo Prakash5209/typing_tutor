@@ -85,28 +85,28 @@
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="lp_label">
              <property name="text">
               <string>LP</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="lr_label">
              <property name="text">
               <string>LR</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="lm_label">
              <property name="text">
               <string>LM</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_4">
+            <widget class="QLabel" name="li_label">
              <property name="text">
               <string>LI</string>
              </property>
@@ -120,28 +120,28 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_6">
+            <widget class="QLabel" name="ri_label">
              <property name="text">
               <string>RI</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="rm_label">
              <property name="text">
               <string>RM</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="rr_label">
              <property name="text">
               <string>RR</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_9">
+            <widget class="QLabel" name="rp_label">
              <property name="text">
               <string>RP</string>
              </property>

@@ -612,9 +612,6 @@ class PracticeScreen(QMainWindow):
             self.update_time.stop()
             self.timer_started = False
 
-            # sending raw user input to Filter_and_save
-        # test = self.filter_save.set_input_lst(strg)
-
         if self.no_chance:
             print("no_change")
             self.thread_timer()
@@ -1047,39 +1044,12 @@ class Tutorial(QMainWindow):
 
 
 class KeyTutorial(QMainWindow):
-
-    FINGER_MAP = {
-        'q': 'left_pinky', 'a': 'left_pinky', 'z': 'left_pinky',
-        'w': 'left_ring', 's': 'left_ring', 'x': 'left_ring',
-        'e': 'left_middle', 'd': 'left_middle', 'c': 'left_middle',
-        'r': 'left_index', 'f': 'left_index', 'v': 'left_index',
-        't': 'left_index', 'g': 'left_index', 'b': 'left_index',
-
-        'y': 'right_index', 'h': 'right_index', 'n': 'right_index',
-        'u': 'right_index', 'j': 'right_index', 'm': 'right_index',
-        'i': 'right_middle', 'k': 'right_middle', ',': 'right_middle',
-        'o': 'right_ring', 'l': 'right_ring', '.': 'right_ring',
-        'p': 'right_pinky', ';': 'right_pinky', '/': 'right_pinky',
-
-        ' ': 'thumb',
-    }
-
-    FINGER_COLOR = {
-        'left_pinky': 'background-color: #e74c3c;',
-        'left_ring': 'background-color: #f39c12;',
-        'left_middle': 'background-color: #f1c40f;',
-        'left_index': 'background-color: #2ecc71;',
-        'right_index': 'background-color: #3498db;',
-        'right_middle': 'background-color: #9b59b6;',
-        'right_ring': 'background-color: #1abc9c;',
-        'right_pinky': 'background-color: #e67e22;',
-        'thumb': 'background-color: #95a5a6;',
-    }
-
     def __init__(self, lesson_data=None):
         super().__init__()
         uic.loadUi("key_tutor.ui", self)
         self.lesson_data = lesson_data
+
+        self.lp_label.setStyleSheet("padding:5px;")
 
         try:
             self.go_back_tutorial.clicked.disconnect()
@@ -1088,19 +1058,6 @@ class KeyTutorial(QMainWindow):
 
         self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
         self.test_type.textChanged.connect(self.textChangedfunc)
-
-        # Finger label map
-        self.finger_labels = {
-            'left_pinky': self.label,
-            'left_ring': self.label_2,
-            'left_middle': self.label_3,
-            'left_index': self.label_4,
-            'thumb': self.label_5,
-            'right_index': self.label_6,
-            'right_middle': self.label_7,
-            'right_ring': self.label_8,
-            'right_pinky': self.label_9,
-        }
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -1126,27 +1083,45 @@ class KeyTutorial(QMainWindow):
         self.liveinput = LiveInputChecker(self.context, self.textBrowser)
         self.fingers = Fingers(self.context)
 
+    
+    def reset_all_labels(self):
+        label_lst = ["lp_label", "lr_label", "lm_label", "li_label", 
+                     "ri_label", "rm_label", "rr_label", "rp_label"]
+        for label_name in label_lst:
+            label = getattr(self, label_name, None)
+            if label is not None:
+                label.setStyleSheet("padding:5px;border-radius:5px")
+
+
     def textChangedfunc(self, strg):
         temp = strg
         input_check = self.liveinput.inputcheck(strg)
-        finger_input_check = self.fingers.userinput(strg)
-    
-        # Highlight correct finger
-        next_letter = self.fingers.future_letter()
-        if next_letter:
-            finger = self.FINGER_MAP.get(next_letter.lower())
-    
-            # Reset all labels
-            for label in self.finger_labels.values():
-                label.setStyleSheet("")
-    
-            # Highlight only the correct finger label
-            if finger and finger in self.finger_labels:
-                color = self.FINGER_COLOR.get(finger, "")
-                correct_label = self.finger_labels[finger]  # Fixed: use correct_label instead of label
-                correct_label.setStyleSheet(color + " color: white; padding: 3px 6px; border-radius: 4px;")
-    
-        # Keep your original flow
+        future_key = self.fingers.userinput(strg)
+
+        self.reset_all_labels()
+
+        light_green = "background-color:#90EE90;padding:5px;border-radius:5px"
+        light_blue = "background-color:#ADD8E6;padding:5px;border-radius:5px"
+
+        if future_key in tuple("qaz"):
+            self.lp_label.setStyleSheet(light_green)
+        elif future_key in tuple("wsx"):
+            self.lr_label.setStyleSheet(light_green)
+        elif future_key in tuple("edc"):
+            self.lm_label.setStyleSheet(light_green)
+        elif future_key in tuple("rfvtgb"):
+            self.li_label.setStyleSheet(light_green)
+        elif future_key == "hit space":
+            print("space")
+        elif future_key in tuple("yhnujm"):
+            self.ri_label.setStyleSheet(light_blue)
+        elif future_key in tuple("ik,"):
+            self.rm_label.setStyleSheet(light_blue)
+        elif future_key in tuple("ol."):
+            self.rr_label.setStyleSheet(light_blue)
+        elif future_key in tuple("p;"):
+            self.rp_label.setStyleSheet(light_blue)
+
         if strg.endswith(" "):
             temp = strg
             self.liveinput.save_previous_word(temp)
@@ -1155,7 +1130,6 @@ class KeyTutorial(QMainWindow):
 
 
 
-            
 if __name__ == "__main__":
     # Run the application
     app = QApplication([])

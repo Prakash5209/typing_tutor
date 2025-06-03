@@ -86,9 +86,6 @@ class LiveInputChecker:
             typed_word = self.typed_word_lst[word_index - 1]
             context_word = context_text[self.wordindex - 1]
 
-            print(typed_word)
-            print(context_word)
-
             if len(typed_word) > len(context_word):
                 self.raw_letter_lst.append(red("".join(context_word)))
                 self.raw_char.append(list(typed_word))
@@ -115,30 +112,19 @@ class Fingers:
     def __init__(self, text):
         self.text = text
         self.index = 0
-        self.prev_input = ""
 
     def userinput(self, current_input):
-        # Update the index based on user's input correctness
-        clean_input = current_input.replace(" ", "")  # Remove spaces for matching
+        lst_text = [i for i in self.text.split()]
+        filter_current_input = current_input.replace(" ","")
 
-        # Move index forward only if characters match expected text sequentially
-        matched_len = 0
-        for i, ch in enumerate(clean_input):
-            if i < len(self.text) and ch == self.text[i]:
-                matched_len = i + 1
-            else:
-                break
-        self.index = matched_len
-        self.prev_input = current_input
+        if current_input.endswith(" "):
+            self.index += 1
 
-    def future_letter(self):
-        # Return next expected character if available
-        if self.index < len(self.text):
-            return self.text[self.index]
-        return None
+        try:
+            future = lst_text[self.index][len(filter_current_input)]
+            print("future",future)
+            return future
+        except IndexError:
+            print("hit space")
+            return "space"
 
-    def sync_index(self, current_input):
-        # Sync index carefully on space or manual reset
-        clean_input = current_input.replace(" ", "")
-        self.index = min(len(clean_input), len(self.text))
-        self.prev_input = current_input
