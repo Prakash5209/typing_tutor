@@ -201,6 +201,7 @@ class Account_recovery:
     def send_mail(self):
         sender_email = os.getenv("SENDER_EMAIL")
         sender_email_password = os.getenv("SENDER_PASSWORD")
+        print("sender info",sender_email,sender_email_password)
 
         self.email = self.request_email()
         if not self.email:
@@ -230,7 +231,6 @@ class Account_recovery:
 
 
 class Verification_code:
-
     def confirm_recovery_code(self, code):
         try:
             dt = {Account_recovery.r.get(
@@ -251,12 +251,10 @@ class Verification_code:
                     "email": email,
                     "password": confirm_password
                 })
+                return response
             except Exception as e:
                 print(e)
 
-            res = json.loads(response.text)
-            # print(res)
-            # print("new password", email, new_password, confirm_password)
 
 
 class Logout:

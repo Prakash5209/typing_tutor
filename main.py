@@ -17,7 +17,7 @@ from working.filter import Tracker
 import numpy as np
 
 from algo_handler import Handler_algo
-
+import json
 
 import sys
 
@@ -718,24 +718,11 @@ class ResetPassword(QMainWindow):
         new_pass = self.newpasswordLineEdit.text()
         confirm_pass = self.confirmpasswordLineEdit.text()
         obj = Verification_code()
-        obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
+        obj = obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
 
-
-    # class AccountScreen(QMainWindow):
-    #     def __init__(self):
-    #         super().__init__()
-    #         uic.loadUi("account.ui", self)
-    # 
-    #         # back to login screen from resetPasswordVerficadtionScreen
-    #         self.logout_btn.clicked.connect(self.backToLoginScreen)
-    # 
-    #     def load_data(self):
-    #         ...
-    # 
-    #     def backToLoginScreen(self):  # from resetPasswordVerficadtionScreen logout = Logout()
-    #         logout.remove_token()
-    #         widget.setCurrentIndex(widget.currentIndex() - 5)
-    
+        # if 200 send to login window
+        if obj.status_code == 200:
+            widget.setCurrentIndex(widget.currentIndex()-6)
 
 class AccountScreen(QMainWindow):
     def __init__(self):
