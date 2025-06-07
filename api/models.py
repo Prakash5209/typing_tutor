@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
@@ -20,6 +20,7 @@ class User(Base, TimeStamps):
     username = Column(String(50), unique=True, index=True)
     email = Column(String(50), unique=True, index=True)
     password = Column(String(128))
+    verified_user = Column(Boolean,default=False)
 
     mistakeletter = relationship("MistakeLetter",back_populates="user",uselist = False)
     report = relationship("Report",back_populates = "user")

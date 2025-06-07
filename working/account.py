@@ -85,8 +85,7 @@ class Login:
                                          json={"username": self.username, "password": self.password})
                 # print("response", response)
                 response_text = json.loads(response.text)
-
-                if response_text and response.status_code == 200:
+                if response_text and response.status_code == 200 and response_text.get("verified_user"):
                     self.generateToken(response_text.get('id'), response_text.get('username'))
                 return response
             except Exception as e:
@@ -174,16 +173,17 @@ class UserInfo:
 class Account_recovery:
     r = redis.Redis(host="localhost", port=6379)
 
-    def __init__(self, usename: str):
-        self.username: str = usename
+    def __init__(self, email: str):
+        self.email: str = email
 
     def request_email(self) -> str:
         try:
-            response = requests.post("http://localhost:8000/get-email/", json={
-                "username": self.username
+            response = requests.post("http://localhost:8000/get-email", json={
+                "email": self.email
             })
-            self.email = json.loads(response.text)
-            return self.email
+            self.email_inst = json.loads(response.text)
+            print("email_inst",self.email_inst)
+            return self.email_inst
         except Exception as e:
             print("send_mail_to_this_user", e)
             return ""
@@ -201,23 +201,23 @@ class Account_recovery:
     def send_mail(self):
         sender_email = os.getenv("SENDER_EMAIL")
         sender_email_password = os.getenv("SENDER_PASSWORD")
-        print("sender info",sender_email,sender_email_password)
 
-        self.email = self.request_email()
-        if not self.email:
+        self.real_email = self.request_email()
+        # print("real_email",self.real_email)
+        if not self.real_email:
             print("invalid email response")
             return
 
         # generate and store code in redis
         self.code = self.generate_code()
-        Account_recovery.r.setex(self.email, 300, self.code)
+        Account_recovery.r.setex(self.real_email, 300, self.code)
 
         try:
             msg = MIMEText(
                 f'This code "{self.code}" is valid for 5 minutes only')
             msg["Subject"] = "typing tutor account recovery"
             msg["From"] = sender_email
-            msg["To"] = self.email
+            msg["To"] = self.real_email
 
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
@@ -244,12 +244,13 @@ class Verification_code:
             print(e)
 
     # create new password
-    def create_new_password(self, email, new_password, confirm_password):
+    def create_new_password(self, email, new_password, confirm_password, verified_user):
         if new_password == confirm_password:
             try:
                 response = requests.post("http://localhost:8000/reset-password/", json={
                     "email": email,
-                    "password": confirm_password
+                    "password": confirm_password,
+                    "verified_user":verified_user
                 })
                 return response
             except Exception as e:

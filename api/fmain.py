@@ -38,20 +38,20 @@ load_dotenv(dotenv_path=env_path)
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
-
 class UserBase(BaseModel):
     username: str
     email: str
     password: str
 
 
-class GetEmailByUsername(BaseModel):
-    username: str
+class GetEmail(BaseModel):
+    email: str
 
 
 class ResetPassword(BaseModel):
     email: str
     password: str
+    verified_user: bool
 
 
 class GetUser(BaseModel):
@@ -142,12 +142,12 @@ async def create_user(user: UserBase, db: db_dependency):
         print("Exception", e)
 
 
-# get email only from Username
 @app.post("/get-email/")
-async def get_email_by_username(user: GetEmailByUsername, db: db_dependency):
+async def get_email_by_username(user: GetEmail, db: db_dependency):
     try:
-        stmt = select(User).where(User.username == user.username)
+        stmt = select(User).where(User.email == user.email)
         that_user = db.execute(stmt).scalar_one_or_none()
+        print("that_user",that_user)
         if not that_user:
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         return that_user.email
@@ -217,10 +217,13 @@ async def delete_user(id: int, db: db_dependency):
 
 @app.post("/reset-password/")
 async def reset_password(user: ResetPassword, db: db_dependency):
+    print("user",user)
     try:
         stmt = select(User).where(User.email == user.email)
         that_user = db.execute(stmt).scalar_one_or_none()
+        print("that_user",that_user)
         that_user.password = user.password
+        that_user.verified_user = user.verified_user
         db.add(that_user)
         db.commit()
         db.refresh(that_user)

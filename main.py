@@ -77,16 +77,11 @@ class MyApp(QMainWindow):
         # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
 
-
-
         # login screen to resetPasswordVerficadtionScreen
         self.forgotPassword_btn.clicked.connect(
             self.goto_resetPasswordVerificationScreen)
 
         QTimer.singleShot(0, self.auto_login_if_token_valid)
-
-    def login_func(self):
-        QMessageBox.information(self,"hello","button clicked")
 
     def auto_login_if_token_valid(self):
         if Login.is_authenticated():
@@ -108,10 +103,14 @@ class MyApp(QMainWindow):
         password = self.passwordlineEdit.text()
         login = Login(username, password)
         response_status = login.get_user()
+        response_txt = json.loads(response_status.text)
         try:
-            if response_status.status_code == 200:
-                # Move to TypingScreen
+            if response_status.status_code == 200 and response_txt.get("verified_user"):
+                # move to typing screen
                 widget.setCurrentIndex(widget.currentIndex() + 3)
+            elif response_status.status_code == 200 and not response_txt.get("verified_user"):
+                # move to login
+                widget.setCurrentIndex(widget.currentIndex() + 2)
         except Exception as e:
             print("Login failed:", e)
 
@@ -141,8 +140,7 @@ class RegisterScreen(QMainWindow):
         returned_info = r._Register__register_new_account()
 
         if returned_info == 201:
-            # goto login page
-            self.gotoScreen1()
+            widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def gotoScreen1(self):
         widget.setCurrentIndex(widget.currentIndex() - 1)
@@ -684,8 +682,8 @@ class ResetPasswordVerificationScreen(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() - 2)
 
     def send_code_to_email(self):
-        username = self.username_lineEdit.text()
-        self.obj = Account_recovery(username)
+        email = self.email_lineEdit.text()
+        self.obj = Account_recovery(email)
         self.obj.send_mail()
 
     def confirm_recovery_code_func(self):
@@ -718,7 +716,7 @@ class ResetPassword(QMainWindow):
         new_pass = self.newpasswordLineEdit.text()
         confirm_pass = self.confirmpasswordLineEdit.text()
         obj = Verification_code()
-        obj = obj.create_new_password(self.verification_obj, new_pass, confirm_pass)
+        obj = obj.create_new_password(self.verification_obj, new_pass, confirm_pass, verified_user = True)
 
         # if 200 send to login window
         if obj.status_code == 200:
@@ -745,19 +743,19 @@ class AccountScreen(QMainWindow):
 
 
     def showEvent(self,event):
-        print("practicingscreen")
         if UserInfo.get_userinfo():
             self.account_btn.setText(UserInfo.get_userinfo().get("username"))
         super().showEvent(event)
 
 
         token = Login.is_authenticated()
+        print("token",token)
         headers = {
             "Authorization":f"Bearer {token}"
         }
 
 
-        user_info = requests.get("http://localhost:8000/user-info",headers = headers).json() 
+        user_info = requests.get("http://localhost:8000/user-info",headers = headers).json()
         self.username_label.setText("Welcome " + user_info.get("username"))
         self.account_btn.setText(user_info.get("username"))
         self.email_label.setText("Email: " + user_info.get("email"))
