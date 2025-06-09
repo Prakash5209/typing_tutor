@@ -1,3 +1,4 @@
+import Levenshtein
 import string
 from working.account import Login
 import requests
@@ -44,7 +45,6 @@ class Tracker:
         self.only_char = {k:j for k,j in self.char_dict.items() if j[0] > 0 or j[1] > 0}
         self.except_char = self.filter_mistake_tracker()
         self.save_char(self.only_char,self.except_char)
-        
 
         return self.only_char
 
@@ -83,12 +83,24 @@ class Tracker:
         #wpm
         wpm = (correct_char / 5) / (time/60)
 
+        print("rwpm",raw_user_char)
+        print("wpm",correct_char)
+
         #accuracy
-        accu = correct_char/raw_user_char * 100
+        # accu = (correct_char/raw_user_char) * 100
+        typed = " ".join(self.raw_char)
+        target = " ".join(self.text[:len(self.raw_char)])
+
+        print("typed",typed)
+        print("target",target)
+
+        distance = Levenshtein.distance(target,typed)
+        accuracy = ((len(target) - distance) / len(target)) * 100
+        print("accu",accuracy)
 
 
         # save_report_db function should be called first be get session_name for file name
-        response = self.save_report_db(rwpm,wpm,accu,time)
+        response = self.save_report_db(rwpm,wpm,accuracy,time)
 
         file_path = response.get("file_path")
 
@@ -136,9 +148,8 @@ class Tracker:
             "accuracy": accu,
             "second":second
         }
-
+        print("js",js)
         response = requests.post("http://localhost:8000/create-report",headers = headers,json = js)
-        # print("res",res.json())
         return response.json()
 
 

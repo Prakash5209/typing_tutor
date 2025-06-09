@@ -725,7 +725,7 @@ class ResetPassword(QMainWindow):
 class AccountScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("account.ui", self)  # Load your UI file here
+        uic.loadUi("account.ui", self)
 
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
@@ -737,16 +737,17 @@ class AccountScreen(QMainWindow):
 
         self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
 
-        self.load_reports()
-        # Load reports on startup
-
 
 
     def showEvent(self,event):
+
+        # Load reports on startup
+        self.load_mistakes()
+        self.load_reports()
+
         if UserInfo.get_userinfo():
             self.account_btn.setText(UserInfo.get_userinfo().get("username"))
         super().showEvent(event)
-
 
         token = Login.is_authenticated()
         print("token",token)
@@ -759,6 +760,7 @@ class AccountScreen(QMainWindow):
         self.username_label.setText("Welcome " + user_info.get("username"))
         self.account_btn.setText(user_info.get("username"))
         self.email_label.setText("Email: " + user_info.get("email"))
+
         joined_date = user_info.get("create_at")
         joined_date_timezone = datetime.datetime.strptime(joined_date,"%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours = 5, minutes = 45)
         self.joinded_date_label.setText("Joinded Date: " + str(joined_date_timezone))
@@ -775,7 +777,7 @@ class AccountScreen(QMainWindow):
         
         for i in test_taken:
             second = i.get("second", 0)
-            
+           
             wpm = i.get("wpm")
             if wpm is not None:
                 if second == 15 and wpm > self.highest_wpm[0]:
@@ -808,16 +810,16 @@ class AccountScreen(QMainWindow):
         print(self.accuracy)
 
 
-        row_position = self.tableWidget.rowCount()  # Get the current number of rows
-        self.tableWidget.insertRow(row_position)    # Add a new empty row
-        
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.insertRow(0)    # Add a new empty row
+        row_position = 0
         # Set items for the new row
         self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(self.highest_wpm[0])))
         self.tableWidget.setItem(row_position, 1, QTableWidgetItem(str(self.highest_wpm[1])))
         self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(self.highest_wpm[2])))
         
         # (Optional) If you want to add multiple rows for rwpm and accuracy:
-        row_position = self.tableWidget.rowCount()
+        # row_position = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row_position)
         self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(self.highest_rwpm[0])))
         self.tableWidget.setItem(row_position, 1, QTableWidgetItem(str(self.highest_rwpm[1])))
@@ -830,11 +832,8 @@ class AccountScreen(QMainWindow):
         self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(self.accuracy[2])))
 
 
-
-
-
-
-
+        row_labels = ["RWPM", "WPM", "Accuracy"]
+        self.tableWidget.setVerticalHeaderLabels(row_labels)
 
         timestamps = []
         wpm_values = []
@@ -843,7 +842,7 @@ class AccountScreen(QMainWindow):
         
         for report in test_taken:
             dt = datetime.datetime.fromisoformat(report['create_at'])
-            timestamps.append(dt.timestamp())  # Convert datetime to float timestamp for plotting
+            timestamps.append(dt.timestamp())
             wpm_values.append(report['wpm'])
             rwpm_values.append(report['rwpm'])
             accuracy_values.append(report['accuracy'])
@@ -898,8 +897,14 @@ class AccountScreen(QMainWindow):
 
 
 
+    def load_mistakes(self):
+        tk = Login.is_authenticated()
+        headers = {
+            "Authorization": f"Bearer {tk}",
+            "Content-Type": "application/json"
+        }
+
         mistake = requests.get("http://localhost:8000/get-mistakes",headers = headers).json()
-        print("mistakes",mistake)
 
         table = self.tableWidget_2
         table.setRowCount(len(mistake))
@@ -944,12 +949,10 @@ class AccountScreen(QMainWindow):
 
     def populate_tree(self, reports):
         self.treeWidget.clear()
-    
         self.treeWidget.setColumnCount(8)
         self.treeWidget.setHeaderLabels([
             "SN", "Session ID", "User ID", "WPM", "Accuracy", "RWPM", "Created At", "File Path"
         ])
-    
         for i, report in enumerate(reports, start=1):
             item = QTreeWidgetItem([
                 str(i),

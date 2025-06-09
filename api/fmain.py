@@ -323,7 +323,7 @@ async def report(report: ReportScheme, db: db_dependency, token_data: str = Depe
 
 @app.get("/get-report", response_model=List[GetReportSchema])
 async def get_report(db: db_dependency, token_data: dict = Depends(verify_token)):
-    result = db.execute(select(Report))
+    result = db.execute(select(Report).filter(Report.user_id == token_data.get("id")))
     reports = result.scalars().all()
     return reports
 
