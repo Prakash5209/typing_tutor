@@ -739,6 +739,31 @@ class AccountScreen(QMainWindow):
         self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
 
 
+        # Replace label_5 with pyqtgraph plot in QGridLayout
+        label = self.findChild(QtWidgets.QLabel, "label_5")
+        layout = label.parent().layout()
+        
+        # Find position of label_5 in the grid
+        position = None
+        for row in range(layout.rowCount()):
+            for col in range(layout.columnCount()):
+                item = layout.itemAtPosition(row, col)
+                if item and item.widget() == label:
+                    position = (row, col)
+                    break
+            if position:
+                break
+        
+        if position:
+            layout.removeWidget(label)
+            label.deleteLater()
+        
+            self.graph_widget = pg.GraphicsLayoutWidget()
+            self.graph_widget.setMinimumHeight(400)  # or any height you prefer
+            layout.addWidget(self.graph_widget, position[0], position[1])
+
+
+
 
     def showEvent(self,event):
 
@@ -863,47 +888,24 @@ class AccountScreen(QMainWindow):
         wpm = np.array(wpm_values)
         rwpm = np.array(rwpm_values)
         accuracy = np.array(accuracy_values)
-        
-
-        # Replace label_5 with pyqtgraph plot in QGridLayout
-        label = self.findChild(QtWidgets.QLabel, "label_5")
-        layout = label.parent().layout()
-        
-        # Find position of label_5 in the grid
-        position = None
-        for row in range(layout.rowCount()):
-            for col in range(layout.columnCount()):
-                item = layout.itemAtPosition(row, col)
-                if item and item.widget() == label:
-                    position = (row, col)
-                    break
-            if position:
-                break
-        
-        if position:
-            layout.removeWidget(label)
-            label.deleteLater()
-        
-            graph_widget = pg.GraphicsLayoutWidget()
-            graph_widget.setMinimumHeight(400)  # or any height you prefer
-            layout.addWidget(graph_widget, position[0], position[1])
 
 
-            plot = graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
-            plot.addLegend()  # Add legend BEFORE plotting
+        self.graph_widget.clear()
+        plot = self.graph_widget.addPlot(title="WPM, RWPM, and Accuracy Over Time")
+        plot.addLegend()  # Add legend BEFORE plotting
 
-            # Plot data with names to appear in the legend
-            wpm_curve = plot.plot(x, wpm, pen=pg.mkPen('r', width=2), name="WPM")
-            rwpm_curve = plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
-            acc_curve = plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
-        
-        
-            plot.setLabel('left', 'Value')
-            plot.setLabel('bottom', 'Time')
-            plot.addLegend()
-        
-            axis = plot.getAxis('bottom')
-            axis.setTicks([[(val, datetime.datetime.fromtimestamp(val).strftime('%H:%M:%S')) for val in x]])
+        # Plot data with names to appear in the legend
+        wpm_curve = plot.plot(x, wpm, pen=pg.mkPen('r', width=2), name="WPM")
+        rwpm_curve = plot.plot(x, rwpm, pen=pg.mkPen('b', width=2), name="RWPM")
+        acc_curve = plot.plot(x, accuracy, pen=pg.mkPen('g', width=2), name="Accuracy")
+
+
+        plot.setLabel('left', 'Value')
+        plot.setLabel('bottom', 'Time')
+        plot.addLegend()
+
+        axis = plot.getAxis('bottom')
+        axis.setTicks([[(val, datetime.datetime.fromtimestamp(val).strftime('%H:%M:%S')) for val in x]])
 
 
 
