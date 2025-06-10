@@ -747,7 +747,6 @@ class AccountScreen(QMainWindow):
         super().showEvent(event)
 
         token = Login.is_authenticated()
-        print("token",token)
         headers = {
             "Authorization":f"Bearer {token}"
         }
@@ -841,7 +840,6 @@ class AccountScreen(QMainWindow):
     def load_graph(self):
 
         token = Login.is_authenticated()
-        print("token",token)
 
         headers = {
             "Authorization":f"Bearer {token}"
