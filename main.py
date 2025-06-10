@@ -1,3 +1,4 @@
+
 import module1
 import pyqtgraph as pg
 from inputchecker import LiveInputChecker,Fingers
@@ -741,10 +742,6 @@ class AccountScreen(QMainWindow):
 
     def showEvent(self,event):
 
-        # Load reports on startup
-        self.load_mistakes()
-        self.load_reports()
-
         if UserInfo.get_userinfo():
             self.account_btn.setText(UserInfo.get_userinfo().get("username"))
         super().showEvent(event)
@@ -835,6 +832,22 @@ class AccountScreen(QMainWindow):
         row_labels = ["RWPM", "WPM", "Accuracy"]
         self.tableWidget.setVerticalHeaderLabels(row_labels)
 
+        # Load reports on startup
+        self.load_mistakes()
+        self.load_reports()
+        self.load_graph()
+
+
+    def load_graph(self):
+
+        token = Login.is_authenticated()
+        print("token",token)
+
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+
+        test_taken = requests.get("http://localhost:8000/get-report",headers = headers).json()
         timestamps = []
         wpm_values = []
         rwpm_values = []
@@ -905,18 +918,21 @@ class AccountScreen(QMainWindow):
         }
 
         mistake = requests.get("http://localhost:8000/get-mistakes",headers = headers).json()
+        print("Mistake",mistake)
+        if mistake != None:
+            table = self.tableWidget_2
+            table.setRowCount(len(mistake))
+            table.setColumnCount(3)
+            table.setHorizontalHeaderLabels(["key", "mistake", "missed"])
 
-        table = self.tableWidget_2
-        table.setRowCount(len(mistake))
-        table.setColumnCount(3)
-        table.setHorizontalHeaderLabels(["key", "mistake", "missed"])
+            for row, (key, value) in enumerate(mistake.items()):
+                table.setItem(row, 0, QTableWidgetItem(str(key)))
+                table.setItem(row, 1, QTableWidgetItem(str(value[0])))
+                table.setItem(row, 2, QTableWidgetItem(str(value[1])))
 
-        for row, (key, value) in enumerate(mistake.items()):
-            table.setItem(row, 0, QTableWidgetItem(str(key)))
-            table.setItem(row, 1, QTableWidgetItem(str(value[0])))
-            table.setItem(row, 2, QTableWidgetItem(str(value[1])))
-
-        table.resizeColumnsToContents()
+            table.resizeColumnsToContents()
+        else:
+            print("mistake is empty")
 
 
 
