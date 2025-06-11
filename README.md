@@ -1,15 +1,42 @@
-# Keystroke Improver
-
-**Version:** 1.0.0  
-**Date:** June 11, 2025
+# Keystroke Improver GUI Application
 
 ## Overview
 
-The **Keystroke Improver (Mid-Defense)** is an innovative application designed to enhance typing accuracy and speed through real-time feedback and adaptive challenges. This project aims to bridge the gap between basic typing exercises and advanced typing proficiency, offering users a comprehensive tool to improve their keystroke dynamics.
+The **Keystroke Improver** is a Python-based desktop application designed to enhance typing speed and accuracy by focusing on frequently mistyped letters. By analyzing user input with the **K-Nearest Neighbors (KNN)** machine learning algorithm, the application identifies common typing errors and generates personalized practice words to help users improve their weak areas.
+
+This tool features an intuitive graphical user interface (GUI) developed with PyQt5, making it accessible for users of all skill levels. Its adaptive learning approach ensures efficient, targeted typing practice, promoting better muscle memory, accuracy, and speed.
 
 ## Features
 
-- **Real-Time Feedback:** Provides immediate corrections and suggestions during typing sessions.
-- **Adaptive Challenges:** Tailors difficulty levels based on user performance to ensure continuous improvement.
-- **Progress Tracking:** Monitors and displays typing metrics over time to motivate users.
-- **Customizable Settings:** Allows users to adjust themes, key layouts, and feedback preferences.
+- Identification of frequently mistyped letters using machine learning (KNN).  
+- Personalized practice word suggestions tailored to user errors.  
+- User-friendly GUI for easy interaction and practice.  
+- Focus on gradual improvement of typing proficiency and accuracy.
+
+## Objectives
+
+- Enhance typing speed and accuracy by reducing errors.  
+- Analyze user input patterns to identify typing weaknesses.  
+- Provide personalized typing exercises for effective learning.
+
+## Technologies Used
+
+- Python  
+- PyQt5 (for GUI)  
+- scikit-learn (KNN algorithm)  
+- nltk, fuzzywuzzy, RapidFuzz (text processing)  
+- FastAPI, Uvicorn (backend utilities)  
+
+## Future Enhancements
+
+- Progress tracking and detailed performance reports.  
+- Gamification elements to increase engagement.  
+- Voice feedback and interactive learning features.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or contributions, please open an issue or submit a pull request.
