@@ -1,4 +1,4 @@
-# Keystroke Improver (Mid-Defense)
+# Keystroke Improver
 
 **Version:** 1.0.0  
 **Date:** June 11, 2025
