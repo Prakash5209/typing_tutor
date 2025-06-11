@@ -26,3 +26,5 @@ This tool features an intuitive graphical user interface (GUI) developed with Py
 - scikit-learn (KNN algorithm)  
 - nltk, fuzzywuzzy, RapidFuzz (text processing)  
 - FastAPI, Uvicorn (backend utilities)  
+
+## Screenshots
