@@ -28,3 +28,5 @@ This tool features an intuitive graphical user interface (GUI) developed with Py
 - FastAPI, Uvicorn (backend utilities)  
 
 ## Screenshots
+![Typing Practice Screenshot](screenshots/Screenshot%202025-06-11%20at%2016.09.04.png)
+
