@@ -28,8 +28,8 @@ This tool features an intuitive graphical user interface (GUI) developed with Py
 - FastAPI, Uvicorn (backend utilities)  
 
 ## Screenshots
-![Typing Tutor Screenshot](typing_tutor/screenshots/test.png)
+![Typing Practice Screenshot](screenshots/test.png)
+![Typing Practice Screenshot](screenshots/practice.png)
+![Typing Practice Screenshot](screenshots/account.png)
 
-![Typing Tutor Screenshot](typing_tutor/screenshots/practice.png)
-![Typing Tutor Screenshot](typing_tutor/screenshots/account.png)
 
