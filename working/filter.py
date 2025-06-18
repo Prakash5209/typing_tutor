@@ -26,8 +26,11 @@ class Tracker:
                             self.char_dict[self.raw_char[i][j]][0] += 1
                         except KeyError:
                             # capital key error
-                            lower_char = self.raw_char[i][j].lower()
-                            self.char_dict[lower_char][0] += 1
+                            if self.raw_char[i][j] in list(string.ascii_letters):
+                                lower_char = self.raw_char[i][j].lower()
+                                self.char_dict[lower_char][0] += 1
+                            else:
+                                print("string.punctuation")
                         except Exception as e:
                             print(e);
 
@@ -40,13 +43,21 @@ class Tracker:
                             self.char_dict[self.raw_char[i][j]][0] += 1
                         except KeyError:
                             # capital key error
-                            lower_char = self.raw_char[i][j].lower()
-                            self.char_dict[lower_char][0] += 1
+                            if self.raw_char[i][j] in list(string.ascii_letters):
+                                lower_char = self.raw_char[i][j].lower()
+                                self.char_dict[lower_char][0] += 1
+                            else:
+                                print("string.punctuation")
                         except Exception as e:
                             print(e);
 
                 for k in range(1,(len(lst_text[i])-len(self.raw_char[i]))+1):
-                    self.char_dict[lst_text[i][-k]][1] += 1
+                    try:
+                        self.char_dict[self.raw_char[i][-k]][0] += 1
+                    except Exception as e:
+                        # ignore all the punctuation keyerror
+                        print(e)
+
 
 
             elif len(self.raw_char[i]) > len(lst_text[i]):
@@ -57,13 +68,20 @@ class Tracker:
                             self.char_dict[self.raw_char[i][j]][0] += 1
                         except KeyError:
                             # capital key error
-                            lower_char = self.raw_char[i][j].lower()
-                            self.char_dict[lower_char][0] += 1
+                            if self.raw_char[i][j] in list(string.ascii_letters):
+                                lower_char = self.raw_char[i][j].lower()
+                                self.char_dict[lower_char][0] += 1
+                            else:
+                                print("string.punctuation")
                         except Exception as e:
                             print(e);
 
                 for k in range(1,(len(self.raw_char[i])-len(lst_text[i]))+1):
-                    self.char_dict[self.raw_char[i][-k]][0] += 1
+                    try:
+                        self.char_dict[self.raw_char[i][-k]][0] += 1
+                    except Exception as e:
+                        # ignore all the punctuation keyerror
+                        print(e)
 
 
         self.only_char = {k:j for k,j in self.char_dict.items() if j[0] > 0 or j[1] > 0}
