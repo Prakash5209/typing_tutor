@@ -29,6 +29,9 @@ This tool features an intuitive graphical user interface (GUI) developed with Py
 
 ## Screenshots
 ![Typing Practice Screenshot](screenshots/test.png)
+
+- Top mistake letters: {'g', 's', 'e', 'n', 'o'}
+  
 ![Typing Practice Screenshot](screenshots/practice.png)
 ![Typing Practice Screenshot](screenshots/account.png)
 
