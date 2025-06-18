@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from typing import Annotated, Optional,Dict,List
+from typing import Annotated,Dict,List
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from sqlalchemy import select, Integer
@@ -25,6 +25,7 @@ import models
 from datetime import datetime
 from models import User,MistakeLetter,Report,MistakeTracker
 from services import deduct_mistake_letters
+from schema import UserBase,GetEmail,ResetPassword,GetUser,UpdateUserBase,MistakeLetterSchema,ReportScheme,GetReportSchema
 
 
 # from custom_algo import get_mistakes
@@ -38,58 +39,6 @@ load_dotenv(dotenv_path=env_path)
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
-class UserBase(BaseModel):
-    username: str
-    email: str
-    password: str
-
-
-class GetEmail(BaseModel):
-    email: str
-
-
-class ResetPassword(BaseModel):
-    email: str
-    password: str
-    verified_user: bool
-
-
-class GetUser(BaseModel):
-    username: str
-    password: str
-
-class UpdateUserBase(BaseModel):
-    username: Optional[str]
-    email: Optional[str]
-    password: Optional[str]
-
-
-class MistakeLetterSchema(BaseModel):
-    jon: Dict[str, List[int]]
-    no_jon: Dict[str, int]
-
-
-class ReportScheme(BaseModel):
-    wpm: float
-    rwpm: float
-    accuracy: float
-    second: int
-
-
-class GetReportSchema(BaseModel):
-    id: int
-    create_at: datetime
-    updated_at: datetime
-    user_id: int
-    session_id: str
-    wpm: float
-    rwpm: float
-    second: int
-    accuracy: float
-    file_path: str
-
-    class Config:
-        orm_mode = True
 
 
 def get_db():
