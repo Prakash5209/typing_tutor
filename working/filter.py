@@ -7,12 +7,12 @@ import os
 import json
 
 class Tracker:
-    def __init__(self, text, raw_char):
+    def __init__(self, text, raw_char:list):
         self.text = text.lower().split()
         self.raw_char = raw_char
 
     def track_characters(self, target_char=None):
-        typed = list(self.raw_char)
+        typed = self.raw_char
         self.char_dict = {key: [0,0] for key in string.ascii_lowercase}
 
         lst_text = list(map(lambda x:list(x),self.text))
@@ -22,14 +22,29 @@ class Tracker:
                 for j in range(len(self.raw_char[i])):
                     if self.raw_char[i][j] != lst_text[i][j]:
                         self.char_dict[lst_text[i][j]][1] += 1
-                        self.char_dict[self.raw_char[i][j]][0] += 1
+                        try:
+                            self.char_dict[self.raw_char[i][j]][0] += 1
+                        except KeyError:
+                            # capital key error
+                            lower_char = self.raw_char[i][j].lower()
+                            self.char_dict[lower_char][0] += 1
+                        except Exception as e:
+                            print(e);
 
 
             elif len(self.raw_char[i]) < len(lst_text[i]):
                 for j in range(len(self.raw_char[i])):
                     if self.raw_char[i][j] != lst_text[i][j]:
                         self.char_dict[lst_text[i][j]][1] += 1
-                        self.char_dict[self.raw_char[i][j]][0] += 1
+                        try:
+                            self.char_dict[self.raw_char[i][j]][0] += 1
+                        except KeyError:
+                            # capital key error
+                            lower_char = self.raw_char[i][j].lower()
+                            self.char_dict[lower_char][0] += 1
+                        except Exception as e:
+                            print(e);
+
                 for k in range(1,(len(lst_text[i])-len(self.raw_char[i]))+1):
                     self.char_dict[lst_text[i][-k]][1] += 1
 
@@ -38,9 +53,18 @@ class Tracker:
                 for j in range(len(lst_text[i])):
                     if self.raw_char[i][j] != lst_text[i][j]:
                         self.char_dict[lst_text[i][j]][1] += 1
-                        self.char_dict[self.raw_char[i][j]][0] += 1
+                        try:
+                            self.char_dict[self.raw_char[i][j]][0] += 1
+                        except KeyError:
+                            # capital key error
+                            lower_char = self.raw_char[i][j].lower()
+                            self.char_dict[lower_char][0] += 1
+                        except Exception as e:
+                            print(e);
+
                 for k in range(1,(len(self.raw_char[i])-len(lst_text[i]))+1):
                     self.char_dict[self.raw_char[i][-k]][0] += 1
+
 
         self.only_char = {k:j for k,j in self.char_dict.items() if j[0] > 0 or j[1] > 0}
         self.except_char = self.filter_mistake_tracker()
