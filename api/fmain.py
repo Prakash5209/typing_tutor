@@ -147,7 +147,6 @@ async def get_email_by_username(user: GetEmail, db: db_dependency):
     try:
         stmt = select(User).where(User.email == user.email)
         that_user = db.execute(stmt).scalar_one_or_none()
-        print("that_user",that_user)
         if not that_user:
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         return that_user.email
@@ -217,11 +216,9 @@ async def delete_user(id: int, db: db_dependency):
 
 @app.post("/reset-password/")
 async def reset_password(user: ResetPassword, db: db_dependency):
-    print("user",user)
     try:
         stmt = select(User).where(User.email == user.email)
         that_user = db.execute(stmt).scalar_one_or_none()
-        print("that_user",that_user)
         that_user.password = user.password
         that_user.verified_user = user.verified_user
         db.add(that_user)
@@ -285,7 +282,6 @@ async def update_character(character: MistakeLetterSchema, db: db_dependency, to
         for i in js:
             updated_json[i][0] = js[i][0]
             updated_json[i][1] = js[i][1]
-        print(updated_json)
         new_instance = MistakeLetter(user_id = user_id,jon = updated_json)
         new_mistakeTracker = MistakeTracker(user_id = user_id,count = no_js)
 
@@ -334,7 +330,6 @@ async def get_mistake_letters(db:db_dependency,token_data: dict = Depends(verify
         stmt = select(MistakeLetter).where(MistakeLetter.user_id == token_data.get("id"))
         out = db.execute(stmt)
         dd = out.scalar_one_or_none()
-        print(jsonable_encoder(dd).get('jon'))
         return jsonable_encoder(dd).get('jon')
     except Exception as e:
         print(e)

@@ -15,15 +15,13 @@ from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
 from working.account import Register, Login, Account_recovery, Verification_code,Logout,UserInfo
 from working.filter import Tracker
-import numpy as np
-
 from algo_handler import Handler_algo
+import numpy as np
 import json
-
 import sys
-
 import time
 
+from ui import login,account,home,key_tutor,practice,register
 
 temp: str = ""
 
@@ -68,8 +66,7 @@ class MyApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
-        uic.loadUi("login.ui", self)  # Load UI dynamically
+        uic.loadUi("ui/login.ui", self)  # Load UI dynamically
         self.login_button.clicked.connect(self.goto_homeScreen)
 
 
@@ -122,7 +119,7 @@ class MyApp(QMainWindow):
 class RegisterScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("register.ui", self)
+        uic.loadUi("ui/register.ui", self)
 
 
         self.password_lineEdit_3.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -155,7 +152,7 @@ class TypingScreen(QMainWindow):
     def __init__(self):
         self.no_chance = True
         super().__init__()
-        uic.loadUi("home.ui", self)
+        uic.loadUi("ui/home.ui", self)
 
 
         # timer option index
@@ -418,7 +415,7 @@ class PracticeScreen(QMainWindow):
     def __init__(self):
         self.no_chance = True
         super().__init__()
-        uic.loadUi("practice.ui", self)
+        uic.loadUi("ui/practice.ui", self)
 
         # set username in account tab 
         # user_name = Login.get_userinfo().get("username")
@@ -669,7 +666,7 @@ class ResetPasswordVerificationScreen(QMainWindow):
     def __init__(self):
         self.obj = None
         super().__init__()
-        uic.loadUi("forgotPasswordVerificationCode.ui", self)
+        uic.loadUi("ui/forgotPasswordVerificationCode.ui", self)
 
         # back to login screen from resetPasswordVerficadtionScreen
         self.forgotPasswordCancel_btn.clicked.connect(self.backToLoginScreen)
@@ -702,7 +699,7 @@ class ResetPasswordVerificationScreen(QMainWindow):
 class ResetPassword(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("password_reset.ui", self)
+        uic.loadUi("ui/password_reset.ui", self)
         self.submit.clicked.connect(self.submit_new_password)
 
 
@@ -726,7 +723,7 @@ class ResetPassword(QMainWindow):
 class AccountScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("account.ui", self)
+        uic.loadUi("ui/account.ui", self)
 
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
@@ -993,7 +990,7 @@ class AccountScreen(QMainWindow):
 class Tutorial(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("Tutor.ui", self)
+        uic.loadUi("ui/Tutor.ui", self)
         self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
         self.pushButton_2.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
         self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
@@ -1050,7 +1047,7 @@ class Tutorial(QMainWindow):
 class KeyTutorial(QMainWindow):
     def __init__(self, lesson_data=None):
         super().__init__()
-        uic.loadUi("key_tutor.ui", self)
+        uic.loadUi("ui/key_tutor.ui", self)
         self.lesson_data = lesson_data
 
         self.lp_label.setStyleSheet("padding:5px;")

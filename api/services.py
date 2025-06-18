@@ -6,9 +6,8 @@ from sqlalchemy.ext.mutable import MutableDict
 def deduct_mistake_letters(user_id: int, db: Session):
     mistakeletter = db.query(MistakeLetter).filter(MistakeLetter.user_id == user_id).first()
     mistaketracker = db.query(MistakeTracker).filter(MistakeTracker.user_id == user_id).first()
-
-    print("mistakeletter", mistakeletter.jon)
-    print("mistaketracker", mistaketracker.count)
+    # print("mistakeletter", mistakeletter.jon)
+    # print("mistaketracker", mistaketracker.count)
 
     updated_jon = mistakeletter.jon.copy()
 
@@ -31,7 +30,7 @@ def deduct_mistake_letters(user_id: int, db: Session):
     db.refresh(mistakeletter)
     db.refresh(mistaketracker)
 
-    print("AFTER UPDATE:")
-    print("mistakeletter", mistakeletter.jon)
-    print("mistaketracker", mistaketracker.count)
+    # print("AFTER UPDATE:")
+    # print("mistakeletter", mistakeletter.jon)
+    # print("mistaketracker", mistaketracker.count)
 
