@@ -54,7 +54,7 @@ class Register:
         pattern = r'^(?=.*\d)(?=.*[!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~]).{6,}$'
 
         if not re.fullmatch(pattern, self.password):
-            print("Password must be at least 6 characters long, contain at least one digit and one punctuation mark.")
+            print("Password must be at least 6 characteraccount.pys long, contain at least one digit and one punctuation mark.")
             return
 
         if self.confirm_password == self.password:

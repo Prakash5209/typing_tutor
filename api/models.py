@@ -21,6 +21,7 @@ class User(Base, TimeStamps):
     email = Column(String(50), unique=True, index=True)
     password = Column(String(128))
     verified_user = Column(Boolean,default=False)
+    xp = Column(Float,default=0)
 
     mistakeletter = relationship("MistakeLetter",back_populates="user",uselist = False)
     report = relationship("Report",back_populates = "user")

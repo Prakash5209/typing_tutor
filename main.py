@@ -1,4 +1,3 @@
-
 import module1
 import pyqtgraph as pg
 from inputchecker import LiveInputChecker,Fingers
@@ -769,6 +768,7 @@ class AccountScreen(QMainWindow):
         super().showEvent(event)
 
         token = Login.is_authenticated()
+        print(token)
         headers = {
             "Authorization":f"Bearer {token}"
         }

@@ -29,6 +29,9 @@ class UpdateUserBase(BaseModel):
     password: Optional[str]
 
 
+class UpdateUserXp(BaseModel):
+    xp: float
+
 class MistakeLetterSchema(BaseModel):
     jon: Dict[str, List[int]]
     no_jon: Dict[str, int]

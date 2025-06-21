@@ -144,6 +144,48 @@ class Tracker:
         # save_report_db function should be called first be get session_name for file name
         response = self.save_report_db(rwpm,wpm,accuracy,time)
 
+
+        # updating the xp
+        self.total_xp = 0
+        self.wpm_xp = 0
+        self.accuracy_xp = 0
+
+        wpm_thresholds = [(100, 5), (80, 4), (60, 3), (40, 2), (20, 1), (1, 0.1)]
+        acc_thresholds = [(100,3), (80,2.4), (60,1.8), (40,1.2), (20,0.6), (1,0.3)]
+        for threshold, xp in wpm_thresholds:
+            if wpm >= threshold:
+                self.wpm_xp += xp
+                break
+        else:
+            self.wpm_xp += 0
+
+        for threshold, xp in acc_thresholds:
+            if accuracy >= threshold:
+                self.accuracy_xp += xp
+                break
+        else:
+            self.accuracy_xp += 0
+
+        self.total_xp = self.wpm_xp + self.accuracy_xp
+
+
+        login = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {login}",
+            "Content-Type":"application/json"
+        }
+        print("test")
+        print(self.total_xp)
+        print(self.wpm_xp)
+        print(self.accuracy_xp)
+        payload = {
+            "xp":self.total_xp
+        }
+        if self.total_xp > 0:
+            xp_response = requests.patch("http://localhost:8000/update-xp",headers = headers,json = payload)
+            print("xp_response",xp_response)
+
+
         file_path = response.get("file_path")
 
 

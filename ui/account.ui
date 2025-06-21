@@ -154,6 +154,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
+
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="username_label">
@@ -176,6 +177,7 @@
                </spacer>
               </item>
              </layout>
+
             </widget>
            </item>
            <item>

@@ -25,11 +25,7 @@ import models
 from datetime import datetime
 from models import User,MistakeLetter,Report,MistakeTracker
 from services import deduct_mistake_letters
-from schema import UserBase,GetEmail,ResetPassword,GetUser,UpdateUserBase,MistakeLetterSchema,ReportScheme,GetReportSchema
-
-
-# from custom_algo import get_mistakes
-# from ml.knn_model import Suggest
+from schema import UserBase,GetEmail,ResetPassword,GetUser,UpdateUserBase,MistakeLetterSchema,ReportScheme,GetReportSchema,UpdateUserXp
 
 
 env_path = Path(__file__).parent.parent / '.env'
@@ -78,6 +74,8 @@ async def user_info(db: db_dependency,token: str = Depends(verify_token)):
     return res
 
 
+
+# creating new account
 @app.post("/create-user/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
     try:
@@ -91,6 +89,7 @@ async def create_user(user: UserBase, db: db_dependency):
         print("Exception", e)
 
 
+# get email by email
 @app.post("/get-email/")
 async def get_email_by_username(user: GetEmail, db: db_dependency):
     try:
@@ -113,6 +112,8 @@ async def get_email_by_username(user: GetEmail, db: db_dependency):
         raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
+
+# get User with username and password
 @app.post("/get-user/")
 async def get_user(user: GetUser, db: db_dependency):
     try:
@@ -139,6 +140,8 @@ async def get_user(user: GetUser, db: db_dependency):
         raise HTTPException(status_code=500, detail="Unexpected server error")
 
 
+
+# update user
 @app.patch("/update-user-details/{id}", status_code=status.HTTP_200_OK)
 async def update_user(id: int, user: UpdateUserBase, db: db_dependency):
     try:
@@ -150,6 +153,19 @@ async def update_user(id: int, user: UpdateUserBase, db: db_dependency):
         db.refresh(that_user)
     except Exception as e:
         print("Exception", e)
+
+
+@app.patch("/update-xp",status_code=status.HTTP_200_OK)
+async def update_user_xp(user_xp: UpdateUserXp, db: db_dependency,token_data: Dict = Depends(verify_token)):
+    try:
+        that_user = db.query(User).filter(User.id == token_data.get("id")).first()
+        that_user.xp = user_xp.xp
+        db.add(that_user)
+        db.commit()
+        db.refresh(that_user)
+    except Exception as e:
+        print("Exception",e)
+
 
 
 @app.delete("/delete-user/{id}", status_code=status.HTTP_200_OK)
