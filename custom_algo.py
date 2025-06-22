@@ -1,4 +1,3 @@
-
 from sklearn.neighbors import NearestNeighbors
 from typing import Dict, List
 import numpy as np
@@ -35,7 +34,7 @@ class Suggest:
         return vec
 
     @classmethod
-    def predict_words(cls, n_neighbors=30, top_n_letters=5):
+    def predict_words(cls, n_neighbors=10, top_n_letters=5):
         # If no letter scores exist, return random words
         if not cls.letter_scores:
             print("No mistake data found. Returning random words.")

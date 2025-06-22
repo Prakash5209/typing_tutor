@@ -19,8 +19,8 @@ class Handler_algo:
             return {}
         return mistakes
 
-    def predict_words(self):
+    def predict_words(self,size_word):
         self.hand = Suggest.assign_mistake_keys(self.mistakes)
         # print(Suggest.error_map,Suggest.letter_scores)
         # print(Suggest.predict_words())
-        return " ".join(Suggest.predict_words())
+        return " ".join(Suggest.predict_words(n_neighbors = size_word))

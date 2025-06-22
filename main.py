@@ -1,3 +1,4 @@
+from typing import Dict
 import module1
 import pyqtgraph as pg
 from inputchecker import LiveInputChecker,Fingers
@@ -25,6 +26,7 @@ from ui import login,account,home,key_tutor,practice,register
 temp: str = ""
 
 
+sync_profile_info: Dict = None
 
 class Worker(QObject):
     finished = pyqtSignal()
@@ -145,6 +147,7 @@ class RegisterScreen(QMainWindow):
 
 class TypingScreen(QMainWindow):
 
+
     random_200_text = module1.typing_test_words()
     timer = [15, 30, 60]
 
@@ -200,9 +203,23 @@ class TypingScreen(QMainWindow):
         self.timer_started = False
 
     def showEvent(self,event):
+
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+        try:
+            user_profile_request = requests.get("http://localhost:8000/user-info",headers = headers)
+            sync_profile_info = json.loads(user_profile_request.text)
+        except Exception as e:
+            print("sync_profile_info ",e)
+
+
         print("typingscreen")
         if UserInfo.get_userinfo():
-            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+            # self.account_btn.setText(UserInfo.get_userinfo().get("username")+ " xp: " +sync_profile_info.get("xp"))
+            self.account_btn.setText(UserInfo.get_userinfo().get("username") + " " + str(sync_profile_info.get('xp')) + " xp")
+            # self.account_btn.setText(sync_profile_info.get("xp",0))
         super().showEvent(event)
 
 
@@ -408,7 +425,32 @@ class TypingScreen(QMainWindow):
 
 
 class PracticeScreen(QMainWindow):
-    random_200_text = Handler_algo().predict_words()
+
+    # generate random words from xp
+    token = Login.is_authenticated()
+    headers = {
+        "Authorization":f"Bearer {token}",
+    }
+    try:
+        res = requests.get("http://localhost:8000/user-info",headers = headers)
+        res_xp = json.loads(res.text).get("xp",0)
+    except Exception as e:
+        print(e)
+
+    size_word = 0
+    if res_xp >= 100:
+        size_word = 1000
+    elif res_xp >= 70:
+        size_word = 300
+    elif res_xp >= 50:
+        size_word = 100
+    elif res_xp >= 30:
+        size_word =50 
+    elif res_xp >= 0:
+        size_word = 30
+
+
+    random_200_text = Handler_algo().predict_words(size_word)
     timer = [15, 30, 60]
 
     def __init__(self):
@@ -461,8 +503,21 @@ class PracticeScreen(QMainWindow):
 
     def showEvent(self,event):
         print("practicingscreen")
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+        try:
+            user_profile_request = requests.get("http://localhost:8000/user-info",headers = headers)
+            sync_profile_info = json.loads(user_profile_request.text)
+        except Exception as e:
+            print("sync_profile_info ",e)
+
         if UserInfo.get_userinfo():
-            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
+            # self.account_btn.setText(UserInfo.get_userinfo().get("username")+ " xp: " +sync_profile_info.get("xp"))
+            self.account_btn.setText(UserInfo.get_userinfo().get("username") + " " + str(sync_profile_info.get('xp')) + " xp")
+            # self.account_btn.setText(sync_profile_info.get("xp",0))
+
         super().showEvent(event)
 
     def tutor(self):
@@ -558,7 +613,30 @@ class PracticeScreen(QMainWindow):
 
     @classmethod
     def assign_random_text(cls):
-        cls.random_200_text = Handler_algo().predict_words()
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}",
+        }
+        try:
+            res = requests.get("http://localhost:8000/user-info",headers = headers)
+            res_xp = json.loads(res.text).get("xp",0)
+        except Exception as e:
+            print(e)
+
+        size_word = 0
+        if res_xp >= 100:
+            size_word = 1000
+        elif res_xp >= 70:
+            size_word = 300
+        elif res_xp >= 50:
+            size_word = 100
+        elif res_xp >= 30:
+            size_word =50 
+        elif res_xp >= 0:
+            size_word = 30
+
+
+        cls.random_200_text = Handler_algo().predict_words(n_neighbors = size_word)
 
 
 
@@ -762,21 +840,28 @@ class AccountScreen(QMainWindow):
 
 
     def showEvent(self,event):
-
-        if UserInfo.get_userinfo():
-            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
-        super().showEvent(event)
-
+        print("account section")
         token = Login.is_authenticated()
-        print(token)
         headers = {
             "Authorization":f"Bearer {token}"
         }
+        try:
+            user_profile_request = requests.get("http://localhost:8000/user-info",headers = headers)
+            sync_profile_info = json.loads(user_profile_request.text)
+        except Exception as e:
+            print("sync_profile_info ",e)
+
+        print(sync_profile_info)
+        if UserInfo.get_userinfo():
+            print("nothing to see here")
+            # self.account_btn.setText(UserInfo.get_userinfo().get("username")+ " xp: " +sync_profile_info.get("xp"))
+            self.account_btn.setText(UserInfo.get_userinfo().get("username") + " " + str(sync_profile_info.get('xp')) + " xp")
+            # self.account_btn.setText(sync_profile_info.get("xp",0))
 
 
         user_info = requests.get("http://localhost:8000/user-info",headers = headers).json()
-        self.username_label.setText("Welcome " + user_info.get("username"))
-        self.account_btn.setText(user_info.get("username"))
+        self.username_label.setText("Welcome " + user_info.get("username") + " " + str(sync_profile_info.get("xp")) + " xp")
+        # self.account_btn.setText(user_info.get("username"))
         self.email_label.setText("Email: " + user_info.get("email"))
 
         joined_date = user_info.get("create_at")
@@ -961,6 +1046,7 @@ class AccountScreen(QMainWindow):
             QMessageBox.critical(self, "Error", f"Failed to load reports:\n{str(e)}")
 
     def populate_tree(self, reports):
+
         self.treeWidget.clear()
         self.treeWidget.setColumnCount(8)
         self.treeWidget.setHeaderLabels([
@@ -977,6 +1063,15 @@ class AccountScreen(QMainWindow):
                 report.get("create_at", ""),
                 report.get("file_path", ""),
             ])
+            with open(report.get('file_path'),"r") as f:
+                jdata = json.load(f)
+                mistakes = jdata.get("mistakes",[])
+                print(len(mistakes))
+                for i in range(len(mistakes)):
+                    for key,value in mistakes[i].items():
+                        child_item = QTreeWidgetItem([f"{key}: {value}"])
+                        item.addChild(child_item)
+                        print(key,value)
             self.treeWidget.addTopLevelItem(item)
 
     def backToLoginScreen(self):
@@ -1037,10 +1132,24 @@ class Tutorial(QMainWindow):
         widget.setCurrentWidget(tutorial_screen)
 
     def showEvent(self, event):
-        print("tutorial")
-        if UserInfo.get_userinfo():
-            self.account_btn.setText(UserInfo.get_userinfo().get("username"))
         super().showEvent(event)
+        print("tutorial")
+
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+        try:
+            user_profile_request = requests.get("http://localhost:8000/user-info",headers = headers)
+            sync_profile_info = json.loads(user_profile_request.text)
+        except Exception as e:
+            print("sync_profile_info ",e)
+
+
+        if UserInfo.get_userinfo():
+            # self.account_btn.setText(UserInfo.get_userinfo().get("username")+ " xp: " +sync_profile_info.get("xp"))
+            self.account_btn.setText(UserInfo.get_userinfo().get("username") + " " + str(sync_profile_info.get('xp')) + " xp")
+            # self.account_btn.setText(sync_profile_info.get("xp",0))
 
 
 
@@ -1063,6 +1172,18 @@ class KeyTutorial(QMainWindow):
     def showEvent(self, event):
         super().showEvent(event)
         print("tutorial")
+
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}"
+        }
+        try:
+            user_profile_request = requests.get("http://localhost:8000/user-info",headers = headers)
+            sync_profile_info = json.loads(user_profile_request.text)
+        except Exception as e:
+            print("sync_profile_info ",e)
+
+
 
         self.context: str = None
         self.intro: str = None
