@@ -62,40 +62,36 @@ class Worker(QObject):
         cls.status = b
 
 
+
 class MyApp(QMainWindow):
-    # login screen
-    def __init__(self):
+    def __init__(self, stacked_widget):
         super().__init__()
+        uic.loadUi("ui/login.ui", self)
+        self.stacked_widget = stacked_widget  # Store widget reference
 
-        uic.loadUi("ui/login.ui", self)  # Load UI dynamically
         self.login_button.clicked.connect(self.goto_homeScreen)
-
-
-        self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
-
-        # login screen to register screen
         self.pushButton_2.clicked.connect(self.goto_registerScreen)
-
-        # login screen to resetPasswordVerficadtionScreen
-        self.forgotPassword_btn.clicked.connect(
-            self.goto_resetPasswordVerificationScreen)
+        self.forgotPassword_btn.clicked.connect(self.goto_resetPasswordVerificationScreen)
+        self.passwordlineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
 
         QTimer.singleShot(0, self.auto_login_if_token_valid)
 
     def auto_login_if_token_valid(self):
         if Login.is_authenticated():
             print("Token valid. Redirecting to TypingScreen.")
-            widget.setCurrentIndex(widget.currentIndex() + 3)
+            self.goto_typing_screen()
         else:
             print("Token not found or invalid.")
 
-        # self.showMaximized()
-    def show_message(self):
-        print('login button pressed')
-        # QMessageBox.information(self, "Hello", "Button Clicked!")
-
     def goto_registerScreen(self):
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        register_screen = RegisterScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(register_screen)
+        self.stacked_widget.setCurrentWidget(register_screen)
+
+    def goto_resetPasswordVerificationScreen(self):
+        reset_verification = ResetPasswordVerificationScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(reset_verification)
+        self.stacked_widget.setCurrentWidget(reset_verification)
 
     def goto_homeScreen(self):
         username = self.usernamelineEdit.text()
@@ -105,57 +101,63 @@ class MyApp(QMainWindow):
         response_txt = json.loads(response_status.text)
         try:
             if response_status.status_code == 200 and response_txt.get("verified_user"):
-                # move to typing screen
-                widget.setCurrentIndex(widget.currentIndex() + 3)
+                self.goto_typing_screen()
             elif response_status.status_code == 200 and not response_txt.get("verified_user"):
-                # move to login
-                widget.setCurrentIndex(widget.currentIndex() + 2)
+                self.goto_resetPasswordVerificationScreen()
         except Exception as e:
             print("Login failed:", e)
 
-    def goto_resetPasswordVerificationScreen(self):
-        widget.setCurrentIndex(widget.currentIndex() + 2)
+    def goto_typing_screen(self):
+        typing_screen = TypingScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(typing_screen)
+        self.stacked_widget.setCurrentWidget(typing_screen)
 
 
 class RegisterScreen(QMainWindow):
-    def __init__(self):
+    def __init__(self, stacked_widget):
         super().__init__()
+        self.stacked_widget = stacked_widget
         uic.loadUi("ui/register.ui", self)
-
 
         self.password_lineEdit_3.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirm_password_lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
-        # self.create_account.connect(self.create_account_button_function)
-        self.create_account_button.clicked.connect(
-            self.create_account_button_function)
-        self.register_b_login.clicked.connect(self.gotoScreen1)
+
+        self.create_account_button.clicked.connect(self.create_account_button_function)
+        self.register_b_login.clicked.connect(self.goto_login_screen)
 
     def create_account_button_function(self):
         email = self.email_lineEdit.text()
         username = self.username_lineEdit_2.text()
         password = self.password_lineEdit_3.text()
         confirm_password = self.confirm_password_lineEdit_4.text()
+
         r = Register(email, username, password, confirm_password)
         returned_info = r._Register__register_new_account()
 
         if returned_info == 201:
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+            # Assume next screen is TypingScreen or similar
+            typing_screen = TypingScreen(self.stacked_widget)
+            self.stacked_widget.addWidget(typing_screen)
+            self.stacked_widget.setCurrentWidget(typing_screen)
 
-    def gotoScreen1(self):
-        widget.setCurrentIndex(widget.currentIndex() - 1)
+    def goto_login_screen(self):
+        login_screen = MyApp(self.stacked_widget)
+        self.stacked_widget.addWidget(login_screen)
+        self.stacked_widget.setCurrentWidget(login_screen)
 
 
 class TypingScreen(QMainWindow):
-
-
-    random_200_text = module1.typing_test_words()
     timer = [15, 30, 60]
 
-    def __init__(self):
-        self.no_chance = True
+    def __init__(self,stacked_widget):
         super().__init__()
+        self.stacked_widget = stacked_widget
+        self.no_chance = True
+
         uic.loadUi("ui/home.ui", self)
 
+
+        self.random_200_text = module1.typing_test_words()
 
         # timer option index
         self.timer_select_index = 0
@@ -166,12 +168,12 @@ class TypingScreen(QMainWindow):
 
         self.practice_button.clicked.connect(self.gotoPractice)
 
-        self.account_btn.clicked.connect(self.goto_account)
+        self.account_btn.clicked.connect(self.gotoAccount)
         self.test_type.textChanged.connect(self.textChangedfunc)
         self.test_refresh_button.clicked.connect(self.refresh_typing_text)
 
         # self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 4))
-        self.tutor_btn.clicked.connect(self.tutor)
+        self.tutor_btn.clicked.connect(self.gototutor)
 
 
         # self.tutor
@@ -239,28 +241,27 @@ class TypingScreen(QMainWindow):
 
         # gui timer won't change until next operation
 
-    def tutor(self):
+    def gototutor(self):
         self.thread_cleanup()
         self.timer_counter = 0
-        widget.setCurrentIndex(widget.currentIndex() + 4)
+        tutor_screen = Tutorial(self.stacked_widget)
+        self.stacked_widget.addWidget(tutor_screen)
+        self.stacked_widget.setCurrentWidget(tutor_screen)
+        # widget.setCurrentIndex(widget.currentIndex() + 4)
 
     def gotoPractice(self):
-        # thread cleaning
         self.thread_cleanup()
-
-        # stop the time tracker by assigning 0
         self.timer_counter = 0
+        practice_screen = PracticeScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(practice_screen)
+        self.stacked_widget.setCurrentWidget(practice_screen)
 
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def goto_account(self):
-        # thread cleaning
+    def gotoAccount(self):
         self.thread_cleanup()
-
-        # stop the time tracker by assigning 0
         self.timer_counter = 0
-
-        widget.setCurrentIndex(widget.currentIndex() + 2)
+        account_screen = AccountScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(account_screen)
+        self.stacked_widget.setCurrentWidget(account_screen)
 
     def tracktimer(self):
         self.time_button.setText("time: " + str(self.timer_counter))
@@ -338,15 +339,14 @@ class TypingScreen(QMainWindow):
         self.thread_cleanup()
 
 
-    @classmethod
-    def assign_random_text(cls):
-        cls.random_200_text = module1.typing_test_words()
+    def assign_random_text(self):
+        self.random_200_text = module1.typing_test_words()
 
     def textChangedfunc(self, strg):
 
         # print("is_authenticated", Login.is_authenticated())
         Worker.change_typing_time(
-            finish_time=TypingScreen.timer[self.timer_select_index])
+            finish_time=PracticeScreen.timer[self.timer_select_index])
         global temp
         temp = strg
 
@@ -405,58 +405,77 @@ class TypingScreen(QMainWindow):
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
         # print("Test raw_user_lst",raw_user_lst)
-        track = Tracker(TypingScreen.random_200_text,raw_user_lst)
+        track = Tracker(self.random_200_text,raw_user_lst)
         track.track_characters()
-        res = track.create_report(TypingScreen.timer[self.timer_select_index])
+        res = track.create_report(PracticeScreen.timer[self.timer_select_index])
 
         # print("res",res)
+        with open(res.get("file_path"),"r") as f:
+            mistakes = f.read()
 
         for key, value in res.items():
             key_item = QTreeWidgetItem()
             key_item.setText(0, str(key))     # Column 0: name
             key_item.setText(1, str(value))   # Column 1: value
             self.treeWidget.addTopLevelItem(key_item)
-        # sending random generated text to filter
-        # self.send_strg = Filter_and_save(self.random_200_text)
-        # self.filter_save.missedkey()
-        # disable the lineedit
+
+        mistakes = json.loads(mistakes).get("mistakes")
+
+        for i in range(len(mistakes)):
+            child_item = QTreeWidgetItem([str(mistakes[i])])
+            self.treeWidget.addTopLevelItem(child_item)
+
+
+        # print(mistakes)
+        # mistake = QTreeWidgetItem([str(mistakes.get("mistakes")[0])])
+        # self.treeWidget.addTopLevelItem(mistake)
+
+
         self.test_type.setEnabled(False)
         self.worker = None
 
 
 class PracticeScreen(QMainWindow):
 
-    # generate random words from xp
-    token = Login.is_authenticated()
-    headers = {
-        "Authorization":f"Bearer {token}",
-    }
-    try:
-        res = requests.get("http://localhost:8000/user-info",headers = headers)
-        res_xp = json.loads(res.text).get("xp",0)
-    except Exception as e:
-        print(e)
-
-    size_word = 0
-    if res_xp >= 100:
-        size_word = 1000
-    elif res_xp >= 70:
-        size_word = 300
-    elif res_xp >= 50:
-        size_word = 100
-    elif res_xp >= 30:
-        size_word =50 
-    elif res_xp >= 0:
-        size_word = 30
-
-
-    random_200_text = Handler_algo().predict_words(size_word)
     timer = [15, 30, 60]
 
-    def __init__(self):
+    def __init__(self,stacked_widget):
         self.no_chance = True
         super().__init__()
+
+
+
+        self.stacked_widget = stacked_widget
+
         uic.loadUi("ui/practice.ui", self)
+
+
+        # generate random words from xp
+        token = Login.is_authenticated()
+        headers = {
+            "Authorization":f"Bearer {token}",
+        }
+        res_xp = 0
+        try:
+            res = requests.get("http://localhost:8000/user-info",headers = headers)
+            res_xp = json.loads(res.text).get("xp",0)
+        except Exception as e:
+            print(e)
+
+        size_word = 0
+        if res_xp >= 100:
+            size_word = 1000
+        elif res_xp >= 70:
+            size_word = 300
+        elif res_xp >= 50:
+            size_word = 100
+        elif res_xp >= 30:
+            size_word =50 
+        elif res_xp >= 0:
+            size_word = 30
+
+        self.random_200_text = Handler_algo().predict_words(size_word)
+
 
         # set username in account tab 
         # user_name = Login.get_userinfo().get("username")
@@ -485,16 +504,16 @@ class PracticeScreen(QMainWindow):
         # change the timer options in gui
 
         self.time_button.setText(
-            f"time: {TypingScreen.timer[self.timer_select_index]}")
+            f"time: {PracticeScreen.timer[self.timer_select_index]}")
         self.time_button.clicked.connect(self.selectTime)
 
         self.timer_thread = None
         self.worker = None
 
-        self.practiceTextBrowser.setMarkdown(PracticeScreen.random_200_text)
+        self.practiceTextBrowser.setMarkdown(self.random_200_text)
 
         self.liveinput = LiveInputChecker(
-            PracticeScreen.random_200_text, self.practiceTextBrowser)
+            self.random_200_text, self.practiceTextBrowser)
 
         self.update_time = QTimer(self)
         self.update_time.timeout.connect(self.tracktimer)
@@ -523,39 +542,44 @@ class PracticeScreen(QMainWindow):
     def tutor(self):
         self.thread_cleanup()
         self.timer_counter = 0
-        widget.setCurrentIndex(widget.currentIndex() + 3)
+        tutor = Tutorial(self.stacked_widget)
+        self.stacked_widget.addWidget(tutor)
+        self.stacked_widget.setCurrentWidget(tutor)
+        # self.stacked_widget.setCurrentIndex(tutor)
+        # widget.setCurrentIndex(widget.currentIndex() + 3)
 
     def gotoHome(self):
         # thread cleaning
         self.thread_cleanup()
         self.timer_counter = 0
-        widget.setCurrentIndex(widget.currentIndex() - 1)
+        home_screen = TypingScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(home_screen)
+        self.stacked_widget.setCurrentWidget(home_screen)
+        # widget.setCurrentIndex(widget.currentIndex() - 1)
 
     def goto_account(self):
         # thread cleaning
         self.thread_cleanup()
         self.timer_counter = 0
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def predict_practice_word():
-        res = requests.get("http://localhost:8000/practice-words")
-        # print("predict_practice_word",res.json())
+        account = AccountScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(account)
+        self.stacked_widget.setCurrentWidget(account)
 
 
 
     def selectTime(self):
-        if self.timer_select_index >= len(TypingScreen.timer)-1:
+        if self.timer_select_index >= len(PracticeScreen.timer)-1:
 
             self.timer_select_index = 0
         else:
             self.timer_select_index += 1
 
         if not Worker.status:
-            self.timer_counter = TypingScreen.timer[self.timer_select_index]
+            self.timer_counter = PracticeScreen.timer[self.timer_select_index]
             Worker.change_typing_time(
-                finish_time=TypingScreen.timer[self.timer_select_index])
+                finish_time=PracticeScreen.timer[self.timer_select_index])
             self.time_button.setText(
-                f"time: {TypingScreen.timer[self.timer_select_index]}")
+                f"time: {PracticeScreen.timer[self.timer_select_index]}")
 
     def tracktimer(self):
         self.time_button.setText("time: " + str(self.timer_counter))
@@ -581,13 +605,13 @@ class PracticeScreen(QMainWindow):
         self.timer_started = False  # Reset the state
         # refresh the timer and reset the text of time_button
         self.time_button.setText(
-            "time: "+str(TypingScreen.timer[self.timer_select_index]))
+            "time: "+str(PracticeScreen.timer[self.timer_select_index]))
 
         # enable the linedit after refreshing the
         self.lineEdit.setEnabled(True)
 
         # resetting self.timer_counter by assigning timer_counter to 0
-        self.timer_counter = TypingScreen.timer[self.timer_select_index]
+        self.timer_counter = PracticeScreen.timer[self.timer_select_index]
 
         # self.random_200_text = module1.typing_test_words()
         self.assign_random_text()
@@ -597,9 +621,9 @@ class PracticeScreen(QMainWindow):
 
         # send to typing_test_words_from_TypingScreen
         self.liveinput = LiveInputChecker(
-            PracticeScreen.random_200_text, self.practiceTextBrowser)
+            self.random_200_text, self.practiceTextBrowser)
 
-        self.practiceTextBrowser.setMarkdown(PracticeScreen.random_200_text)
+        self.practiceTextBrowser.setMarkdown(self.random_200_text)
 
         # clearing the input fields when refreshing the text
         self.lineEdit.blockSignals(True)
@@ -611,8 +635,7 @@ class PracticeScreen(QMainWindow):
 
         self.thread_cleanup()
 
-    @classmethod
-    def assign_random_text(cls):
+    def assign_random_text(self):
         token = Login.is_authenticated()
         headers = {
             "Authorization":f"Bearer {token}",
@@ -636,7 +659,7 @@ class PracticeScreen(QMainWindow):
             size_word = 30
 
 
-        cls.random_200_text = Handler_algo().predict_words(n_neighbors = size_word)
+        self.random_200_text = Handler_algo().predict_words(n_neighbors = size_word)
 
 
 
@@ -657,7 +680,7 @@ class PracticeScreen(QMainWindow):
                         self.timer_thread.terminate()
 
                         # resetting self.timer_counter by assigning timer_counter to 0
-                        self.timer_counter = TypingScreen.timer[self.timer_select_index]
+                        self.timer_counter = PracticeScreen.timer[self.timer_select_index]
 
                         self.timer_thread.wait()
             except RuntimeError:
@@ -722,10 +745,12 @@ class PracticeScreen(QMainWindow):
         # sending to 
         raw_user_lst = self.liveinput.user_raw_text()
         # print("Test raw_user_lst",raw_user_lst)
-        track = Tracker(PracticeScreen.random_200_text,raw_user_lst)
+        track = Tracker(self.random_200_text,raw_user_lst)
         track.track_characters()
         res = track.create_report(self.timer)
 
+        with open(res.get("file_path"),"r") as f:
+            mistakes = f.read()
 
         for key,value in res.items():
             key_item = QTreeWidgetItem()
@@ -733,6 +758,11 @@ class PracticeScreen(QMainWindow):
             key_item.setText(1,str(value))
             self.treeWidget.addTopLevelItem(key_item)
 
+        mistakes = json.loads(mistakes).get("mistakes")
+
+        for i in range(len(mistakes)):
+            child_item = QTreeWidgetItem([str(mistakes[i])])
+            self.treeWidget.addTopLevelItem(child_item)
 
         # disable the lineedit
         self.lineEdit.setEnabled(False)
@@ -798,19 +828,20 @@ class ResetPassword(QMainWindow):
             widget.setCurrentIndex(widget.currentIndex()-6)
 
 class AccountScreen(QMainWindow):
-    def __init__(self):
+    def __init__(self,stacked_widget):
         super().__init__()
         uic.loadUi("ui/account.ui", self)
+        self.stacked_widget = stacked_widget
 
         self.logout_btn.clicked.connect(self.backToLoginScreen)
 
         # back to typing screen
-        self.test_session.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
+        self.test_session.clicked.connect(self.typing_screen)
 
         # back to practice screen
-        self.practice_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 1))
+        self.practice_button.clicked.connect(self.practice_screen)
 
-        self.tutor_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() + 2))
+        self.tutor_btn.clicked.connect(self.tutor_screen)
 
 
         # Replace label_5 with pyqtgraph plot in QGridLayout
@@ -836,8 +867,20 @@ class AccountScreen(QMainWindow):
             self.graph_widget.setMinimumHeight(400)  # or any height you prefer
             layout.addWidget(self.graph_widget, position[0], position[1])
 
+    def typing_screen(self):
+        typing_screen = TypingScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(typing_screen)
+        self.stacked_widget.setCurrentWidget(typing_screen)
 
+    def practice_screen(self):
+        typing_screen = PracticeScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(typing_screen)
+        self.stacked_widget.setCurrentWidget(typing_screen)
 
+    def tutor_screen(self):
+        typing_screen = Tutorial(self.stacked_widget)
+        self.stacked_widget.addWidget(typing_screen)
+        self.stacked_widget.setCurrentWidget(typing_screen)
 
     def showEvent(self,event):
         print("account section")
@@ -1066,29 +1109,38 @@ class AccountScreen(QMainWindow):
             with open(report.get('file_path'),"r") as f:
                 jdata = json.load(f)
                 mistakes = jdata.get("mistakes",[])
-                print(len(mistakes))
                 for i in range(len(mistakes)):
-                    for key,value in mistakes[i].items():
-                        child_item = QTreeWidgetItem([f"{key}: {value}"])
-                        item.addChild(child_item)
-                        print(key,value)
+                    print("test",mistakes[i])
+                    child_item = QTreeWidgetItem([str(mistakes[i])])
+                    item.addChild(child_item)
+                    # for key,value in mistakes[i].items():
+                    #     child_item = QTreeWidgetItem([f"{key}: {value}"])
+                    #     item.addChild(child_item)
             self.treeWidget.addTopLevelItem(item)
 
     def backToLoginScreen(self):
         logout = Logout()
         logout.remove_token()
-        widget.setCurrentIndex(widget.currentIndex() - 5)
+        login_screen = MyApp(self.stacked_widget)
+        self.stacked_widget.addWidget(login_screen)
+        self.stacked_widget.setCurrentWidget(login_screen)
 
 
 
 
 class Tutorial(QMainWindow):
-    def __init__(self):
+    def __init__(self,stacked_widget):
         super().__init__()
         uic.loadUi("ui/Tutor.ui", self)
-        self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
-        self.pushButton_2.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
-        self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
+        self.stacked_widget = stacked_widget
+
+        self.test_button.clicked.connect(self.gotoTestScreen)
+        self.pushButton_2.clicked.connect(self.gotoPracticeScreen)
+        self.account_btn.clicked.connect(self.gotoAccountScreen)
+
+        # self.test_button.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 4))
+        # self.pushButton_2.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 3))
+        # self.account_btn.clicked.connect(lambda: widget.setCurrentIndex(widget.currentIndex() - 2))
 
         
         pairs = {
@@ -1113,21 +1165,31 @@ class Tutorial(QMainWindow):
             'z._btn': 'z-.',
             'b_btn': 'b',  # single letter drill
             'nm_btn': 'n-m',
-        
-            # Additional useful combos (optional but common)
-            # 'ui_btn': 'u-i',
-            # 'op_btn': 'o-p',
-            # 'qw_btn': 'q-w',
-            # 'as_btn': 'a-s',
-            # 'zx_btn': 'z-x',
         }
 
         for btn_name, pair in pairs.items():
             btn = getattr(self, btn_name)
             btn.clicked.connect(lambda _, p=pair: self.open_key_tutorial({'pair': p}))
 
+
+    def gotoAccountScreen(self):
+        account_screen = AccountScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(account_screen)
+        self.stacked_widget.setCurrentWidget(account_screen)
+
+
+    def gotoTestScreen(self):
+        test_screen = TypingScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(test_screen)
+        self.stacked_widget.setCurrentWidget(test_screen)
+
+    def gotoPracticeScreen(self):
+        practice_screen = PracticeScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(practice_screen)
+        self.stacked_widget.setCurrentWidget(practice_screen)
+
     def open_key_tutorial(self, lesson_data):
-        tutorial_screen = KeyTutorial(lesson_data=lesson_data)
+        tutorial_screen = KeyTutorial(self.stacked_widget,lesson_data=lesson_data)
         widget.addWidget(tutorial_screen)
         widget.setCurrentWidget(tutorial_screen)
 
@@ -1154,9 +1216,10 @@ class Tutorial(QMainWindow):
 
 
 class KeyTutorial(QMainWindow):
-    def __init__(self, lesson_data=None):
+    def __init__(self,stacked_widget, lesson_data=None):
         super().__init__()
         uic.loadUi("ui/key_tutor.ui", self)
+        self.stacked_widget = stacked_widget
         self.lesson_data = lesson_data
 
         self.lp_label.setStyleSheet("padding:5px;")
@@ -1166,7 +1229,9 @@ class KeyTutorial(QMainWindow):
         except TypeError:
             pass
 
-        self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutorial))
+        tutor_screen = Tutorial(self.stacked_widget)
+        widget.addWidget(tutor_screen)
+        self.go_back_tutorial.clicked.connect(lambda: widget.setCurrentWidget(tutor_screen))
         self.test_type.textChanged.connect(self.textChangedfunc)
 
     def showEvent(self, event):
@@ -1259,28 +1324,33 @@ if __name__ == "__main__":
     # adding styling files
     with open("style/style.qss") as f:
         app.setStyleSheet(f.read())
+
     widget = QtWidgets.QStackedWidget()
 
-    login = MyApp()
-    resetConfirmation = ResetPasswordVerificationScreen()
-    register = RegisterScreen()
-    typingScreen = TypingScreen()
-    practicescreen = PracticeScreen()
-    accountscreen = AccountScreen()
-    resetpassword = ResetPassword()
-    tutorial = Tutorial()
-    key_tutorial = KeyTutorial()
+
+    login = MyApp(widget)
+    # resetConfirmation = ResetPasswordVerificationScreen()
+    # register = RegisterScreen()
+    # typingScreen = TypingScreen()
+    # practicescreen = PracticeScreen()
+    # accountscreen = AccountScreen()
+    # resetpassword = ResetPassword()
+    # tutorial = Tutorial()
+    # key_tutorial = KeyTutorial()
 
     widget.addWidget(login)
-    widget.addWidget(register)
-    widget.addWidget(resetConfirmation)
-    widget.addWidget(typingScreen)
-    widget.addWidget(practicescreen)
-    widget.addWidget(accountscreen)
-    widget.addWidget(resetpassword)
-    widget.addWidget(tutorial)
-    widget.addWidget(key_tutorial)
+    # widget.addWidget(register)
+    # widget.addWidget(resetConfirmation)
+    # widget.addWidget(typingScreen)
+    # widget.addWidget(practicescreen)
+    # widget.addWidget(accountscreen)
+    # widget.addWidget(resetpassword)
+    # widget.addWidget(tutorial)
+    # widget.addWidget(key_tutorial)
 
+
+    widget.setCurrentWidget(login)
+    
     widget.show()
     app.exec_()
 
