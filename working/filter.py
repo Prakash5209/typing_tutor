@@ -146,6 +146,16 @@ class Tracker:
 
 
         # updating the xp
+        login = Login.is_authenticated()
+        headers = {
+
+            "Authorization":f"Bearer {login}",
+            "Content-Type":"application/json"
+        }
+
+        get_xp = requests.get("http://localhost:8000/user-info",headers = headers)
+        self.instance_xp = json.loads(get_xp.text).get("xp")
+
         self.total_xp = 0
         self.wpm_xp = 0
         self.accuracy_xp = 0
@@ -166,18 +176,11 @@ class Tracker:
         else:
             self.accuracy_xp += 0
 
-        self.total_xp = self.wpm_xp + self.accuracy_xp
+        self.total_xp = self.wpm_xp + self.accuracy_xp + self.instance_xp
 
-
-        login = Login.is_authenticated()
-        headers = {
-            "Authorization":f"Bearer {login}",
-            "Content-Type":"application/json"
-        }
-        print("test")
-        print(self.total_xp)
-        print(self.wpm_xp)
         print(self.accuracy_xp)
+        print(self.wpm_xp)
+        print(self.total_xp)
         payload = {
             "xp":self.total_xp
         }

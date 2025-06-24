@@ -176,7 +176,6 @@ class TypingScreen(QMainWindow):
         self.tutor_btn.clicked.connect(self.gototutor)
 
 
-        # self.tutor
 
         # change the timer options in gui
         self.time_button.setText(
@@ -415,8 +414,8 @@ class TypingScreen(QMainWindow):
 
         for key, value in res.items():
             key_item = QTreeWidgetItem()
-            key_item.setText(0, str(key))     # Column 0: name
-            key_item.setText(1, str(value))   # Column 1: value
+            key_item.setText(0, str(key))
+            key_item.setText(1, str(value))
             self.treeWidget.addTopLevelItem(key_item)
 
         mistakes = json.loads(mistakes).get("mistakes")
@@ -424,11 +423,6 @@ class TypingScreen(QMainWindow):
         for i in range(len(mistakes)):
             child_item = QTreeWidgetItem([str(mistakes[i])])
             self.treeWidget.addTopLevelItem(child_item)
-
-
-        # print(mistakes)
-        # mistake = QTreeWidgetItem([str(mistakes.get("mistakes")[0])])
-        # self.treeWidget.addTopLevelItem(mistake)
 
 
         self.test_type.setEnabled(False)
@@ -442,8 +436,6 @@ class PracticeScreen(QMainWindow):
     def __init__(self,stacked_widget):
         self.no_chance = True
         super().__init__()
-
-
 
         self.stacked_widget = stacked_widget
 
@@ -1350,7 +1342,6 @@ if __name__ == "__main__":
 
 
     widget.setCurrentWidget(login)
-    
-    widget.show()
+    widget.showMaximized()
     app.exec_()
 
