@@ -1,14 +1,12 @@
 from fastapi import FastAPI, Depends, status, HTTPException
 from sqlalchemy.ext.mutable import MutableDict
-from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
 from typing import Annotated,Dict,List
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import select, Integer
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import datetime
@@ -17,7 +15,6 @@ import string
 import os
 import logging
 
-import json
 import jwt
 
 

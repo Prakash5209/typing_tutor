@@ -1102,7 +1102,6 @@ class AccountScreen(QMainWindow):
                 jdata = json.load(f)
                 mistakes = jdata.get("mistakes",[])
                 for i in range(len(mistakes)):
-                    print("test",mistakes[i])
                     child_item = QTreeWidgetItem([str(mistakes[i])])
                     item.addChild(child_item)
                     # for key,value in mistakes[i].items():
@@ -1265,7 +1264,7 @@ class KeyTutorial(QMainWindow):
     
     def reset_all_labels(self):
         label_lst = ["lp_label", "lr_label", "lm_label", "li_label", 
-                     "ri_label", "rm_label", "rr_label", "rp_label"]
+                     "ri_label", "rm_label", "rr_label", "rp_label","thumb_label"]
         for label_name in label_lst:
             label = getattr(self, label_name, None)
             if label is not None:
@@ -1281,6 +1280,7 @@ class KeyTutorial(QMainWindow):
 
         light_green = "background-color:#90EE90;padding:5px;border-radius:5px"
         light_blue = "background-color:#ADD8E6;padding:5px;border-radius:5px"
+        light_cyan = "background-color:#B769FF;padding:5px;border-radius:5px"
 
         if future_key in tuple("qaz"):
             self.lp_label.setStyleSheet(light_green)
@@ -1290,8 +1290,9 @@ class KeyTutorial(QMainWindow):
             self.lm_label.setStyleSheet(light_green)
         elif future_key in tuple("rfvtgb"):
             self.li_label.setStyleSheet(light_green)
-        elif future_key == "hit space":
-            print("space")
+        elif future_key == "space":
+            self.thumb_label.setStyleSheet(light_cyan)
+            # print("space")
         elif future_key in tuple("yhnujm"):
             self.ri_label.setStyleSheet(light_blue)
         elif future_key in tuple("ik,"):

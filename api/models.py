@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
 
+import uuid
+
 
 class TimeStamps:
     create_at = Column(DateTime(timezone=True),
