@@ -821,6 +821,13 @@ class ResetPassword(QMainWindow):
         if obj.status_code == 200:
             widget.setCurrentIndex(widget.currentIndex()-6)
 
+
+class AppDetails(QMainWindow):
+    def __init__(self,stacked_widget):
+        super().__init__()
+        uic.loadUi("ui/appDetails.ui",self)
+        self.stacked_widget = stacked_widget
+
 class AccountScreen(QMainWindow):
     def __init__(self,stacked_widget):
         super().__init__()
@@ -834,6 +841,10 @@ class AccountScreen(QMainWindow):
 
         # back to practice screen
         self.practice_button.clicked.connect(self.practice_screen)
+
+        self.app_version_button.clicked.connect(self.appDetail_screen)
+
+
 
         self.tutor_btn.clicked.connect(self.tutor_screen)
 
@@ -865,6 +876,13 @@ class AccountScreen(QMainWindow):
         typing_screen = TypingScreen(self.stacked_widget)
         self.stacked_widget.addWidget(typing_screen)
         self.stacked_widget.setCurrentWidget(typing_screen)
+
+    def appDetail_screen(self):
+        appdetail = AppDetails(self.stacked_widget)
+        self.stacked_widget.addWidget(appdetail)
+        self.stacked_widget.setCurrentWidget(appdetail)
+        print("ddd")
+
 
     def practice_screen(self):
         typing_screen = PracticeScreen(self.stacked_widget)
