@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>859</width>
+    <width>746</width>
     <height>1200</height>
    </rect>
   </property>
@@ -24,9 +24,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>825</width>
-         <height>1565</height>
+         <y>-60</y>
+         <width>712</width>
+         <height>1677</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -154,7 +154,6 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="username_label">
@@ -177,7 +176,6 @@
                </spacer>
               </item>
              </layout>
-
             </widget>
            </item>
            <item>
@@ -257,7 +255,7 @@
            <enum>QFrame::Plain</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QTableWidget" name="tableWidget">
              <property name="minimumSize">
               <size>
@@ -282,6 +280,21 @@
              </column>
             </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Your Hightest Score </string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -294,7 +307,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="label_5">
              <property name="minimumSize">
               <size>
@@ -304,6 +317,21 @@
              </property>
              <property name="text">
               <string>GRAPH</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Graph</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -319,7 +347,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QTableWidget" name="tableWidget_2">
              <property name="minimumSize">
               <size>
@@ -344,6 +372,21 @@
              </column>
             </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Character Error State</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -356,7 +399,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QTreeWidget" name="treeWidget">
              <property name="minimumSize">
               <size>
@@ -369,6 +412,21 @@
                <string>report list</string>
               </property>
              </column>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Report Overview</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
             </widget>
            </item>
           </layout>
@@ -385,7 +443,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>859</width>
+     <width>746</width>
      <height>21</height>
     </rect>
    </property>
