@@ -2,14 +2,11 @@ from typing import Dict
 import module1
 import pyqtgraph as pg
 from inputchecker import LiveInputChecker,Fingers
-# from filter_save import Filter_and_save
-import smtplib
 import requests
 import datetime
 
 from PyQt5 import QtWidgets
 from PyQt5 import uic
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTreeWidgetItem,QTableWidgetItem
 from PyQt5.QtCore import pyqtSignal, QThread, QObject, QTimer
 
@@ -415,6 +412,8 @@ class TypingScreen(QMainWindow):
             mistakes = f.read()
 
         for key, value in res.items():
+            if key == "user_id":
+                continue
             key_item = QTreeWidgetItem()
             key_item.setText(0, str(key))
             key_item.setText(1, str(value))
@@ -747,6 +746,8 @@ class PracticeScreen(QMainWindow):
             mistakes = f.read()
 
         for key,value in res.items():
+            if key == "user_id":
+                continue
             key_item = QTreeWidgetItem()
             key_item.setText(0,str(key))
             key_item.setText(1,str(value))
