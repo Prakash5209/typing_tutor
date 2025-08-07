@@ -828,6 +828,15 @@ class AppDetails(QMainWindow):
         uic.loadUi("ui/appDetails.ui",self)
         self.stacked_widget = stacked_widget
 
+        self.backaccount.clicked.connect(self.backtoAccount)
+
+
+    def backtoAccount(self):
+        account_screen = AccountScreen(self.stacked_widget)
+        self.stacked_widget.addWidget(account_screen)
+        self.stacked_widget.setCurrentWidget(account_screen)
+
+
 class AccountScreen(QMainWindow):
     def __init__(self,stacked_widget):
         super().__init__()
