@@ -24,7 +24,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-60</y>
+         <y>0</y>
          <width>712</width>
          <height>1677</height>
         </rect>
@@ -220,13 +220,6 @@
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_7">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="logout_btn">
-                <property name="text">
-                 <string>Logout</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="1">
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
@@ -239,6 +232,20 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="logout_btn">
+                <property name="text">
+                 <string>Logout</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="app_version_button">
+                <property name="text">
+                 <string>Info</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
