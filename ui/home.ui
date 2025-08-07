@@ -185,7 +185,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Test session</string>
+              <string>You're now in a typing session — focus, improve your accuracy, and let every keystroke count.</string>
              </property>
             </widget>
            </item>
@@ -233,7 +233,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>time: 1 minute</string>
+              <string>Time: 1 minute</string>
              </property>
             </widget>
            </item>

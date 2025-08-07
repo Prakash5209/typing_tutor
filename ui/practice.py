@@ -194,9 +194,9 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Practice"))
         self.tutor_btn.setText(_translate("MainWindow", "Tutor"))
         self.account_btn.setText(_translate("MainWindow", "Account"))
-        self.label_2.setText(_translate("MainWindow", "Practice session"))
+        self.label_2.setText(_translate("MainWindow", "Practice session started — repeat, refine, and build muscle memory with every word."))
         self.practice_refresh.setText(_translate("MainWindow", "Refresh"))
-        self.time_button.setText(_translate("MainWindow", "time: 1 minute"))
+        self.time_button.setText(_translate("MainWindow", "Time: 1 minute"))
         self.practiceTextBrowser.setMarkdown(_translate("MainWindow", "loading...\n"
 "\n"
 ""))

@@ -66,7 +66,9 @@ class Worker(QObject):
 class MyApp(QMainWindow):
     def __init__(self, stacked_widget):
         super().__init__()
+        self.setWindowTitle("Keystroke Improver")
         uic.loadUi("ui/login.ui", self)
+
         self.stacked_widget = stacked_widget  # Store widget reference
 
         self.login_button.clicked.connect(self.goto_homeScreen)
@@ -179,7 +181,7 @@ class TypingScreen(QMainWindow):
 
         # change the timer options in gui
         self.time_button.setText(
-            f"time: {TypingScreen.timer[self.timer_select_index]}")
+            f"Time: {TypingScreen.timer[self.timer_select_index]}")
         self.time_button.clicked.connect(self.selectTime)
 
         self.timer_thread = None
@@ -236,7 +238,7 @@ class TypingScreen(QMainWindow):
             Worker.change_typing_time(
                 finish_time=TypingScreen.timer[self.timer_select_index])
             self.time_button.setText(
-                f"time: {TypingScreen.timer[self.timer_select_index]}")
+                f"Time: {TypingScreen.timer[self.timer_select_index]}")
 
         # gui timer won't change until next operation
 
@@ -263,7 +265,7 @@ class TypingScreen(QMainWindow):
         self.stacked_widget.setCurrentWidget(account_screen)
 
     def tracktimer(self):
-        self.time_button.setText("time: " + str(self.timer_counter))
+        self.time_button.setText("Time: " + str(self.timer_counter))
         self.timer_counter -= 1
 
         if self.timer_counter < 1:
@@ -307,7 +309,7 @@ class TypingScreen(QMainWindow):
 
         # refresh the timer and reset the text of time_button
         self.time_button.setText(
-            "time: "+str(TypingScreen.timer[self.timer_select_index]))
+            "Time: "+str(TypingScreen.timer[self.timer_select_index]))
 
         # enable the linedit after refreshing the
         self.test_type.setEnabled(True)
@@ -496,7 +498,7 @@ class PracticeScreen(QMainWindow):
         # change the timer options in gui
 
         self.time_button.setText(
-            f"time: {PracticeScreen.timer[self.timer_select_index]}")
+            f"Time: {PracticeScreen.timer[self.timer_select_index]}")
         self.time_button.clicked.connect(self.selectTime)
 
         self.timer_thread = None
@@ -571,10 +573,10 @@ class PracticeScreen(QMainWindow):
             Worker.change_typing_time(
                 finish_time=PracticeScreen.timer[self.timer_select_index])
             self.time_button.setText(
-                f"time: {PracticeScreen.timer[self.timer_select_index]}")
+                f"Time: {PracticeScreen.timer[self.timer_select_index]}")
 
     def tracktimer(self):
-        self.time_button.setText("time: " + str(self.timer_counter))
+        self.time_button.setText("Time: " + str(self.timer_counter))
         self.timer_counter -= 1
 
         if self.timer_counter < 1:
@@ -597,7 +599,7 @@ class PracticeScreen(QMainWindow):
         self.timer_started = False  # Reset the state
         # refresh the timer and reset the text of time_button
         self.time_button.setText(
-            "time: "+str(PracticeScreen.timer[self.timer_select_index]))
+            "Time: "+str(PracticeScreen.timer[self.timer_select_index]))
 
         # enable the linedit after refreshing the
         self.lineEdit.setEnabled(True)
@@ -1343,6 +1345,7 @@ if __name__ == "__main__":
 
 
     widget.setCurrentWidget(login)
+    widget.setWindowTitle("Keystroke Improver")
     widget.showMaximized()
     app.exec_()
 

@@ -1,8 +1,6 @@
 import os
 import requests
 import random
-import jwt
-import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 from cryptography.fernet import Fernet

@@ -161,7 +161,8 @@ class Tracker:
         self.accuracy_xp = 0
 
         wpm_thresholds = [(100, 5), (80, 4), (60, 3), (40, 2), (20, 1), (1, 0.1)]
-        acc_thresholds = [(100,3), (80,2.4), (60,1.8), (40,1.2), (20,0.6), (1,0.3)]
+        # acc_thresholds = [(100,3), (80,2.4), (60,1.8), (40,1.2), (20,0.6), (1,0.3)]
+        acc_thresholds = [(100,3), (80,2.4), (60,1.8), (40,1.2), (20,-1.5), (1,-0.5)]
         for threshold, xp in wpm_thresholds:
             if wpm >= threshold:
                 self.wpm_xp += xp

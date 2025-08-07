@@ -170,7 +170,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Practice session</string>
+              <string>Practice session started — repeat, refine, and build muscle memory with every word.</string>
              </property>
             </widget>
            </item>
@@ -218,7 +218,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>time: 1 minute</string>
+              <string>Time: 1 minute</string>
              </property>
             </widget>
            </item>

@@ -1,4 +1,3 @@
-import requests
 from typing import Dict, List
 from working.account import Login
 

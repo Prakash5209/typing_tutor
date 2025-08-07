@@ -1,7 +1,6 @@
 from sklearn.neighbors import NearestNeighbors
 from typing import Dict, List
 import numpy as np
-import random
 
 class Suggest:
     error_map: Dict = None

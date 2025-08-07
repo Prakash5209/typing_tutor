@@ -1,5 +1,4 @@
 import requests
-import jwt
 
 
 class Register:

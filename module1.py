@@ -6,7 +6,6 @@ import json
 from working.account import Login
 
 # random 200 words generator
-
 def typing_test_words():
     token = Login.is_authenticated()
     headers = {

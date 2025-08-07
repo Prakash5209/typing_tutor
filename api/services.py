@@ -3,7 +3,7 @@ from models import MistakeLetter,MistakeTracker
 from sqlalchemy.ext.mutable import MutableDict
 
 
-# mistake trakcer
+# mistake tracker
 def deduct_mistake_letters(user_id: int, db: Session):
     mistakeletter = db.query(MistakeLetter).filter(MistakeLetter.user_id == user_id).first()
     mistaketracker = db.query(MistakeTracker).filter(MistakeTracker.user_id == user_id).first()
