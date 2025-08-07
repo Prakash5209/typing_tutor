@@ -243,7 +243,7 @@
               <item row="0" column="2">
                <widget class="QPushButton" name="app_version_button">
                 <property name="text">
-                 <string>Info</string>
+                 <string>app info</string>
                 </property>
                </widget>
               </item>
